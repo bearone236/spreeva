@@ -9,18 +9,25 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hono/node-server": "^1.12.1",
+    "hono": "^4.5.8",
+    "next": "14.2.6",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "14.2.6"
+    "react-dom": "^18"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@biomejs/biome": "1.8.3",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
+    "biome": "^0.3.3",
+    "eslint": "^8",
+    "eslint-config-next": "^14.2.6",
+    "lefthook": "^1.7.15",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.6"
+    "typescript": "^5"
   }
 }

@@ -1,0 +1,39 @@
+scripts:
+  # Commit時に実行される
+  pre-commit:
+    parallel: true  # 並列で実行して効率化
+    commands:
+      prettier:
+        run: npx prettier --check "src/**/*.{ts,tsx,js,jsx,css,scss,md}"
+
+      biome:
+        run: npx biome check
+
+      eslint:
+        run: npx eslint "src/**/*.{ts,tsx,js,jsx}"
+
+      commit-msg:
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          if ! [[ "$COMMIT_MSG" =~ ^(feat|fix|chore|docs|style|refactor|test|perf):\ .+ ]]; then
+            echo "エラー: コミットメッセージは 'feat: xxx', 'fix: xxx' などのプレフィックスを使用してください。"
+            exit 1
+          fi
+
+  # Push時に実行される
+  pre-push:
+    parallel: true
+    commands:
+      typecheck:
+        run: npx tsc --noEmit
+
+      test:
+        run: npm run test
+
+  # ブランチ変更時に実行される
+  post-checkout:
+    commands:
+      # データベースのリセットを自動で実行
+      reset-db:
+        run: npx prisma migrate reset --force
+        # ブランチ変更後にデータベースをリセットして、開発環境をクリーンに保つ.
