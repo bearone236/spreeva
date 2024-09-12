@@ -14,9 +14,17 @@ import Image from 'next/image'
 
 export default function Login() {
   return (
-    <div className='min-h-screen flex justify-center items-center bg-gray-100'>
+    <div className='min-h-screen flex justify-center items-center bg-orange-50'>
       <div className='max-w-md mx-auto p-8 bg-white rounded-lg shadow-md'>
-        <h1 className='text-4xl font-bold text-center mb-4'>Spreeva</h1>
+        <div className='flex justify-center'>
+          <Image
+            src='/spreeva-icon.png'
+            alt='Spreeva Icon'
+            className='text-4xl font-bold text-center mb-4'
+            width={250}
+            height={250}
+          />
+        </div>
         <p className='text-center mb-6'>
           一般ユーザーまたは学校関係者にてログイン
         </p>

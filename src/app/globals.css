@@ -113,7 +113,3 @@ h6 {
     @apply text-sm;
     @apply font-semibold;
 }
-a {
-    @apply text-blue-600 underline;
-}
-
