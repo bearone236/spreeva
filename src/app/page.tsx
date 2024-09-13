@@ -6,6 +6,9 @@ export default function Home() {
     <main className='flex min-h-screen flex-col items-center justify-between p-24'>
       <h2>Hello Kazuya</h2>
       <Button>
+        <Link href={'/select'}>Select</Link>
+      </Button>
+      <Button>
         <Link href={'/login'}>Login</Link>
       </Button>
     </main>
