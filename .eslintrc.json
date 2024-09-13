@@ -39,14 +39,6 @@
     "react/react-in-jsx-scope": "off", // Next.jsではReactのインポートは不要
     "react/prop-types": "off", // TypeScriptを使用するため、PropTypesは不要
     "jsx-a11y/anchor-is-valid": "off", // Next.jsの<Link>タグを使うために無効化
-    "import/order": [
-      "error",
-      {
-        "groups": [["builtin", "external", "internal"]],
-        "newlines-between": "always",
-        "alphabetize": { "order": "asc", "caseInsensitive": true }
-      }
-    ],
     "no-console": "warn", // console.logなどを警告
     "no-debugger": "error" // debuggerはエラーとして扱う
   },
