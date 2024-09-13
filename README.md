@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## プロジェクト概要
+![Spreeva Icon](public/spreeva-icon.png)
 
-## Getting Started
+### 1. プロジェクト名
+**Spreeva (スプリーバ)**:  
+Spreeva は「Speak（話す）」と「Revive（よみがえる）」を組み合わせた造語です。英語力がよみがえり、活性化するイメージを表現しており、ユーザーが英語を自由に話し、英語力を再び強化する場を提供するアプリです。
 
-First, run the development server:
+### 2. 背景・目的
+オーストラリアでの語学交流で、1分しか話せなかった悔しさを元に、英語のキャッチボールを活性化するためのアプリを作成しました。短い会話ではなく、複数の文でしっかりと相手とコミュニケーションを取ることを目指しています。
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 3. ターゲットユーザー
+- リスニング・スピーキング力を向上させたい人
+- 英語を話す環境が欲しい人
+- 英語スピーキングテストを実施したい教育機関
+- 英語思考力を身につけたい人
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 4. 主要機能
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **時間制限スピーキング練習**: ランダム・指定ワードを基に質問が表示され、設定した時間内でスピーキングの練習ができる。
+- **AIによる文章評価**: AIを用いてスピーキング内容を評価。
+- **スピーキング日記**: スピーキングで日記を作成し、英語力を向上。
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## 5. 既存サービスとの比較・強み
 
-## Learn More
+- **時間制限スピーキング練習**: 短い時間で話す力を鍛える点で、他のアプリと差別化されています。
+- **スピーキング日記**: ライティングではなく、スピーキングで日記を記録できる点がユニークです。
 
-To learn more about Next.js, take a look at the following resources:
+## 6. アーキテクチャ概要
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**アーキテクチャパターン**: オニオンアーキテクチャ  
+- **Domain層**: ビジネスルールやエンティティを定義。  
+- **UseCase層**: ビジネスアクションを実行し、リポジトリ層と連携。  
+- **Repository層**: データベースや外部サービスとの通信を抽象化。  
+- **Controller層**: HTTPリクエストを処理し、レスポンスを返す。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## 7. 技術スタック
 
-## Deploy on Vercel
+- **言語**: TypeScript
+- **フロントサイド**: Next.js (App Router)
+- **サーバーサイド**: Hono
+- **API設計**: OpenAPI (Swagger)
+- **Database**: PostgreSQL
+- **マイグレーションツール**: Prisma
+- **Hosting**: Vercel, Cloudflare Worker (optional)
+- **デザイン**: Yamada UI, Shadcn/ui, Tailwind CSS
+- **アイコン**: Lucide
+- **認証機能**: Auth.js
+- **環境構築**: Biome
+- **Git管理**: Lefthook
+- **その他**: Makefileで効率化
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 8. 特記事項
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+開発サイクルを上げるために、モダンな技術選定を行い、開発効率と拡張性を重視しています。また、スピーキング力を強化するための独自機能を持つことがSpreevaの強みです。
