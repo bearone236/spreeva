@@ -1,8 +1,18 @@
+'use client'
+
 import { History, Home, User } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Button } from './ui/button'
 
 export default function Header() {
+  const pathname = usePathname()
+
+  if (pathname === '/login') {
+    return null
+  }
+
   return (
     <>
       <header className='bg-[#1a2b3c] py-4 px-6 shadow-md fixed top-0 left-0 w-full z-50'>
@@ -24,7 +34,7 @@ export default function Header() {
               className='text-white hover:bg-white hover:bg-opacity-90 transition-colors flex items-center'
             >
               <Home className='h-5 w-5 mr-2' />
-              <span>ホーム</span>
+              <Link href={'/'}>ホーム</Link>
             </Button>
 
             <Button
