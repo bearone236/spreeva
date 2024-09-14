@@ -6,7 +6,8 @@
 Spreeva は「Speak（話す）」と「Revive（よみがえる）」を組み合わせた造語です。英語力がよみがえり、活性化するイメージを表現しており、ユーザーが英語を自由に話し、英語力を再び強化する場を提供するアプリです。
 
 ### 2. 背景・目的
-オーストラリアでの語学交流で、1分しか話せなかった悔しさを元に、英語のキャッチボールを活性化するためのアプリを作成しました。短い会話ではなく、複数の文でしっかりと相手とコミュニケーションを取ることを目指しています。
+オーストラリアでの語学交流で、1分しか話せなかった悔しさを元に、英語のキャッチボールを活性化するためのアプリを作成しました。
+短い会話ではなく、複数の文でしっかりと相手とコミュニケーションを取ることを目指しています。
 
 ### 3. ターゲットユーザー
 - リスニング・スピーキング力を向上させたい人
@@ -38,11 +39,11 @@ Spreeva は「Speak（話す）」と「Revive（よみがえる）」を組み�
 - **言語**: TypeScript
 - **フロントサイド**: Next.js (App Router)
 - **サーバーサイド**: Hono
-- **API設計**: OpenAPI (Swagger)
-- **Database**: PostgreSQL
+- **API設計**: OpenAPI
+- **Database**: Supabase (PostgreSQL)
 - **マイグレーションツール**: Prisma
-- **Hosting**: Vercel, Cloudflare Worker (optional)
-- **デザイン**: Yamada UI, Shadcn/ui, Tailwind CSS
+- **Hosting**: Vercel, Cloudflare Worker
+- **デザイン**: Shadcn/ui, Tailwind CSS
 - **アイコン**: Lucide
 - **認証機能**: Auth.js
 - **環境構築**: Biome
