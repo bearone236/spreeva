@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// 一般ユーザー
+model GeneralUser {
+  id        String      @id @default(cuid())
+  email     String      @unique
+  password  String
+  name      String
+  createdAt DateTime    @default(now())
+}
+
+// 団体ユーザー
+model OrganizationUser {
+  id        String      @id @default(cuid())
+  email     String      @unique
+  password  String
+  name      String
+  createdAt DateTime    @default(now())
+}
