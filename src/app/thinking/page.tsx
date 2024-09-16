@@ -1,12 +1,12 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
+import LevelDisplay from '@/components/LevelDisplay'
 import { Card, CardContent } from '@/components/ui/card'
 import { useEffect, useState } from 'react'
 
 export default function ThinkingPage() {
   const [remainingTime, setRemainingTime] = useState(30)
-  const [themeLevel] = useState('Middle')
+  const [themeLevel] = useState<'Low' | 'Middle' | 'High'>('Middle')
   const [question] = useState(
     'What are some effective ways to reduce stress in daily life, and how have you personally dealt with stressful situations?',
   )
@@ -26,14 +26,12 @@ export default function ThinkingPage() {
   }, [])
 
   return (
-    <div className='min-h-screen bg-[#e6ebf0] flex flex-col items-center justify-center p-4'>
+    <div className='min-h-screen flex flex-col items-center justify-center '>
       <Card className='w-full max-w-3xl bg-white shadow-lg border-t-4 border-[#ed9600]'>
         <CardContent className='p-6'>
           <div className='flex justify-between items-center mb-6'>
             <h2 className='text-2xl font-bold text-[#ed7e00]'>Thinking Time</h2>
-            <Badge className='bg-[#edae00] text-white font-semibold px-3 py-1'>
-              Level: {themeLevel}
-            </Badge>
+            <LevelDisplay level={themeLevel} />
           </div>
 
           <div className='mb-8'>
