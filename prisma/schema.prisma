@@ -8,20 +8,127 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// 一般ユーザー
-model GeneralUser {
-  id        String      @id @default(cuid())
-  email     String      @unique
-  password  String
-  name      String
-  createdAt DateTime    @default(now())
+model User {
+  id                 String   @id @default(cuid())
+  name               String
+  email              String   @unique
+  userType           String
+  organization       Organization? @relation(fields: [organizationId], references: [id])
+  organizationId     String?
+  studentIdNumber    String?
+  speakingSessions   SpeakingSession[]
+  speakingDiaries    SpeakingDiary[]
+  classMembers       ClassMember[]
+  assignmentResponses AssignmentResponse[]
+  createdAssignments Assignment[] @relation("createdByUser")   // 逆リレーション
+  assignedAssignments Assignment[] @relation("assignedToUser") // 逆リレーション
+  createdClasses     Class[] @relation("createdByUser")        // 逆リレーション
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }
 
-// 団体ユーザー
-model OrganizationUser {
-  id        String      @id @default(cuid())
-  email     String      @unique
-  password  String
-  name      String
-  createdAt DateTime    @default(now())
+model Organization {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  organizationType String
+  classes       Class[]
+  users         User[]
+  assignments   Assignment[]   // 逆リレーション
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Class {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  organization  Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+  classMembers  ClassMember[]
+  assignments   Assignment[]
+  createdBy     User   @relation("createdByUser", fields: [createdById], references: [id])
+  createdById   String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model ClassMember {
+  id          String @id @default(cuid())
+  class       Class  @relation(fields: [classId], references: [id])
+  classId     String
+  user        User   @relation(fields: [userId], references: [id])
+  userId      String
+  roleInClass String
+  enrolledAt  DateTime @default(now())
+}
+
+model Assignment {
+  id                  String   @id @default(cuid())
+  title               String
+  description         String?
+  organization        Organization @relation(fields: [organizationId], references: [id])
+  organizationId      String
+  assignedToClass     Class?  @relation(fields: [assignedToClassId], references: [id])
+  assignedToClassId   String?
+  assignedToUser      User?   @relation("assignedToUser", fields: [assignedToUserId], references: [id])
+  assignedToUserId    String?
+  responses           AssignmentResponse[]
+  createdBy           User    @relation("createdByUser", fields: [createdById], references: [id])
+  createdById         String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model AssignmentResponse {
+  id                String  @id @default(cuid())
+  assignment        Assignment @relation(fields: [assignmentId], references: [id])
+  assignmentId      String
+  user              User  @relation(fields: [userId], references: [id])
+  userId            String
+  audioData         Bytes
+  transcript        String?
+  aiFeedback        String?
+  pronunciationScore Decimal?
+  submittedAt       DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model SpeakingSession {
+  id              String  @id @default(cuid())
+  user            User    @relation(fields: [userId], references: [id])
+  userId          String
+  theme           String
+  themeLevel      String
+  thinkingTime    Int
+  speakingTime    Int
+  records         SpeakingRecord[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model SpeakingRecord {
+  id                String  @id @default(cuid())
+  session           SpeakingSession @relation(fields: [sessionId], references: [id])
+  sessionId         String
+  audioData         Bytes 
+  transcript        String?
+  aiFeedback        String?
+  pronunciationScore Decimal?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model SpeakingDiary {
+  id              String  @id @default(cuid())
+  user            User    @relation(fields: [userId], references: [id])
+  userId          String
+  entryDate       DateTime
+  audioData       Bytes 
+  transcript      String?
+  aiFeedback      String?
+  pronunciationScore Decimal?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
