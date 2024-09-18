@@ -2,14 +2,23 @@
 
 import LevelDisplay from '@/components/LevelDisplay'
 import { Card, CardContent } from '@/components/ui/card'
+import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
+type Level = 'Low' | 'Middle' | 'High'
+
 export default function ThinkingPage() {
-  const [remainingTime, setRemainingTime] = useState(30)
-  const [themeLevel] = useState<'Low' | 'Middle' | 'High'>('Middle')
-  const [question] = useState(
-    'What are some effective ways to reduce stress in daily life, and how have you personally dealt with stressful situations?',
+  const searchParams = useSearchParams()
+
+  // URLパラメータから取得
+  const theme = searchParams.get('theme') || 'No theme provided'
+  const thinkingTimeParam = searchParams.get('thinkTime') || '30'
+  const themeLevel = (searchParams.get('level') || 'Middle') as Level
+
+  const [remainingTime, setRemainingTime] = useState(
+    Number.parseInt(thinkingTimeParam),
   )
+  const [question] = useState(theme)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -26,7 +35,7 @@ export default function ThinkingPage() {
   }, [])
 
   return (
-    <div className='min-h-screen flex flex-col items-center justify-center '>
+    <div className='min-h-screen flex flex-col items-center justify-center'>
       <Card className='w-full max-w-3xl bg-white shadow-lg border-t-4 border-[#ed9600]'>
         <CardContent className='p-6'>
           <div className='flex justify-between items-center mb-6'>

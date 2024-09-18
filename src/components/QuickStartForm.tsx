@@ -3,13 +3,16 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Mic } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 const QuickStartForm = () => {
   const [theme, setTheme] = useState('')
+  const router = useRouter()
 
   const handleThemeSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    router.push(`/select?theme=${theme || 'random'}`)
   }
 
   return (
@@ -19,6 +22,7 @@ const QuickStartForm = () => {
         <Button
           className='w-full bg-gradient-to-r from-[#f1c40f] to-[#e67e22] text-white hover:from-[#f39c12] hover:to-[#d35400] py-3 rounded-md'
           size='lg'
+          onClick={() => router.push('/select?theme=random')}
         >
           <Mic className='mr-2 h-4 w-4' />
           ランダムテーマで始める
