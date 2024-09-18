@@ -9,10 +9,8 @@ import {
 import { useMemo, useState } from 'react'
 
 const ContributionGraph: React.FC = () => {
-  // useState to manage the selected year
   const [year, setYear] = useState(new Date().getFullYear())
 
-  // Generate contribution data for the selected year
   const contributionData = useMemo(() => {
     const data: { [key: string]: number } = {}
     const startDate = new Date(year, 0, 1)
@@ -30,7 +28,6 @@ const ContributionGraph: React.FC = () => {
     return data
   }, [year])
 
-  // Get the current year and show the latest 4 years
   const currentYear = new Date().getFullYear()
   const yearOptions = Array.from({ length: 4 }, (_, i) => currentYear - i)
 
@@ -58,7 +55,6 @@ const ContributionGraph: React.FC = () => {
   const firstDayOfYear = startDate.getUTCDay()
   const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-  // Display labels for the vertical week axis, only showing Mon, Wed, Fri
   const displayDayLabels = ['', 'Mon', '', 'Wed', '', 'Fri', '']
 
   const weeks: (Date | null)[][] = []
@@ -84,7 +80,6 @@ const ContributionGraph: React.FC = () => {
     weeks.push(currentWeek)
   }
 
-  // Monthly labels spaced by 4-5 blocks
   const monthLabels = [
     { name: 'Jan', index: 0 },
     { name: 'Feb', index: 4 },

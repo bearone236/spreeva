@@ -10,7 +10,6 @@ const QuickStartForm = () => {
 
   const handleThemeSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Selected theme:', theme)
   }
 
   return (
