@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang='en'>
       <body className={`${inter.className} bg-orange-50`}>
         <Header />
-        <div className='pt-8'>{children}</div>
+        <div className='pt-8 px-8'>{children}</div>
       </body>
     </html>
   )
