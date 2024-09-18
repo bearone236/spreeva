@@ -6,6 +6,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@radix-ui/react-label'
 import { Clock, Eye, Mic, Volume2 } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
 export default function SelectPage() {
@@ -16,9 +17,43 @@ export default function SelectPage() {
   const [themeLevel, setThemeLevel] = useState('Middle')
   const [showTheme, setShowTheme] = useState(true)
   const [readTheme, setReadTheme] = useState(true)
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    const theme = searchParams.get('theme') || 'random'
+
+    try {
+      const response = await fetch('http://localhost:3000/api/theme', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+        },
+        body: JSON.stringify({
+          theme,
+          themeLevel,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+
+      const effectiveThinkTime =
+        thinkingTime === 'custom' ? customThinkingTime : thinkingTime
+      const effectiveSpeakTime =
+        speakingTime === 'custom' ? customSpeakingTime : speakingTime
+
+      const href = `/thinking?theme=${data.message}&thinkTime=${effectiveThinkTime}&speakTime=${effectiveSpeakTime}&level=${themeLevel}`
+      router.push(href)
+    } catch (error) {
+      alert('セッションの開始に失敗しました。もう一度お試しください。')
+    }
   }
 
   return (
