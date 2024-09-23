@@ -4,7 +4,11 @@ import type { ReactNode } from 'react'
 
 const NextAuthProvider = async ({ children }: { children: ReactNode }) => {
   const session = await auth()
-  return <SessionProvider session={session}>{children}</SessionProvider>
+  return (
+    <>
+      <SessionProvider session={session}>{children}</SessionProvider>
+    </>
+  )
 }
 
 export default NextAuthProvider
