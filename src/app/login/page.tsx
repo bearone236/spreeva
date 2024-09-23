@@ -1,3 +1,4 @@
+'use client'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -10,9 +11,23 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { signIn } from 'next-auth/react'
 import Image from 'next/image'
+import { useState } from 'react'
 
 export default function Login() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleEmailLogin = async () => {
+    await signIn('credentials', {
+      redirect: true,
+      email,
+      password,
+      callbackUrl: window.location.origin,
+    })
+  }
+
   return (
     <div className='min-h-screen flex justify-center items-center bg-orange-50'>
       <div className='max-w-md mx-auto p-8 bg-white rounded-lg shadow-md'>
@@ -41,16 +56,21 @@ export default function Login() {
                   Googleアカウントでログインしてください
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <a href='/auth/google' className='block'>
+              <CardContent className='text-center'>
+                <button
+                  onClick={() => {
+                    signIn('google')
+                  }}
+                  type='button'
+                  aria-label='Google Login'
+                >
                   <Image
                     src='/google-login-icon.png'
                     alt='Google Login'
-                    className='mx-auto'
                     width={200}
                     height={200}
                   />
-                </a>
+                </button>
               </CardContent>
             </Card>
           </TabsContent>
@@ -65,15 +85,27 @@ export default function Login() {
               <CardContent className='space-y-2'>
                 <div className='space-y-1'>
                   <Label htmlFor='email'>メールアドレス</Label>
-                  <Input id='email' type='email' />
+                  <Input
+                    id='email'
+                    type='email'
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                  />
                 </div>
                 <div className='space-y-1'>
                   <Label htmlFor='password'>パスワード</Label>
-                  <Input id='password' type='password' />
+                  <Input
+                    id='password'
+                    type='password'
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                  />
                 </div>
               </CardContent>
               <CardFooter>
-                <Button className='w-full'>ログイン</Button>
+                <Button className='w-full' onClick={handleEmailLogin}>
+                  ログイン
+                </Button>
               </CardFooter>
             </Card>
           </TabsContent>

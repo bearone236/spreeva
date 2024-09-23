@@ -7,19 +7,13 @@ import { ThemeController } from './controllers/themeController'
 const app = new Hono().basePath('/api')
 const themeController = new ThemeController()
 
+// CORS設定
 app.use('*', cors())
 app.use(logger())
 
-const route = app.use(
-  '*',
-  cors({
-    origin: '*',
-  }),
-)
+app.post('/theme', c => themeController.handleGenerateTheme(c))
 
-route.post('/theme', c => themeController.handleGenerateTheme(c))
-
-type AppType = typeof route
+type AppType = typeof app
 
 if (!process.env.VERCEL_URL) {
   throw new Error('VERCEL_URL is not defined')

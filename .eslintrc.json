@@ -1,28 +1,19 @@
 {
   "extends": [
-    "next/core-web-vitals", // Next.jsのベストプラクティス
-    "eslint:recommended", // 基本的なESLintの推奨ルール
-    "plugin:@typescript-eslint/recommended", // TypeScriptの推奨ルール
-    "plugin:react/recommended", // Reactの推奨ルール
-    "plugin:react-hooks/recommended", // React Hooksのベストプラクティス
-    "plugin:jsx-a11y/recommended", // アクセシビリティのルールセット
-    "plugin:import/errors", // import構文のエラーチェック
-    "plugin:import/warnings", // import構文の警告チェック
-    "plugin:import/typescript" // TypeScriptのimportサポート
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended"
   ],
-  "parser": "@typescript-eslint/parser", // TypeScriptの解析
-  "plugins": [
-    "@typescript-eslint",
-    "react",
-    "react-hooks",
-    "jsx-a11y",
-    "import"
-  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "react", "react-hooks", "jsx-a11y"],
   "parserOptions": {
     "ecmaVersion": 2020,
     "sourceType": "module",
     "ecmaFeatures": {
-      "jsx": true // JSXをサポート
+      "jsx": true
     }
   },
   "env": {
@@ -36,15 +27,15 @@
       { "argsIgnorePattern": "^_" }
     ],
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    "react/react-in-jsx-scope": "off", // Next.jsではReactのインポートは不要
-    "react/prop-types": "off", // TypeScriptを使用するため、PropTypesは不要
-    "jsx-a11y/anchor-is-valid": "off", // Next.jsの<Link>タグを使うために無効化
-    "no-console": "warn", // console.logなどを警告
-    "no-debugger": "error" // debuggerはエラーとして扱う
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "jsx-a11y/anchor-is-valid": "off",
+    "no-console": "warn",
+    "no-debugger": "error"
   },
   "settings": {
     "react": {
-      "version": "detect" // Reactのバージョンを自動検出
+      "version": "detect"
     }
   }
 }
