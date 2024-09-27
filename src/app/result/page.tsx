@@ -3,17 +3,27 @@
 import LevelDisplay from '@/components/LevelDisplay'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
+type Level = 'Low' | 'Middle' | 'High'
+
 export default function ResultPage() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
   const [retryCount, setRetryCount] = useState(0)
   const maxRetries = 3
+  const [isLoading, setIsLoading] = useState(false)
 
   const theme =
+    searchParams.get('theme') ||
     'What are some effective ways to reduce stress in daily life, and how have you personally dealt with stressful situations?'
-  const level = 'Middle'
+  const level = (searchParams.get('level') as Level) || 'Middle'
   const spokenText =
+    searchParams.get('spokenText') ||
     "In my experience, effective ways to reduce stress include regular exercise, meditation, and maintaining a healthy work-life balance. Personally, I've found that taking short breaks throughout the day and practicing deep breathing exercises helps me manage stressful situations."
+  const thinkTime = searchParams.get('thinkTime') || '30'
+  const speakTime = searchParams.get('speakTime') || '60'
 
   const handleRetry = () => {
     if (retryCount < maxRetries) {
@@ -21,7 +31,37 @@ export default function ResultPage() {
     }
   }
 
-  const handleEvaluate = () => {}
+  const handleEvaluate = async () => {
+    setIsLoading(true)
+
+    try {
+      const response = await fetch('/api/evaluate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          theme,
+          level,
+          transcript: spokenText,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to evaluate speech')
+      }
+
+      const data = await response.json()
+
+      router.push(
+        `/evaluate?theme=${encodeURIComponent(theme)}&level=${encodeURIComponent(level)}&spokenText=${encodeURIComponent(spokenText)}&thinkTime=${thinkTime}&speakTime=${speakTime}&evaluation=${encodeURIComponent(data.evaluation)}&speechScore=85&grammarAccuracy=90&vocabularyRange=85&pronunciationClarity=80&fluency=85&contentRelevance=90&aiImprovedText=${encodeURIComponent('Improved version of the speech here.')}`,
+      )
+    } catch (error) {
+      alert('評価に失敗しました。もう一度お試しください。')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className='min-h-screen flex flex-col items-center justify-center'>
@@ -60,8 +100,9 @@ export default function ResultPage() {
             <Button
               onClick={handleEvaluate}
               className='bg-[#ed7e00] hover:bg-[#ed9600] text-white'
+              disabled={isLoading}
             >
-              Evaluate
+              {isLoading ? 'Evaluating...' : 'Evaluate'}
             </Button>
           </div>
         </CardContent>
