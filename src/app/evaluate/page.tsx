@@ -4,6 +4,7 @@ import LevelDisplay from '@/components/LevelDisplay'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { useSearchParams } from 'next/navigation'
+import ReactMarkdown from 'react-markdown'
 
 export default function EvaluatePage() {
   const searchParams = useSearchParams()
@@ -12,7 +13,6 @@ export default function EvaluatePage() {
   const themeLevel = searchParams.get('level') || 'Middle'
   const thinkingTime = searchParams.get('thinkTime') || '30'
   const speakingTime = searchParams.get('speakTime') || '60'
-  const userSpeech = searchParams.get('spokenText') || 'No speech available.'
   const aiEvaluation =
     searchParams.get('evaluation') || 'No evaluation available.'
   const speechScore = Number.parseInt(
@@ -34,10 +34,6 @@ export default function EvaluatePage() {
     10,
   )
   const fluency = Number.parseInt(searchParams.get('fluency') || '0', 10)
-  const contentRelevance = Number.parseInt(
-    searchParams.get('contentRelevance') || '0',
-    10,
-  )
 
   return (
     <div className='min-h-screen flex flex-col items-center justify-center p-4'>
@@ -71,11 +67,11 @@ export default function EvaluatePage() {
 
           <div>
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
-              あなたのスピーチ
+              AI評価
             </h3>
-            <p className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
-              {userSpeech}
-            </p>
+            <div className='overflow-auto max-h-96 text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
+              <ReactMarkdown>{aiEvaluation}</ReactMarkdown>
+            </div>
           </div>
 
           <div>
@@ -100,7 +96,6 @@ export default function EvaluatePage() {
                 語彙の範囲: vocabularyRange,
                 発音の明瞭さ: pronunciationClarity,
                 流暢さ: fluency,
-                内容の関連性: contentRelevance,
               }).map(([key, value]) => (
                 <div key={`${key}-${value}`} className='flex flex-col'>
                   <span className='text-sm text-gray-600'>{key}</span>
@@ -111,15 +106,6 @@ export default function EvaluatePage() {
                 </div>
               ))}
             </div>
-          </div>
-
-          <div>
-            <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
-              AI評価
-            </h3>
-            <p className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
-              {aiEvaluation}
-            </p>
           </div>
 
           <div>
