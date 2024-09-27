@@ -1,4 +1,5 @@
 'use client'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -7,7 +8,7 @@ import { Switch } from '@/components/ui/switch'
 import { Label } from '@radix-ui/react-label'
 import { Clock, Eye, Mic, Volume2 } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function SelectPage() {
   const [thinkingTime, setThinkingTime] = useState('30')
@@ -19,6 +20,26 @@ export default function SelectPage() {
   const [readTheme, setReadTheme] = useState(true)
   const router = useRouter()
   const searchParams = useSearchParams()
+
+  useEffect(() => {
+    if (!showTheme && !readTheme) {
+      setReadTheme(true) // 読み上げがオフかつテーマ表示をオフにすると読み上げをオンにする
+    }
+  }, [showTheme, readTheme])
+
+  const handleThemeDisplayChange = (checked: boolean) => {
+    if (!checked && !readTheme) {
+      setReadTheme(true) // 読み上げがオフの状態でテーマ表示をオフにする場合、読み上げをオンにする
+    }
+    setShowTheme(checked)
+  }
+
+  const handleReadThemeChange = (checked: boolean) => {
+    if (!checked && !showTheme) {
+      setShowTheme(true) // テーマ表示がオフの状態で読み上げをオフにする場合、テーマ表示をオンにする
+    }
+    setReadTheme(checked)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,7 +70,7 @@ export default function SelectPage() {
       const effectiveSpeakTime =
         speakingTime === 'custom' ? customSpeakingTime : speakingTime
 
-      const href = `/thinking?theme=${data.message}&thinkTime=${effectiveThinkTime}&speakTime=${effectiveSpeakTime}&level=${themeLevel}`
+      const href = `/thinking?theme=${data.message}&thinkTime=${effectiveThinkTime}&speakTime=${effectiveSpeakTime}&level=${themeLevel}&showTheme=${showTheme}&readTheme=${readTheme}`
       router.push(href)
     } catch (error) {
       alert('セッションの開始に失敗しました。もう一度お試しください。')
@@ -160,7 +181,7 @@ export default function SelectPage() {
               <Switch
                 id='show-theme'
                 checked={showTheme}
-                onCheckedChange={setShowTheme}
+                onCheckedChange={handleThemeDisplayChange}
               />
             </div>
             <div className='flex items-center justify-between'>
@@ -174,7 +195,7 @@ export default function SelectPage() {
               <Switch
                 id='read-theme'
                 checked={readTheme}
-                onCheckedChange={setReadTheme}
+                onCheckedChange={handleReadThemeChange}
               />
             </div>
           </div>
