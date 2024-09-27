@@ -15,19 +15,21 @@ export default function ResultPage() {
   const maxRetries = 3
   const [isLoading, setIsLoading] = useState(false)
 
-  const theme =
-    searchParams.get('theme') ||
-    'What are some effective ways to reduce stress in daily life, and how have you personally dealt with stressful situations?'
+  const theme = searchParams.get('theme') || 'No theme provided.'
   const level = (searchParams.get('level') as Level) || 'Middle'
   const spokenText =
-    searchParams.get('spokenText') ||
-    "In my experience, effective ways to reduce stress include regular exercise, meditation, and maintaining a healthy work-life balance. Personally, I've found that taking short breaks throughout the day and practicing deep breathing exercises helps me manage stressful situations."
+    searchParams.get('spokenText') || 'No spoken text provided.'
   const thinkTime = searchParams.get('thinkTime') || '30'
   const speakTime = searchParams.get('speakTime') || '60'
 
   const handleRetry = () => {
     if (retryCount < maxRetries) {
       setRetryCount(retryCount + 1)
+      router.push(
+        `/speaking?theme=${encodeURIComponent(theme)}&level=${encodeURIComponent(
+          level,
+        )}&thinkTime=${thinkTime}&speakTime=${speakTime}`,
+      )
     }
   }
 
