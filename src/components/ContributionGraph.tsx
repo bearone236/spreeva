@@ -6,12 +6,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 const ContributionGraph: React.FC = () => {
-  const [year, setYear] = useState(new Date().getFullYear())
+  const [year, setYear] = useState<number | null>(null)
+
+  useEffect(() => {
+    setYear(new Date().getFullYear())
+  }, [])
 
   const contributionData = useMemo(() => {
+    if (!year) return {}
+
     const data: { [key: string]: number } = {}
     const startDate = new Date(year, 0, 1)
     const endDate = new Date(year, 11, 31)
@@ -31,8 +37,8 @@ const ContributionGraph: React.FC = () => {
   const currentYear = new Date().getFullYear()
   const yearOptions = Array.from({ length: 4 }, (_, i) => currentYear - i)
 
-  const startDate = new Date(Date.UTC(year, 0, 1))
-  const endDate = new Date(Date.UTC(year, 11, 31))
+  const startDate = new Date(Date.UTC(year || currentYear, 0, 1))
+  const endDate = new Date(Date.UTC(year || currentYear, 11, 31))
 
   const getColor = (count: number) => {
     if (count === 0) return 'bg-white'
@@ -61,7 +67,7 @@ const ContributionGraph: React.FC = () => {
   let currentWeek: (Date | null)[] = Array(firstDayOfYear).fill(null)
 
   for (
-    let date = new Date(Date.UTC(year, 0, 1));
+    let date = new Date(Date.UTC(year || currentYear, 0, 1));
     date <= endDate;
     date.setUTCDate(date.getUTCDate() + 1)
   ) {
@@ -95,114 +101,117 @@ const ContributionGraph: React.FC = () => {
     { name: 'Dec', index: 48 },
   ]
 
+  if (!year) {
+    return <div>Loading...</div>
+  }
+
   return (
-    <TooltipProvider>
-      <div className='bg-white p-6 rounded-lg shadow-md'>
-        <h1 className='text-[#e67e22] text-2xl font-bold'>継続グラフ</h1>
-        <div className='flex justify-between items-center mb-4 mt-2'>
-          <div className='text-left'>
-            <h3 className='text-lg font-semibold'>
-              Total Contributions: {totalContributions}
-            </h3>
-          </div>
-
-          <div>
-            <select
-              value={year}
-              onChange={handleYearChange}
-              className='border rounded px-2 py-1'
-            >
-              {yearOptions.map(yearOption => (
-                <option key={yearOption} value={yearOption}>
-                  {yearOption}年
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className='overflow-x-auto'>
-          <div className='flex'>
-            <div className='flex flex-col mr-2 text-xs text-gray-500 mt-7'>
-              {displayDayLabels.map(day => (
-                <span key={day} className='h-[16px]'>
-                  {day}
-                </span>
-              ))}
+    <>
+      <TooltipProvider>
+        <div className='bg-white p-6 rounded-lg shadow-md'>
+          <h1 className='text-[#e67e22] text-2xl font-bold'>継続グラフ</h1>
+          <div className='flex justify-between items-center mb-4 mt-2'>
+            <div className='text-left'>
+              <h1 className='text-lg font-semibold'>
+                {year} Total Lessons: {totalContributions}
+              </h1>
             </div>
+
             <div>
-              <div className='flex mb-2 text-xs text-gray-500 justify-center'>
-                {weeks.map((_, weekIndex) => {
-                  const label = monthLabels.find(
-                    month => month.index === weekIndex,
-                  )
-                  return (
-                    <span
-                      key={label ? label.name : `empty-${weekIndex}`}
-                      className={`w-[15px] mr-[1px] ${
-                        label ? 'text-black' : 'text-transparent'
-                      }`}
-                    >
-                      {label ? label.name : ''}
-                    </span>
-                  )
-                })}
-              </div>
-              <div className='flex'>
-                {weeks.map((week, weekIndex) => (
-                  <div
-                    key={week[0]?.toISOString() || weekIndex}
-                    className='flex flex-col'
-                  >
-                    {week.map((date: Date | null, dayOfWeek) => {
-                      if (!date || date.getUTCFullYear() !== year) {
-                        return (
-                          <div
-                            key={
-                              date
-                                ? date.toISOString()
-                                : `empty-${weekIndex}-${dayOfWeek}`
-                            }
-                            className='w-[15px] h-[15px] m-[1px]'
-                          />
-                        )
-                      }
-                      const dateString = date.toISOString().split('T')[0]
-                      const count = contributionData[dateString] || 0
-                      return (
-                        <Tooltip key={dateString}>
-                          <TooltipTrigger>
-                            <div
-                              className={`w-[15px] h-[15px] m-[1px] ${getColor(count)} border border-gray-200`}
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>
-                              {count} {count === 1 ? 'lesson' : 'lessons'} on{' '}
-                              {dayLabels[dayOfWeek]} {dateString}
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      )
-                    })}
-                  </div>
+              <select
+                value={year}
+                onChange={handleYearChange}
+                className='border rounded px-2 py-1'
+              >
+                {yearOptions.map(yearOption => (
+                  <option key={yearOption} value={yearOption}>
+                    {yearOption}年
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className='overflow-x-auto'>
+            <div className='flex'>
+              <div className='flex flex-col mr-2 text-xs text-gray-500 mt-7'>
+                {displayDayLabels.map(day => (
+                  <span key={day} className='h-[16px]'>
+                    {day}
+                  </span>
                 ))}
               </div>
+              <div>
+                <div className='flex mb-2 text-xs text-gray-500 justify-center'>
+                  {weeks.map((_, weekIndex) => {
+                    const label = monthLabels.find(
+                      month => month.index === weekIndex,
+                    )
+                    return (
+                      <span
+                        key={label ? label.name : `empty-${weekIndex}`}
+                        className={`w-[15px] mr-[1px] ${
+                          label ? 'text-black' : 'text-transparent'
+                        }`}
+                      >
+                        {label ? label.name : ''}
+                      </span>
+                    )
+                  })}
+                </div>
+                <div className='flex'>
+                  {weeks.map((week, weekIndex) => (
+                    <div
+                      key={`week-${week.map(date => date?.toISOString()).join('-')}`}
+                      className='flex flex-col'
+                    >
+                      {week.map((date: Date | null, dayOfWeek) => {
+                        if (!date || date.getUTCFullYear() !== year) {
+                          const emptyDateString = `empty-${weekIndex}-${dayOfWeek}`
+                          return (
+                            <div
+                              key={emptyDateString}
+                              className='w-[15px] h-[15px] m-[1px]'
+                            />
+                          )
+                        }
+                        const dateString = date.toISOString().split('T')[0]
+                        const count = contributionData[dateString] || 0
+                        return (
+                          <Tooltip key={dateString}>
+                            <TooltipTrigger>
+                              <div
+                                className={`w-[15px] h-[15px] m-[1px] ${getColor(count)} border border-gray-200`}
+                              />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <span>
+                                {count} {count === 1 ? 'lesson' : 'lessons'} on
+                                {dayLabels[dayOfWeek]} {dateString}
+                              </span>
+                            </TooltipContent>
+                          </Tooltip>
+                        )
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className='flex justify-end mt-4 text-xs text-gray-500'>
-          <span className='mr-1'>Less</span>
-          <div className='w-3 h-3 bg-white border border-gray-200' />
-          <div className='w-3 h-3 bg-[#ffeeba]' />
-          <div className='w-3 h-3 bg-[#ffd280]' />
-          <div className='w-3 h-3 bg-[#ffb347]' />
-          <div className='w-3 h-3 bg-[#ff8c00]' />
-          <span className='ml-1'>More</span>
+          <div className='flex justify-end mt-4 text-xs text-gray-500'>
+            <span className='mr-1'>Less</span>
+            <div className='w-3 h-3 bg-white border border-gray-200' />
+            <div className='w-3 h-3 bg-[#ffeeba]' />
+            <div className='w-3 h-3 bg-[#ffd280]' />
+            <div className='w-3 h-3 bg-[#ffb347]' />
+            <div className='w-3 h-3 bg-[#ff8c00]' />
+            <span className='ml-1'>More</span>
+          </div>
         </div>
-      </div>
-    </TooltipProvider>
+      </TooltipProvider>
+    </>
   )
 }
 
