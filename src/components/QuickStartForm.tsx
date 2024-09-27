@@ -47,7 +47,12 @@ const QuickStartForm = () => {
               />
               <Button
                 type='submit'
-                className='bg-gradient-to-r from-[#f1c40f] to-[#e67e22] hover:from-[#f39c12] hover:to-[#d35400] text-white px-6 py-2 rounded-md'
+                disabled={!theme.trim()}
+                className={`px-6 py-2 rounded-md text-white ${
+                  theme.trim()
+                    ? 'bg-gradient-to-r from-[#f1c40f] to-[#e67e22] hover:from-[#f39c12] hover:to-[#d35400]'
+                    : 'bg-gray-400 cursor-not-allowed'
+                }`}
               >
                 開始
               </Button>
