@@ -33,6 +33,6 @@ export class EvaluationRepository {
   }
 
   private createPrompt(requestData: EvaluationRequest): string {
-    return `次のスピーチを以下のテーマに基づいて評価してください。テーマ: 「${requestData.theme}」、レベル: ${requestData.level}。 スピーチ内容は以下の通りです。「${requestData.transcript}」。 文法、語彙、内容の関連性に関する詳細なフィードバックを提供してください。また、必要に応じて、改善された文や表現を提示してください。評価結果は日本語で記述してください。`
+    return `次のスピーチを以下のテーマに基づいてMarkdown形式で評価してください。テーマ: 「${requestData.theme}」、レベル: ${requestData.level}。 スピーチ内容は以下の通りです。「${requestData.transcript}」。 文法、語彙、内容の関連性に関する詳細なフィードバックを提供してください。また、必要に応じて、改善された文や表現をMarkdown形式で提示してください。評価結果もMarkdownで出力してください。`
   }
 }
