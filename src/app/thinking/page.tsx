@@ -15,7 +15,7 @@ export default function ThinkingPage() {
   const thinkingTimeParam = searchParams.get('thinkTime') || '30'
   const speakingTime = searchParams.get('speakTime') || '60'
   const level = (searchParams.get('level') || 'Middle') as Level
-
+  const showTheme = searchParams.get('showTheme') === 'true'
   const [remainingTime, setRemainingTime] = useState(
     Number.parseInt(thinkingTimeParam),
   )
@@ -63,42 +63,44 @@ export default function ThinkingPage() {
     <div className='min-h-screen flex flex-col items-center justify-center'>
       <Card className='w-full max-w-3xl bg-white shadow-lg border-t-4 border-[#ed9600]'>
         <CardContent className='p-6'>
-          {remainingTime > 0 ? (
-            <>
-              <div className='flex justify-between items-center mb-6'>
-                <h2 className='text-2xl font-bold text-[#ed7e00]'>
-                  Thinking Time
-                </h2>
-                <LevelDisplay level={level} />
+          <div className='flex justify-between items-center mb-6'>
+            <h2 className='text-2xl font-bold text-[#ed7e00]'>Thinking Time</h2>
+            <LevelDisplay level={level} />
+          </div>
+          <div className='mb-8'>
+            <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>Theme</h3>
+            {showTheme ? (
+              <p className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
+                {theme}
+              </p>
+            ) : (
+              <div className='flex items-center justify-center text-lg text-gray-500 bg-[#f6f6f6] p-4 rounded-lg border-l-4 border-gray-300'>
+                <span className='italic'>テーマが非表示です</span>
               </div>
-              <div className='mb-8'>
-                <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
-                  Theme
-                </h3>
-                <p className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
-                  {theme}
-                </p>
-              </div>
-              <div className='text-center'>
+            )}
+          </div>
+          <div className='text-center'>
+            {remainingTime > 0 ? (
+              <>
                 <div className='text-8xl font-bold text-[#ed7e00] mb-2'>
                   {remainingTime}
                 </div>
                 <p className='text-xl text-[#ed9600]'>seconds remaining</p>
-              </div>
-            </>
-          ) : (
-            gracePeriod > 0 && (
-              <div className='text-center'>
-                <div className='text-2xl font-bold text-[#ed7e00] mb-4'>
-                  5秒後にSpeaking画面に遷移します
-                </div>
-                <div className='text-5xl font-bold text-[#ed9600] mb-2'>
-                  {gracePeriod}
-                </div>
-                <p className='text-xl text-[#ed9600]'>seconds remaining</p>
-              </div>
-            )
-          )}
+              </>
+            ) : (
+              gracePeriod > 0 && (
+                <>
+                  <div className='text-2xl font-bold text-[#ed7e00] mb-2'>
+                    Speaking画面に遷移します。
+                  </div>
+                  <div className='text-5xl font-bold text-[#ed9600] mb-2'>
+                    {gracePeriod}
+                  </div>
+                  <p className='text-xl text-[#ed9600]'>秒後に遷移します</p>
+                </>
+              )
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>
