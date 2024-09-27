@@ -23,20 +23,20 @@ export default function SelectPage() {
 
   useEffect(() => {
     if (!showTheme && !readTheme) {
-      setReadTheme(true) // 読み上げがオフかつテーマ表示をオフにすると読み上げをオンにする
+      setReadTheme(true)
     }
   }, [showTheme, readTheme])
 
   const handleThemeDisplayChange = (checked: boolean) => {
     if (!checked && !readTheme) {
-      setReadTheme(true) // 読み上げがオフの状態でテーマ表示をオフにする場合、読み上げをオンにする
+      setReadTheme(true)
     }
     setShowTheme(checked)
   }
 
   const handleReadThemeChange = (checked: boolean) => {
     if (!checked && !showTheme) {
-      setShowTheme(true) // テーマ表示がオフの状態で読み上げをオフにする場合、テーマ表示をオンにする
+      setShowTheme(true)
     }
     setReadTheme(checked)
   }
