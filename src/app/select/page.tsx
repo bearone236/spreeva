@@ -17,7 +17,7 @@ export default function SelectPage() {
   const [customSpeakingTime, setCustomSpeakingTime] = useState('')
   const [themeLevel, setThemeLevel] = useState('Middle')
   const [showTheme, setShowTheme] = useState(true)
-  const [readTheme, setReadTheme] = useState(true)
+  const [readTheme, setReadTheme] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
 

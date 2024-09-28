@@ -25,6 +25,12 @@ export class EvaluationRepository {
     })
 
     if (!response.ok) {
+      console.error(
+        'Gemini API responded with an error:',
+        response.status,
+        response.statusText,
+      )
+
       throw new Error('Failed to fetch from Gemini API')
     }
 

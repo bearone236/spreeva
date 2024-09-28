@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import NextAuth, { type User, type Session } from 'next-auth'
 import type { JWT } from 'next-auth/jwt'
@@ -47,4 +47,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     maxAge: 30 * 24 * 60 * 60, // 30 days
     updateAge: 24 * 60 * 60, // 24 hours
   },
+  
 })
