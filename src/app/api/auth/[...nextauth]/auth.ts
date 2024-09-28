@@ -4,12 +4,13 @@ import NextAuth, { type User, type Session } from 'next-auth'
 import type { JWT } from 'next-auth/jwt'
 import Google from 'next-auth/providers/google'
 
-export const { handlers, auth, signIn } = NextAuth({
+export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: '/login',
+    error: '/auth/error',
   },
   adapter: PrismaAdapter(prisma),
-  secret: process.env.AUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
 
   providers: [
     Google({
@@ -18,11 +19,11 @@ export const { handlers, auth, signIn } = NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({ account }) {
-      if (account?.provider === 'google') {
-        return true
+    async signIn({ account, profile }) {
+      if (account?.provider === 'google' && !profile) {
+        return false
       }
-      return false
+      return true
     },
     async redirect({ baseUrl }) {
       return baseUrl
