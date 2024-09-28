@@ -20,10 +20,10 @@ export default async function RootLayout({
   return (
     <html lang='en'>
       <body className={`${inter.className} bg-orange-50`}>
-        <Header />
-        <div className='pt-8 px-8'>
-          <NextAuthProvider>{children}</NextAuthProvider>
-        </div>
+        <NextAuthProvider>
+          <Header />
+          <div className='pt-8 px-8'>{children}</div>
+        </NextAuthProvider>
       </body>
     </html>
   )
