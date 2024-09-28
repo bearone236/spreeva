@@ -8,7 +8,11 @@ import {
 } from '@/components/ui/tooltip'
 import { useEffect, useMemo, useState } from 'react'
 
-const ContributionGraph: React.FC = () => {
+type ContributionGraphProps = {
+  contributions: { [key: string]: number }
+}
+
+const ContributionGraphClient: React.FC<ContributionGraphProps> = ({ contributions }) => {
   const [year, setYear] = useState<number | null>(null)
 
   useEffect(() => {
@@ -28,11 +32,11 @@ const ContributionGraph: React.FC = () => {
       d.setDate(d.getDate() + 1)
     ) {
       const dateString = d.toISOString().split('T')[0]
-      data[dateString] = Math.floor(Math.random() * 10)
+      data[dateString] = contributions[dateString] || 0 // DBから取得したデータを利用
     }
 
     return data
-  }, [year])
+  }, [year, contributions])
 
   const currentYear = new Date().getFullYear()
   const yearOptions = Array.from({ length: 4 }, (_, i) => currentYear - i)
@@ -215,4 +219,4 @@ const ContributionGraph: React.FC = () => {
   )
 }
 
-export default ContributionGraph
+export default ContributionGraphClient

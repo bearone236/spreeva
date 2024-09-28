@@ -1,7 +1,7 @@
-import ContributionGraph from '@/components/ContributionGraph'
 import GamificationCard from '@/components/GemificationCard'
 import QuickStartForm from '@/components/QuickStartForm'
 import { auth } from './api/auth/[...nextauth]/auth';
+import ContributionGraph from '@/components/ContributionGraph/index';
 
 export default async function Page() {
   const session = await auth(); 
@@ -31,7 +31,7 @@ export default async function Page() {
                 </div>
               </div>
               <div className='mt-9'>
-                <ContributionGraph />
+                <ContributionGraph/>
               </div>
             </div>
           </>
