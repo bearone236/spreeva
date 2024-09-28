@@ -104,7 +104,6 @@ export default function SpeakingPage() {
     }
   }, [router, theme, speakingTimeParam, thinkTime, level, transcribedText])
 
-  // 途中で切り上げて審査する関数
   const handleSkipAndEvaluate = () => {
     router.push(
       `/result?theme=${theme}&thinkTime=${thinkTime}&speakTime=${speakingTimeParam}&level=${level}&spokenText=${encodeURIComponent(

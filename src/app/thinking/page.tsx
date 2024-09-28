@@ -4,6 +4,7 @@ import LevelDisplay from '@/components/LevelDisplay'
 import { Card, CardContent } from '@/components/ui/card'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import ReactMarkdown from 'react-markdown';
 
 type Level = 'Low' | 'Middle' | 'High'
 
@@ -51,7 +52,7 @@ export default function ThinkingPage() {
       setRemainingTime(prevTime => {
         if (prevTime <= 1) {
           clearInterval(timer)
-          setGracePeriod(5)
+          setGracePeriod(3)
           return 0
         }
         return prevTime - 1
@@ -121,7 +122,7 @@ export default function ThinkingPage() {
                 </h3>
                 {showTheme ? (
                   <p className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
-                    {theme}
+                    <ReactMarkdown>{theme}</ReactMarkdown>
                   </p>
                 ) : (
                   <div className='flex items-center justify-center text-lg text-gray-500 bg-[#f6f6f6] p-4 rounded-lg border-l-4 border-gray-300'>
