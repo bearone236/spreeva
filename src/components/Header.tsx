@@ -1,16 +1,15 @@
 'use client'
 
-import { History, Home, User } from 'lucide-react'
+import { History, Home, LogOut, User } from 'lucide-react'
+import { signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
 import { Button } from './ui/button'
 
 export default function Header() {
   const pathname = usePathname()
-
-  const [isLoggedIn] = useState(true)
+  const { data: session } = useSession()
 
   if (pathname === '/login') {
     return null
@@ -42,7 +41,7 @@ export default function Header() {
               <Link href={'/'}>ホーム</Link>
             </Button>
 
-            {isLoggedIn ? (
+            {session ? (
               <>
                 <Button
                   variant='ghost'
@@ -59,6 +58,15 @@ export default function Header() {
                 >
                   <User className='h-5 w-5' />
                   <span className='sr-only'>ユーザープロフィール</span>
+                </Button>
+
+                <Button
+                  variant='ghost'
+                  className='text-white hover:bg-white hover:bg-opacity-90 transition-colors flex items-center'
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                >
+                  <LogOut className='h-5 w-5 mr-2' />
+                  ログアウト
                 </Button>
               </>
             ) : (
