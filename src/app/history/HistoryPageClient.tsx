@@ -89,7 +89,7 @@ const HistoryCard = ({ entry }: { entry: HistoryEntry }) => {
 
 export default function HistoryPageClient({ history }: { history: HistoryEntry[] }) {
   return (
-    <div className='min-h-screen flex flex-col items-center justify-center p-4 bg-gray-100'>
+    <div className='min-h-screen flex flex-col items-center justify-center p-4'>
       <Card className='w-full max-w-4xl bg-white shadow-lg rounded-lg'>
         <CardHeader>
           <CardTitle className='text-2xl font-bold text-[#ed7e00] text-center py-4'>
