@@ -75,9 +75,9 @@ export default function ThinkingPage() {
       }
       startProcess()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // GracePeriod処理
   useEffect(() => {
     if (remainingTime === 0 && gracePeriod > 0) {
       const graceTimer = setInterval(() => {
