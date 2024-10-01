@@ -1,5 +1,5 @@
 import { auth } from '@/app/api/auth/[...nextauth]/auth'
-import { prisma } from '@/lib/prisma'
+import prisma from '@/lib/prisma'
 import type { Context } from 'hono'
 import type { EvaluationRequest as EvalRequestType } from '../domain/evaluation'
 import { EvaluateSpeechUseCase } from '../usecase/evaluateSpeech'

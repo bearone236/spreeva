@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+import prisma from '@/lib/prisma'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import NextAuth, { type User, type Session } from 'next-auth'
 import type { JWT } from 'next-auth/jwt'

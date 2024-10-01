@@ -1,5 +1,5 @@
 import { auth } from '@/app/api/auth/[...nextauth]/auth'
-import { prisma } from '@/lib/prisma'
+import prisma from '@/lib/prisma'
 import ContributionGraphClient from './ContributionGraphClient'
 
 export default async function ContributionGraph() {
