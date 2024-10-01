@@ -47,7 +47,7 @@ export default function SelectPage() {
     const theme = searchParams.get('theme') || 'random'
 
     try {
-      const response = await fetch('http://localhost:3000/api/theme', {
+      const response = await fetch('/api/theme', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
