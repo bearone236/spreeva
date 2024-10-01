@@ -6,13 +6,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import type React from 'react'
 import { useEffect, useMemo, useState } from 'react'
 
 type ContributionGraphProps = {
   contributions: { [key: string]: number }
 }
 
-const ContributionGraphClient: React.FC<ContributionGraphProps> = ({ contributions }) => {
+const ContributionGraphClient: React.FC<ContributionGraphProps> = ({
+  contributions,
+}) => {
   const [year, setYear] = useState<number | null>(null)
 
   useEffect(() => {

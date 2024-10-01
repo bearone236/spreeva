@@ -19,13 +19,11 @@ const LevelDisplay: React.FC<LevelDisplayProps> = ({ level }) => {
   }
 
   return (
-    <>
-      <div
-        className={`text-center py-1 rounded-md text-white w-20 ${getLevelColor(level)}`}
-      >
-        {level}
-      </div>
-    </>
+    <div
+      className={`text-center py-1 rounded-md text-white w-20 ${getLevelColor(level)}`}
+    >
+      {level}
+    </div>
   )
 }
 
