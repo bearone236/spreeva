@@ -3,8 +3,9 @@
 import LevelDisplay from '@/components/LevelDisplay'
 import { Card, CardContent } from '@/components/ui/card'
 import { useRouter, useSearchParams } from 'next/navigation'
+import React from 'react'
 import { useEffect, useRef, useState } from 'react'
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown from 'react-markdown'
 
 type Level = 'Low' | 'Middle' | 'High'
 

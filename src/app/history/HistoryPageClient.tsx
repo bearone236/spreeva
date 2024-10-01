@@ -1,26 +1,27 @@
 'use client'
 
-import { useState } from 'react';
-import LevelDisplay from '@/components/LevelDisplay';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
+import LevelDisplay from '@/components/LevelDisplay'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ChevronDown, ChevronUp } from 'lucide-react'
+import { useState } from 'react'
+import React from 'react'
+import ReactMarkdown from 'react-markdown'
 
 type HistoryEntry = {
-  id: string;
-  date: string;
-  theme: string;
-  level: 'Low' | 'Middle' | 'High';
-  speakTime: number;
-  thinkTime: number;
-  aiEvaluation: string;
-  aiImprovedText: string | null;
-  spokenText: string;
-};
+  id: string
+  date: string
+  theme: string
+  level: 'Low' | 'Middle' | 'High'
+  speakTime: number
+  thinkTime: number
+  aiEvaluation: string
+  aiImprovedText: string | null
+  spokenText: string
+}
 
 const HistoryCard = ({ entry }: { entry: HistoryEntry }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false)
 
   return (
     <Card className='mb-4 overflow-hidden shadow-lg border rounded-lg'>
@@ -45,10 +46,12 @@ const HistoryCard = ({ entry }: { entry: HistoryEntry }) => {
               </span>
             </div>
             <div className='border p-2 rounded mb-2 bg-gray-50'>
-              <span className='font-semibold'>シンキング時間:</span> {entry.thinkTime} seconds
+              <span className='font-semibold'>シンキング時間:</span>{' '}
+              {entry.thinkTime} seconds
             </div>
             <div className='border p-2 rounded mb-2 bg-gray-50'>
-              <span className='font-semibold'>スピーキング時間:</span> {entry.speakTime} seconds
+              <span className='font-semibold'>スピーキング時間:</span>{' '}
+              {entry.speakTime} seconds
             </div>
             <div className='border p-2 rounded mb-2 bg-gray-50'>
               <span className='font-semibold'>AI評価:</span>
@@ -84,10 +87,12 @@ const HistoryCard = ({ entry }: { entry: HistoryEntry }) => {
         </Button>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default function HistoryPageClient({ history }: { history: HistoryEntry[] }) {
+export default function HistoryPageClient({
+  history,
+}: { history: HistoryEntry[] }) {
   return (
     <div className='min-h-screen flex flex-col items-center justify-center p-4'>
       <Card className='w-full max-w-4xl bg-white shadow-lg rounded-lg'>
@@ -97,11 +102,11 @@ export default function HistoryPageClient({ history }: { history: HistoryEntry[]
           </CardTitle>
         </CardHeader>
         <CardContent>
-            {history.map(entry => (
-              <HistoryCard key={entry.id} entry={entry} />
-            ))}
+          {history.map(entry => (
+            <HistoryCard key={entry.id} entry={entry} />
+          ))}
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

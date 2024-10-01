@@ -1,19 +1,18 @@
+import ContributionGraph from '@/components/ContributionGraph/index'
 import GamificationCard from '@/components/GemificationCard'
 import QuickStartForm from '@/components/QuickStartForm'
-import { auth } from './api/auth/[...nextauth]/auth';
-import ContributionGraph from '@/components/ContributionGraph/index';
+import React from 'react'
+import { auth } from './api/auth/[...nextauth]/auth'
 
 export default async function Page() {
-  const session = await auth(); 
+  const session = await auth()
 
   return (
     <>
       <main className='min-h-screen'>
-
-
         {session?.user ? (
           <>
-            <h2 className="text-2xl font-bold">
+            <h2 className='text-2xl font-bold'>
               {`Hello, ${session.user.name}`}
             </h2>
             <div className='flex flex-col'>
@@ -31,15 +30,13 @@ export default async function Page() {
                 </div>
               </div>
               <div className='mt-9'>
-                <ContributionGraph/>
+                <ContributionGraph />
               </div>
             </div>
           </>
         ) : (
-            <div className='mt-5 w-[800px] mx-auto'>
-              <h2 className="text-2xl font-bold pb-7">
-              Hello, Guest
-            </h2>
+          <div className='mt-5 w-[800px] mx-auto'>
+            <h2 className='text-2xl font-bold pb-7'>Hello, Guest</h2>
             <QuickStartForm />
           </div>
         )}
