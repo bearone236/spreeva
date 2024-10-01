@@ -15,12 +15,30 @@ export class EvaluationController {
     const session = await auth()
 
     if (!session?.user?.email) {
-      return c.json(
-        { error: 'Unauthorized: User not logged in or session invalid' },
-        401,
-      )
+      const { theme, level, transcript } = await c.req.json()
+
+      if (!theme || !level || !transcript) {
+        return c.json({ error: 'Invalid input, missing parameters' }, 400)
+      }
+
+      const requestData: EvalRequestType = {
+        theme,
+        level,
+        transcript,
+      }
+
+      try {
+        const evaluationResponse =
+          await this.evaluateSpeechUseCase.execute(requestData)
+        return c.json({
+          evaluation: evaluationResponse.evaluation,
+        })
+      } catch (error) {
+        return c.json({ error: 'Failed to evaluate speech' }, 500)
+      }
     }
 
+    // ログインユーザーの処理: データ保存も含める
     const { theme, level, transcript, thinkTime, speakTime } =
       await c.req.json()
 
