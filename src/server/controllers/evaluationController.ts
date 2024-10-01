@@ -12,13 +12,17 @@ export class EvaluationController {
   }
 
   async handleEvaluateSpeech(c: Context) {
-    const session = await auth();
+    const session = await auth()
 
     if (!session?.user?.email) {
-      return c.json({ error: 'Unauthorized: User not logged in or session invalid' }, 401);
+      return c.json(
+        { error: 'Unauthorized: User not logged in or session invalid' },
+        401,
+      )
     }
 
-    const { theme, level, transcript, thinkTime, speakTime } = await c.req.json()
+    const { theme, level, transcript, thinkTime, speakTime } =
+      await c.req.json()
 
     if (!theme || !level || !transcript) {
       return c.json({ error: 'Invalid input, missing parameters' }, 400)
@@ -31,16 +35,17 @@ export class EvaluationController {
     }
 
     try {
-      const evaluationResponse = await this.evaluateSpeechUseCase.execute(requestData)
+      const evaluationResponse =
+        await this.evaluateSpeechUseCase.execute(requestData)
 
       const user = await prisma.user.findUnique({
         where: { email: session.user.email },
-      });
+      })
 
       if (user) {
         const speakingResult = await prisma.speakingResult.create({
           data: {
-            userId: user.id, 
+            userId: user.id,
             theme: theme,
             level: level,
             thinkTime: Number(thinkTime),
@@ -55,7 +60,7 @@ export class EvaluationController {
             fluency: null,
             contentRelevance: null,
           },
-        });
+        })
 
         await prisma.evaluationRequest.create({
           data: {
@@ -63,15 +68,14 @@ export class EvaluationController {
             requestBody: JSON.stringify(requestData),
             responseBody: JSON.stringify(evaluationResponse),
           },
-        });
+        })
       }
 
       return c.json({
         evaluation: evaluationResponse.evaluation,
-      });
+      })
     } catch (error) {
-      console.error('Error during evaluation or saving process:', error);
-      return c.json({ error: 'Failed to evaluate speech or save result' }, 500);
+      return c.json({ error: 'Failed to evaluate speech or save result' }, 500)
     }
   }
 }
