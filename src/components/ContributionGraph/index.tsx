@@ -1,5 +1,5 @@
-import { prisma } from '@/lib/prisma'
 import { auth } from '@/app/api/auth/[...nextauth]/auth'
+import { prisma } from '@/lib/prisma'
 import ContributionGraphClient from './ContributionGraphClient'
 
 export default async function ContributionGraph() {
@@ -21,6 +21,7 @@ export default async function ContributionGraph() {
   })
 
   const contributions: { [key: string]: number } = {}
+  // biome-ignore lint/complexity/noForEach: <explanation>
   speakingResults.forEach(result => {
     const dateString = result.createdAt.toISOString().split('T')[0]
     if (contributions[dateString]) {
