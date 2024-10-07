@@ -71,7 +71,7 @@ export default function SpeakingPage() {
     const recognition = new SpeechRecognition()
     recognition.lang = 'en-US'
     recognition.continuous = true
-    recognition.interimResults = false
+    recognition.interimResults = true
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
       const lastResultIndex = event.results.length - 1
