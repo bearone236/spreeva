@@ -1,8 +1,10 @@
 import { SpeechClient, protos } from '@google-cloud/speech'
+import { Storage } from '@google-cloud/storage'
 import { GoogleAuth } from 'google-auth-library'
 
 export class SpeechRepository {
   private client: SpeechClient
+  private storage: Storage
 
   constructor() {
     try {
@@ -19,10 +21,20 @@ export class SpeechRepository {
       } else {
         this.client = new SpeechClient()
       }
+      this.storage = new Storage()
     } catch (error) {
       console.error('Error initializing GoogleAuth:', error)
       throw error
     }
+  }
+
+  async uploadToGCS(audioBuffer: Buffer, filename: string): Promise<string> {
+    const bucketName = process.env.GCS_BUCKET_NAME || 'default-bucket'
+    const file = this.storage.bucket(bucketName).file(filename)
+    await file.save(audioBuffer, {
+      contentType: 'audio/webm',
+    })
+    return `gs://${bucketName}/${filename}`
   }
 
   async recognizeSpeech(audioBuffer: Buffer): Promise<string> {
@@ -40,12 +52,18 @@ export class SpeechRepository {
     }
 
     try {
-      // 音声データの秒数を計算 (byte数をサンプルレートで割って時間を算出)
-      const audioDurationInSeconds = audioBuffer.length / (48000 * 2) // 16-bit (2 bytes per sample)
+      const audioDurationInSeconds = audioBuffer.length / (48000 * 2)
 
       if (audioDurationInSeconds > 60) {
-        // 1分以上の音声の場合、longRunningRecognizeを使用
-        const [operation] = await this.client.longRunningRecognize(request)
+        const gcsUri = await this.uploadToGCS(
+          audioBuffer,
+          `long_audio_${Date.now()}.webm`,
+        )
+        const longRequest = {
+          audio: { uri: gcsUri },
+          config: request.config,
+        }
+        const [operation] = await this.client.longRunningRecognize(longRequest)
         const [response] = await operation.promise()
         const transcription = response.results
           ? response.results
@@ -54,7 +72,7 @@ export class SpeechRepository {
           : 'No transcription available'
         return transcription
       }
-      // 1分以内の音声の場合、recognizeを使用
+
       const [response] = await this.client.recognize(request)
       const transcription = response.results
         ? response.results
