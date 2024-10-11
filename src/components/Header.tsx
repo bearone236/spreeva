@@ -52,14 +52,26 @@ export default function Header() {
                   <Link href={'/history'}>履歴</Link>
                 </Button>
 
-                <Button
+                {/* <Button
                   variant='ghost'
                   size='icon'
                   className='text-white hover:bg-white hover:bg-opacity-90 transition-colors flex items-center'
                 >
                   <User className='h-5 w-5' />
                   <span className='sr-only'>ユーザープロフィール</span>
-                </Button>
+                </Button> */}
+
+                {session.user.image ? (
+                  <Image
+                    src={session.user.image}
+                    alt='User Profile'
+                    width={40}
+                    height={40}
+                    className='rounded-full'
+                  />
+                ) : (
+                  <User className='h-5 w-5 text-white' />
+                )}
 
                 <Button
                   variant='ghost'
