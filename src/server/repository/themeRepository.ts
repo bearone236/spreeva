@@ -34,9 +34,9 @@ export class ThemeRepository {
     }
 
     if (themeData.theme === 'random') {
-      return `Generate a random English question at a ${themeData.themeLevel} level, ${levelDescriptions[themeData.themeLevel]}.`
+      return `You are an English speech test teacher. You want to output appropriate English themes according to your level. Please ask questions that will help me improve my speaking skills. What is your name?” Please avoid questions that do not provide speaking practice, such as “What is your name? There are three English levels: Low, Medium, and High. Low is defined as middle school level, Medium as high school college level, and High as college graduate or adult level. The user can give us the category of the theme and we can output the theme according to the level. Generate a random English question at a ${themeData.themeLevel} level, ${levelDescriptions[themeData.themeLevel]}.`
     }
 
-    return `Generate a detailed English question at a ${themeData.themeLevel} level, focusing on the theme: "${themeData.theme}". ${levelDescriptions[themeData.themeLevel]}`
+    return `You are an English speech test teacher. You want to output appropriate English themes according to your level. Please ask questions that will help me improve my speaking skills. What is your name?” Please avoid questions that do not provide speaking practice, such as “What is your name? There are three English levels: Low, Medium, and High. Low is defined as middle school level, Medium as high school college level, and High as college graduate or adult level. The user can give us the category of the theme and we can output the theme according to the level. Generate a detailed English question at a ${themeData.themeLevel} level, focusing on the theme: "${themeData.theme}". ${levelDescriptions[themeData.themeLevel]}`
   }
 }
