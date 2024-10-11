@@ -22,8 +22,8 @@ export default function SpeakingPage() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
 
   useEffect(() => {
-    if (remainingTime === 0 && !isLoading && !transcribedText) {
-      handleSkipAndEvaluate('音声が検出されませんでした')
+    if (remainingTime === 0 && !isLoading) {
+      handleSkipAndEvaluate(transcribedText || '音声が検出されませんでした')
     }
   }, [remainingTime, transcribedText, isLoading])
 
@@ -101,15 +101,17 @@ export default function SpeakingPage() {
 
       if (response.ok) {
         const data = await response.json()
-        setTranscribedText(data.transcription)
+        setTranscribedText(data.transcription || '')
         setIsLoading(false)
       } else {
         console.error('Failed to transcribe audio', response.statusText)
         setIsLoading(false)
+        handleSkipAndEvaluate('音声が検出されませんでした')
       }
     } catch (error) {
       console.error('Error while sending audio to server', error)
       setIsLoading(false)
+      handleSkipAndEvaluate('音声が検出されませんでした')
     }
   }
 
