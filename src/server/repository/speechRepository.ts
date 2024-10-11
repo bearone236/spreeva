@@ -1,10 +1,15 @@
 import { SpeechClient, protos } from '@google-cloud/speech'
+import { GoogleAuth } from 'google-auth-library'
 
 export class SpeechRepository {
   private client: SpeechClient
 
   constructor() {
-    this.client = new SpeechClient()
+    const auth = new GoogleAuth({
+      credentials: JSON.parse(process.env.GCLOUD_CREDENTIALS || '{}'),
+      scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+    })
+    this.client = new SpeechClient({ auth })
   }
 
   async recognizeSpeech(audioBuffer: Buffer): Promise<string> {
