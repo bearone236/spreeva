@@ -106,7 +106,7 @@ export default function ThinkingPage() {
   ])
 
   return (
-    <div className='min-h-screen flex flex-col items-center justify-center'>
+    <div className='flex flex-col items-center justify-center pt-20'>
       <Card className='w-full max-w-3xl bg-white shadow-lg border-t-4 border-[#ed9600]'>
         <CardContent className='p-6'>
           {remainingTime > 0 ? (
@@ -145,14 +145,16 @@ export default function ThinkingPage() {
               </div>
             </>
           ) : gracePeriod > 0 ? (
-            <div className='text-center'>
-              <div className='text-2xl font-bold text-[#ed7e00] mb-2'>
-                Speaking画面に遷移します。
+            <div className='flex justify-center items-center'>
+              <div className='text-center'>
+                <div className='text-2xl font-bold text-[#ed7e00] mb-2'>
+                  Speaking画面に遷移します
+                </div>
+                <div className='text-5xl font-bold text-[#ed9600] mb-2'>
+                  {gracePeriod}
+                </div>
+                <p className='text-xl text-[#ed9600]'>秒後に遷移します</p>
               </div>
-              <div className='text-5xl font-bold text-[#ed9600] mb-2'>
-                {gracePeriod}
-              </div>
-              <p className='text-xl text-[#ed9600]'>秒後に遷移します</p>
             </div>
           ) : null}
         </CardContent>

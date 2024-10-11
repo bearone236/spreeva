@@ -9,7 +9,7 @@ export default async function Page() {
 
   return (
     <>
-      <main className='min-h-screen'>
+      <main>
         {session?.user ? (
           <>
             <h2 className='text-2xl font-bold'>

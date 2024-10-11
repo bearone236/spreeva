@@ -2,7 +2,7 @@
 
 import LevelDisplay from '@/components/LevelDisplay'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
+// import { Progress } from '@/components/ui/progress'
 import { useSearchParams } from 'next/navigation'
 import ReactMarkdown from 'react-markdown'
 
@@ -15,30 +15,30 @@ export default function EvaluatePage() {
   const speakingTime = searchParams.get('speakTime') || '60'
   const aiEvaluation =
     searchParams.get('evaluation') || 'No evaluation available.'
-  const speechScore = Number.parseInt(
-    searchParams.get('speechScore') || '0',
-    10,
-  )
-  const aiImprovedText =
-    searchParams.get('aiImprovedText') || 'No improved text available.'
-  const grammarAccuracy = Number.parseInt(
-    searchParams.get('grammarAccuracy') || '0',
-    10,
-  )
-  const vocabularyRange = Number.parseInt(
-    searchParams.get('vocabularyRange') || '0',
-    10,
-  )
-  const pronunciationClarity = Number.parseInt(
-    searchParams.get('pronunciationClarity') || '0',
-    10,
-  )
-  const fluency = Number.parseInt(searchParams.get('fluency') || '0', 10)
+  // const speechScore = Number.parseInt(
+  //   searchParams.get('speechScore') || '0',
+  //   10,
+  // )
+  // const aiImprovedText =
+  //   searchParams.get('aiImprovedText') || 'No improved text available.'
+  // const grammarAccuracy = Number.parseInt(
+  //   searchParams.get('grammarAccuracy') || '0',
+  //   10,
+  // )
+  // const vocabularyRange = Number.parseInt(
+  //   searchParams.get('vocabularyRange') || '0',
+  //   10,
+  // )
+  // const pronunciationClarity = Number.parseInt(
+  //   searchParams.get('pronunciationClarity') || '0',
+  //   10,
+  // )
+  // const fluency = Number.parseInt(searchParams.get('fluency') || '0', 10)
 
   return (
-    <div className='min-h-screen flex flex-col items-center justify-center p-4'>
+    <div className='flex flex-col items-center justify-center p-3'>
       <Card className='w-full max-w-4xl bg-white shadow-lg border-t-4 border-[#ed9600]'>
-        <CardHeader>
+        <CardHeader className='flex justify-between'>
           <CardTitle className='text-2xl font-bold text-[#ed7e00]'>
             評価結果
           </CardTitle>
@@ -52,16 +52,11 @@ export default function EvaluatePage() {
               {theme}
             </p>
             <div className='mt-2 flex justify-between items-center'>
-              <div className='flex'>
-                <p className='text-[#ed9600] my-auto mr-2 font-semibold'>
-                  レベル
-                </p>
-                <LevelDisplay level={themeLevel as 'Low' | 'Middle' | 'High'} />
-              </div>
               <div className='text-sm text-gray-600'>
                 シンキングタイム: {thinkingTime}秒 | スピーキングタイム:{' '}
                 {speakingTime}秒
               </div>
+              <LevelDisplay level={themeLevel as 'Low' | 'Middle' | 'High'} />
             </div>
           </div>
 
@@ -69,12 +64,12 @@ export default function EvaluatePage() {
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
               AI評価
             </h3>
-            <div className='overflow-auto max-h-96 text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
+            <div className='overflow-auto max-h-80 text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
               <ReactMarkdown>{aiEvaluation}</ReactMarkdown>
             </div>
           </div>
 
-          <div>
+          {/* <div>
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
               総合スコア
             </h3>
@@ -115,7 +110,7 @@ export default function EvaluatePage() {
             <p className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
               {aiImprovedText}
             </p>
-          </div>
+          </div> */}
         </CardContent>
       </Card>
     </div>

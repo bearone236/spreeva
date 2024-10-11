@@ -154,7 +154,7 @@ export default function SpeakingPage() {
   }
 
   return (
-    <div className='min-h-screen flex flex-col items-center justify-center'>
+    <div className=' flex flex-col items-center justify-center pt-20'>
       <Card className='w-full max-w-2xl bg-white shadow-lg border-t-4 border-[#ed9600]'>
         <CardContent className='p-12'>
           <h2 className='text-3xl font-bold text-[#ed7e00] mb-8 text-center'>

@@ -84,7 +84,7 @@ export default function SelectPage() {
   }
 
   return (
-    <Card className='w-full max-w-lg md:max-w-lg lg:max-w-2xl mx-auto my-16 p-6 shadow-lg rounded-lg'>
+    <Card className='w-full max-w-lg md:max-w-lg lg:max-w-2xl mx-auto mt-8 p-6 shadow-lg rounded-lg'>
       <CardHeader>
         <CardTitle className='text-2xl font-bold text-[#333]'>
           クイックスタート設定
@@ -119,7 +119,7 @@ export default function SelectPage() {
                 placeholder='秒数を入力'
                 value={customThinkingTime}
                 onChange={e => setCustomThinkingTime(e.target.value)}
-                className='w-full max-w-[200px]'
+                className='w-full max-w-[150px]'
               />
             )}
           </div>
@@ -151,7 +151,7 @@ export default function SelectPage() {
                 placeholder='秒数を入力'
                 value={customSpeakingTime}
                 onChange={e => setCustomSpeakingTime(e.target.value)}
-                className='w-full max-w-[200px]'
+                className='w-full max-w-[150px]'
               />
             )}
           </div>
@@ -208,7 +208,7 @@ export default function SelectPage() {
 
           <Button
             type='submit'
-            disabled={isLoading} // ローディング中はボタンを無効化
+            disabled={isLoading}
             className='w-full bg-[#ed7e00] hover:bg-[#f18e1b] text-white py-2 rounded-md flex justify-center items-center'
           >
             {isLoading ? (

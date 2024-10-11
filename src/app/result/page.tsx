@@ -74,7 +74,7 @@ export default function ResultPage() {
   }
 
   return (
-    <div className='min-h-screen flex flex-col items-center justify-center'>
+    <div className='flex flex-col items-center justify-center pt-20'>
       <Card className='w-full max-w-3xl bg-white shadow-lg border-t-4 border-[#ed9600]'>
         <CardHeader>
           <CardTitle className='text-2xl font-bold text-[#ed7e00]'>
