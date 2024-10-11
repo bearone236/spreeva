@@ -1,54 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
-
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Player } from '@lottiefiles/react-lottie-player'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
-
-declare global {
-  interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    SpeechRecognition: any
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    webkitSpeechRecognition: any
-  }
-
-  interface SpeechRecognition extends EventTarget {
-    continuous: boolean
-    interimResults: boolean
-    lang: string
-    start: () => void
-    stop: () => void
-    onresult: (event: SpeechRecognitionEvent) => void
-    onerror: (event: SpeechRecognitionErrorEvent) => void
-  }
-
-  interface SpeechRecognitionEvent extends Event {
-    readonly results: SpeechRecognitionResultList
-  }
-
-  interface SpeechRecognitionErrorEvent extends Event {
-    readonly error: string
-  }
-
-  interface SpeechRecognitionResultList {
-    readonly length: number
-    item(index: number): SpeechRecognitionResult
-  }
-
-  interface SpeechRecognitionResult {
-    readonly isFinal: boolean
-    readonly length: number
-    item(index: number): SpeechRecognitionAlternative
-  }
-
-  interface SpeechRecognitionAlternative {
-    readonly transcript: string
-    readonly confidence: number
-  }
-}
+import { useEffect, useRef, useState } from 'react'
 
 export default function SpeakingPage() {
   const searchParams = useSearchParams()
@@ -63,52 +18,136 @@ export default function SpeakingPage() {
     Number.parseInt(speakingTimeParam),
   )
   const [transcribedText, setTranscribedText] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
 
   useEffect(() => {
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition
+    if (remainingTime === 0 && !isLoading && !transcribedText) {
+      handleSkipAndEvaluate('音声が検出されませんでした')
+    }
+  }, [remainingTime, transcribedText, isLoading])
 
-    const recognition = new SpeechRecognition()
-    recognition.lang = 'en-US'
-    recognition.continuous = true
-    recognition.interimResults = true
+  useEffect(() => {
+    let stream: MediaStream | null = null
 
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const lastResultIndex = event.results.length - 1
-      const transcript = event.results[lastResultIndex][0].transcript
-      setTranscribedText(prevText => `${prevText} ${transcript}`)
+    const startSpeechRecognition = async () => {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mediaRecorder = new MediaRecorder(stream)
+      mediaRecorderRef.current = mediaRecorder
+
+      const audioChunks: Blob[] = []
+      mediaRecorder.ondataavailable = event => {
+        audioChunks.push(event.data)
+      }
+
+      mediaRecorder.start()
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
+        setIsLoading(true)
+        await sendAudioToServer(audioBlob)
+      }
+
+      const timer = setTimeout(() => {
+        mediaRecorder.stop()
+      }, Number(speakingTimeParam) * 1000)
+
+      return () => {
+        clearTimeout(timer)
+        for (const track of stream?.getTracks() || []) {
+          track.stop()
+        }
+      }
     }
 
-    recognition.start()
+    startSpeechRecognition()
 
-    const timer = setInterval(() => {
-      setRemainingTime(prevTime => {
-        if (prevTime <= 1) {
-          clearInterval(timer)
-          recognition.stop()
-
-          router.push(
-            `/result?theme=${theme}&thinkTime=${thinkTime}&speakTime=${speakingTimeParam}&level=${level}&spokenText=${encodeURIComponent(
-              transcribedText,
-            )}`,
-          )
+    const interval = setInterval(() => {
+      setRemainingTime(prev => {
+        if (prev <= 1) {
+          clearInterval(interval)
+          setIsLoading(true)
           return 0
         }
-        return prevTime - 1
+        return prev - 1
       })
     }, 1000)
 
     return () => {
-      clearInterval(timer)
-      recognition.stop()
+      clearInterval(interval)
+      if (
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state !== 'inactive'
+      ) {
+        mediaRecorderRef.current.stop()
+      }
+      if (stream) {
+        for (const track of stream.getTracks()) {
+          track.stop()
+        }
+      }
     }
-  }, [router, theme, speakingTimeParam, thinkTime, level, transcribedText])
+  }, [speakingTimeParam])
 
-  const handleSkipAndEvaluate = () => {
+  const sendAudioToServer = async (audioBlob: Blob) => {
+    const formData = new FormData()
+    formData.append('file', audioBlob, 'uploaded-audio.wav')
+
+    try {
+      const response = await fetch('/api/speech', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setTranscribedText(data.transcription)
+        setIsLoading(false)
+      } else {
+        console.error('Failed to transcribe audio', response.statusText)
+        setIsLoading(false)
+      }
+    } catch (error) {
+      console.error('Error while sending audio to server', error)
+      setIsLoading(false)
+    }
+  }
+
+  const handleSkipAndEvaluate = (transcription: string = transcribedText) => {
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state !== 'inactive'
+    ) {
+      mediaRecorderRef.current.stop()
+    }
+
     router.push(
-      `/result?theme=${theme}&thinkTime=${thinkTime}&speakTime=${speakingTimeParam}&level=${level}&spokenText=${encodeURIComponent(
-        transcribedText,
-      )}`,
+      `/result?theme=${theme}&thinkTime=${thinkTime}&speakTime=${speakingTimeParam}&level=${level}&spokenText=${encodeURIComponent(transcription)}`,
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className='min-h-screen flex flex-col justify-center items-center'>
+        <Player
+          autoplay
+          loop
+          src={'/loading.json'}
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            height: '250px',
+            width: '250px',
+            zIndex: 1,
+            pointerEvents: 'none',
+          }}
+        />
+        <p className='mt-32 text-lg text-center font-bold fixed'>
+          テキストを読み取っています...
+        </p>
+      </div>
     )
   }
 
@@ -127,7 +166,11 @@ export default function SpeakingPage() {
           </div>
           <div className='mt-8 flex justify-center'>
             <Button
-              onClick={handleSkipAndEvaluate}
+              onClick={() =>
+                handleSkipAndEvaluate(
+                  transcribedText || '音声が検出されませんでした',
+                )
+              }
               className='bg-[#ff4a4a] hover:bg-[#dc4343] text-white py-2 px-4 rounded-md'
             >
               Skip and Evaluate

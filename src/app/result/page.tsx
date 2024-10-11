@@ -28,7 +28,7 @@ export default function ResultPage() {
   const theme = searchParams.get('theme') || 'No theme provided.'
   const level = (searchParams.get('level') as Level) || 'Middle'
   const spokenText =
-    searchParams.get('spokenText') || 'No spoken text provided.'
+    searchParams.get('spokenText') || '音声が検出されませんでした'
   const thinkTime = searchParams.get('thinkTime') || '30'
   const speakTime = searchParams.get('speakTime') || '60'
 
@@ -83,7 +83,9 @@ export default function ResultPage() {
         </CardHeader>
         <CardContent className='space-y-6'>
           <div>
-            <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>Theme</h3>
+            <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
+              テーマ
+            </h3>
             <p className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
               {theme}
             </p>
@@ -91,7 +93,7 @@ export default function ResultPage() {
           <LevelDisplay level={level} />
           <div>
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
-              Your Response
+              あなたのスピーチ
             </h3>
             <p className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
               {spokenText}
@@ -105,13 +107,21 @@ export default function ResultPage() {
             >
               Retry ({maxRetries - retryCount} 残り)
             </Button>
-            <Button
-              onClick={handleEvaluate}
-              className='bg-[#ed7e00] hover:bg-[#ed9600] text-white'
-              disabled={isLoading}
-            >
-              {isLoading ? 'Evaluating...' : 'Evaluate'}
-            </Button>
+            {isLoading ? (
+              <Button className='bg-[#ed7e00] text-white' disabled>
+                Loading...
+              </Button>
+            ) : (
+              <Button
+                onClick={handleEvaluate}
+                className='bg-[#ed7e00] hover:bg-[#ed9600] text-white font-semibold'
+                disabled={
+                  spokenText === '音声が検出されませんでした' || isLoading
+                }
+              >
+                評価
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>

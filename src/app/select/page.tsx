@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Switch } from '@/components/ui/switch'
+import { Player } from '@lottiefiles/react-lottie-player'
 import { Label } from '@radix-ui/react-label'
 import { Clock, Eye, Mic, Volume2 } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -18,6 +19,8 @@ export default function SelectPage() {
   const [themeLevel, setThemeLevel] = useState('Middle')
   const [showTheme, setShowTheme] = useState(true)
   const [readTheme, setReadTheme] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -43,6 +46,7 @@ export default function SelectPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsLoading(true)
 
     const theme = searchParams.get('theme') || 'random'
 
@@ -74,11 +78,13 @@ export default function SelectPage() {
       router.push(href)
     } catch (error) {
       alert('セッションの開始に失敗しました。もう一度お試しください。')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
-    <Card className='w-full max-w-lg md:max-w-md lg:max-w-lg mx-auto my-16 p-6 shadow-lg rounded-lg'>
+    <Card className='w-full max-w-lg md:max-w-lg lg:max-w-2xl mx-auto my-16 p-6 shadow-lg rounded-lg'>
       <CardHeader>
         <CardTitle className='text-2xl font-bold text-[#333]'>
           クイックスタート設定
@@ -202,9 +208,22 @@ export default function SelectPage() {
 
           <Button
             type='submit'
-            className='w-full bg-[#ed7e00] hover:bg-[#f18e1b] text-white py-2 rounded-md'
+            disabled={isLoading} // ローディング中はボタンを無効化
+            className='w-full bg-[#ed7e00] hover:bg-[#f18e1b] text-white py-2 rounded-md flex justify-center items-center'
           >
-            セッションを開始
+            {isLoading ? (
+              <>
+                <Player
+                  autoplay
+                  loop
+                  src={'/select-loading.json'}
+                  style={{ height: '40px', width: '40px' }}
+                />
+                <span className='ml-2'>読み込み中</span>
+              </>
+            ) : (
+              'セッションを開始'
+            )}
           </Button>
         </form>
       </CardContent>

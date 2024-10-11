@@ -1,5 +1,5 @@
 import ContributionGraph from '@/components/ContributionGraph/index'
-import GamificationCard from '@/components/GemificationCard'
+// import GamificationCard from '@/components/GemificationCard'
 import QuickStartForm from '@/components/QuickStartForm'
 import React from 'react'
 import { auth } from './api/auth/[...nextauth]/auth'
@@ -20,17 +20,17 @@ export default async function Page() {
                 <div className='md:w-1/2'>
                   <QuickStartForm />
                 </div>
-                <div className='md:w-1/2'>
+                {/* <div className='md:w-1/2'>
                   <GamificationCard
                     streak={7}
                     level={5}
                     points={78}
                     nextReward={10}
                   />
+                </div> */}
+                <div className=''>
+                  <ContributionGraph />
                 </div>
-              </div>
-              <div className='mt-9'>
-                <ContributionGraph />
               </div>
             </div>
           </>
