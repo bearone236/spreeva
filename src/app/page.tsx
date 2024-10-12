@@ -1,4 +1,5 @@
 import ContributionGraph from '@/components/ContributionGraph/index'
+import PDFUploadForm from '@/components/PDFUploadForm'
 // import GamificationCard from '@/components/GemificationCard'
 import QuickStartForm from '@/components/QuickStartForm'
 import React from 'react'
@@ -28,16 +29,28 @@ export default async function Page() {
                     nextReward={10}
                   />
                 </div> */}
-                <div className=''>
-                  <ContributionGraph />
+                <div className='md:w-1/2'>
+                  <PDFUploadForm />
                 </div>
               </div>
             </div>
+            <div className='mt-4'>
+              <ContributionGraph />
+            </div>
           </>
         ) : (
-          <div className='mt-5 w-[800px] mx-auto'>
-            <h2 className='text-2xl font-bold pb-7'>Hello, Guest</h2>
-            <QuickStartForm />
+          <div>
+            <h2 className='text-2xl font-bold'>Hello, Guest</h2>
+            <div className='flex flex-col'>
+              <div className='flex flex-col md:flex-row gap-6 mt-5'>
+                <div className='md:w-1/2'>
+                  <QuickStartForm />
+                </div>
+                <div className='md:w-1/2'>
+                  <PDFUploadForm />
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </main>
