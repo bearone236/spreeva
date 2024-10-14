@@ -12,7 +12,8 @@ const QuickStartForm = () => {
 
   const handleThemeSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    router.push(`/select?theme=${theme || 'random'}`)
+    // themeType=quickstart を URL に追加
+    router.push(`/select?theme=${theme || 'random'}&themeType=quickstart`)
   }
 
   return (
@@ -22,7 +23,9 @@ const QuickStartForm = () => {
         <Button
           className='w-full bg-gradient-to-r from-[#f1c40f] to-[#e67e22] text-white hover:from-[#f39c12] hover:to-[#d35400] py-3 rounded-md'
           size='lg'
-          onClick={() => router.push('/select?theme=random')}
+          onClick={() =>
+            router.push('/select?theme=random&themeType=quickstart')
+          }
         >
           <Mic className='mr-2 h-4 w-4' />
           ランダムテーマで始める

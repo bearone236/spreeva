@@ -24,6 +24,9 @@ export default function SelectPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
+  const theme = searchParams.get('theme') || 'random'
+  const themeType = searchParams.get('themeType') || 'quickstart'
+
   useEffect(() => {
     if (!showTheme && !readTheme) {
       setReadTheme(true)
@@ -48,18 +51,16 @@ export default function SelectPage() {
     e.preventDefault()
     setIsLoading(true)
 
-    const theme = searchParams.get('theme') || 'random'
-
     try {
       const response = await fetch('/api/theme', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache',
         },
         body: JSON.stringify({
           theme,
           themeLevel,
+          themeType,
         }),
       })
 

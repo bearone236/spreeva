@@ -2,13 +2,13 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import type React from 'react'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 const PDFUploadForm = () => {
   const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
-  const [theme, setTheme] = useState('')
+  const router = useRouter()
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -30,7 +30,13 @@ const PDFUploadForm = () => {
       })
 
       const data = await response.json()
-      setTheme(data.theme)
+      if (data.error) throw new Error(data.error)
+
+      router.push(
+        `/select?theme=${encodeURIComponent(data.theme)}&themeType=ocr`,
+      )
+    } catch (error) {
+      alert('PDFのアップロードに失敗しました。もう一度お試しください。')
     } finally {
       setLoading(false)
     }
@@ -67,13 +73,6 @@ const PDFUploadForm = () => {
         >
           {loading ? 'アップロード中...' : 'アップロード'}
         </Button>
-
-        {theme && (
-          <div className='mt-4'>
-            <h3 className='text-xl font-semibold'>生成されたテーマ:</h3>
-            <p>{theme}</p>
-          </div>
-        )}
       </div>
     </div>
   )
