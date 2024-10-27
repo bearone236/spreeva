@@ -31,6 +31,7 @@ export default function ResultPage() {
     searchParams.get('spokenText') || '音声が検出されませんでした'
   const thinkTime = searchParams.get('thinkTime') || '30'
   const speakTime = searchParams.get('speakTime') || '60'
+  const themeType = searchParams.get('themeType') || 'quickstart'
 
   const handleEvaluate = async () => {
     setIsLoading(true)
@@ -53,7 +54,7 @@ export default function ResultPage() {
 
       const data = await response.json()
       router.push(
-        `/evaluate?theme=${encodeURIComponent(theme)}&level=${encodeURIComponent(level)}&spokenText=${encodeURIComponent(spokenText)}&thinkTime=${thinkTime}&speakTime=${speakTime}&evaluation=${encodeURIComponent(data.evaluation)}`,
+        `/evaluate?theme=${encodeURIComponent(theme)}&level=${encodeURIComponent(level)}&spokenText=${encodeURIComponent(spokenText)}&thinkTime=${thinkTime}&speakTime=${speakTime}&evaluation=${encodeURIComponent(data.evaluation)}&themeType=${themeType}`,
       )
     } catch (error) {
       alert('評価に失敗しました。もう一度お試しください。')
@@ -66,7 +67,7 @@ export default function ResultPage() {
     if (retryCount < maxRetries) {
       setRetryCount(retryCount + 1)
       router.push(
-        `/speaking?theme=${encodeURIComponent(theme)}&level=${encodeURIComponent(level)}&thinkTime=${thinkTime}&speakTime=${speakTime}&retryCount=${retryCount + 1}`,
+        `/speaking?theme=${encodeURIComponent(theme)}&level=${encodeURIComponent(level)}&thinkTime=${thinkTime}&speakTime=${speakTime}&retryCount=${retryCount + 1}&themeType=${themeType}`,
       )
     } else {
       alert('これ以上再試行できません。')

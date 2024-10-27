@@ -13,6 +13,7 @@ export default function SpeakingPage() {
   const speakingTimeParam = searchParams.get('speakTime') || '60'
   const thinkTime = searchParams.get('thinkTime') || '30'
   const level = searchParams.get('level') || 'Middle'
+  const themeType = searchParams.get('themeType') || 'quickstart'
 
   const [remainingTime, setRemainingTime] = useState(
     Number.parseInt(speakingTimeParam),
@@ -124,7 +125,7 @@ export default function SpeakingPage() {
     }
 
     router.push(
-      `/result?theme=${theme}&thinkTime=${thinkTime}&speakTime=${speakingTimeParam}&level=${level}&spokenText=${encodeURIComponent(transcription)}`,
+      `/result?theme=${theme}&thinkTime=${thinkTime}&speakTime=${speakingTimeParam}&level=${level}&spokenText=${encodeURIComponent(transcription)}&themeType=${themeType}`,
     )
   }
 

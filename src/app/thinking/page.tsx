@@ -17,6 +17,7 @@ export default function ThinkingPage() {
   const thinkingTimeParam = searchParams.get('thinkTime') || '30'
   const speakingTime = searchParams.get('speakTime') || '60'
   const level = (searchParams.get('level') || 'Middle') as Level
+  const themeType = searchParams.get('themeType') || 'quickstart'
   const showTheme = searchParams.get('showTheme') === 'true'
   const readTheme = searchParams.get('readTheme') === 'true'
   const [remainingTime, setRemainingTime] = useState(
@@ -87,7 +88,7 @@ export default function ThinkingPage() {
             router.push(
               `/speaking?theme=${encodeURIComponent(
                 theme,
-              )}&thinkTime=${thinkingTimeParam}&speakTime=${speakingTime}&level=${level}`,
+              )}&thinkTime=${thinkingTimeParam}&speakTime=${speakingTime}&level=${level}&themeType=${themeType}`,
             )
           }
           return prev - 1
@@ -103,6 +104,7 @@ export default function ThinkingPage() {
     thinkingTimeParam,
     speakingTime,
     level,
+    themeType,
   ])
 
   return (
