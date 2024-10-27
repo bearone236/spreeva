@@ -7,15 +7,14 @@ export class GoogleVisionOCRRepository {
   private storage: Storage = new Storage()
 
   constructor() {
-    if (process.env.NODE_ENV === 'production') {
-      this.client = new vision.ImageAnnotatorClient({
-        credentials: JSON.parse(process.env.GCLOUD_CREDENTIALS || '{}'),
-      })
-    } else {
-      this.client = new vision.ImageAnnotatorClient({
-        keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-      })
-    }
+    this.client =
+      process.env.NODE_ENV === 'production'
+        ? new vision.ImageAnnotatorClient({
+            credentials: JSON.parse(process.env.GCLOUD_CREDENTIALS || '{}'),
+          })
+        : new vision.ImageAnnotatorClient({
+            keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+          })
   }
 
   async uploadToGCS(pdfFile: Blob, fileName: string): Promise<string> {
@@ -34,7 +33,7 @@ export class GoogleVisionOCRRepository {
   async extractTextFromPDF(pdfFile: Blob): Promise<string> {
     const fileName = `uploads/${Date.now()}.pdf`
     const gcsUri = await this.uploadToGCS(pdfFile, fileName)
-    const outputPrefix = `gs://spreeva-ocr-output/output/${uuidv4()}-`
+    const outputPrefix = `output/${uuidv4()}-`
 
     console.log(`Starting OCR process for: ${gcsUri}`)
 
@@ -48,7 +47,7 @@ export class GoogleVisionOCRRepository {
           features: [{ type: 'DOCUMENT_TEXT_DETECTION' as const }],
           outputConfig: {
             gcsDestination: {
-              uri: outputPrefix, // プレフィックスを使用
+              uri: `gs://spreeva-ocr-output/${outputPrefix}`, // プレフィックスを指定
             },
           },
         },
@@ -56,12 +55,11 @@ export class GoogleVisionOCRRepository {
     }
 
     const [operation] = await this.client.asyncBatchAnnotateFiles(request)
-    await operation.promise() // 処理が完了するまで待機
+    await operation.promise()
 
     console.log('OCR processing completed. Waiting for output files...')
 
-    // ファイルを取得するための再試行ロジックを追加
-    for (let attempt = 0; attempt < 5; attempt++) {
+    for (let attempt = 0; attempt < 10; attempt++) {
       const [files] = await this.storage.bucket('spreeva-ocr-output').getFiles({
         prefix: outputPrefix,
       })
@@ -71,7 +69,6 @@ export class GoogleVisionOCRRepository {
       )
 
       if (files.length > 0) {
-        // 最初のファイルを取得して解析
         const ocrData = JSON.parse(
           (await files[0].download())[0].toString('utf8'),
         )
@@ -85,8 +82,7 @@ export class GoogleVisionOCRRepository {
         return fullText
       }
 
-      // 2秒待機してから再試行
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      await new Promise(resolve => setTimeout(resolve, 3000)) // 3秒待機
     }
 
     throw new Error(
