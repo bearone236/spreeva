@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import type React from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 type ContributionGraphProps = {
   contributions: { [key: string]: number }
@@ -17,10 +17,28 @@ const ContributionGraphClient: React.FC<ContributionGraphProps> = ({
   contributions,
 }) => {
   const [year, setYear] = useState<number | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const today = new Date()
 
   useEffect(() => {
     setYear(new Date().getFullYear())
   }, [])
+
+  useEffect(() => {
+    if (!containerRef.current || !year) return
+
+    const startOfYear = new Date(year, 0, 1)
+    const diffTime = today.getTime() - startOfYear.getTime()
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+    const weekIndex = Math.floor((diffDays + startOfYear.getDay()) / 7)
+
+    const scrollPosition = weekIndex * 17 - containerRef.current.clientWidth / 2
+
+    containerRef.current.scrollTo({
+      left: Math.max(0, scrollPosition),
+      behavior: 'smooth',
+    })
+  }, [year, today])
 
   const contributionData = useMemo(() => {
     if (!year) return {}
@@ -35,7 +53,7 @@ const ContributionGraphClient: React.FC<ContributionGraphProps> = ({
       d.setDate(d.getDate() + 1)
     ) {
       const dateString = d.toISOString().split('T')[0]
-      data[dateString] = contributions[dateString] || 0 // DBから取得したデータを利用
+      data[dateString] = contributions[dateString] || 0
     }
 
     return data
@@ -139,7 +157,7 @@ const ContributionGraphClient: React.FC<ContributionGraphProps> = ({
             </div>
           </div>
 
-          <div className='overflow-x-auto'>
+          <div className='overflow-x-auto' ref={containerRef}>
             <div className='flex'>
               <div className='flex flex-col mr-2 text-xs text-gray-500 mt-7'>
                 {displayDayLabels.map(day => (
@@ -184,11 +202,17 @@ const ContributionGraphClient: React.FC<ContributionGraphProps> = ({
                         }
                         const dateString = date.toISOString().split('T')[0]
                         const count = contributionData[dateString] || 0
+                        const isToday =
+                          dateString === today.toISOString().split('T')[0]
                         return (
                           <Tooltip key={dateString}>
                             <TooltipTrigger>
                               <div
-                                className={`w-[15px] h-[15px] m-[1px] ${getColor(count)} border border-gray-200`}
+                                className={`w-[15px] h-[15px] m-[1px] ${getColor(count)} border ${
+                                  isToday
+                                    ? 'border-black border-1'
+                                    : 'border-gray-200'
+                                }`}
                               />
                             </TooltipTrigger>
                             <TooltipContent>
