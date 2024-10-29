@@ -1,63 +1,103 @@
 import type { Context } from 'hono'
-import type { Theme } from '../domain/theme'
-import type { GenerateThemeUseCase } from '../usecase/generateTheme'
+import { z } from 'zod'
+import type { ThemeLevel } from '../domain/types/theme.types'
+import type { GenerateThemeUseCase } from '../usecase/GenerateThemeUseCase'
 import type { PDFThemeGenerationUsecase } from '../usecase/pdfThemeGeneration'
 
+const themeRequestSchema = z.object({
+  theme: z.string(),
+  themeLevel: z.enum(['Low', 'Middle', 'High']),
+  themeType: z.enum(['quickstart', 'ocr']),
+})
+
 export class ThemeController {
-  private generateThemeUseCase: GenerateThemeUseCase
-  private pdfThemeGenerationUsecase: PDFThemeGenerationUsecase
-
   constructor(
-    generateThemeUseCase: GenerateThemeUseCase,
-    pdfThemeGenerationUsecase: PDFThemeGenerationUsecase,
-  ) {
-    this.generateThemeUseCase = generateThemeUseCase
-    this.pdfThemeGenerationUsecase = pdfThemeGenerationUsecase
-  }
+    private generateThemeUseCase: GenerateThemeUseCase,
+    private pdfThemeGenerationUsecase: PDFThemeGenerationUsecase,
+  ) {}
 
-  async handleGenerateTheme(c: Context) {
+  async handleThemeGeneration(c: Context) {
     try {
-      // PDFのアップロード処理を考慮
-      if (c.req.header('content-type')?.includes('multipart/form-data')) {
+      const contentType = c.req.header('content-type')
+
+      if (contentType?.includes('multipart/form-data')) {
         const formData = await c.req.formData()
         const file = formData.get('file') as File
+
         if (!file) {
           return c.json({ error: 'PDFファイルがありません' }, 400)
         }
 
         const arrayBuffer = await file.arrayBuffer()
-        const buffer = Buffer.from(arrayBuffer)
-        const blob = new Blob([buffer], { type: 'application/pdf' })
+        const pdfBlob = new Blob([arrayBuffer], { type: 'application/pdf' })
+        const themeLevel =
+          (formData.get('themeLevel') as ThemeLevel) || 'Middle'
 
-        // PDFからテーマを生成
-        const theme = await this.pdfThemeGenerationUsecase.execute(blob)
+        const extractedText =
+          await this.pdfThemeGenerationUsecase.execute(pdfBlob)
 
-        return c.json({ theme })
+        const themeParams = {
+          theme: extractedText.trim(),
+          themeLevel,
+          themeType: 'ocr' as const,
+        }
+
+        const validatedData = themeRequestSchema.parse(themeParams)
+
+        const theme = await this.generateThemeUseCase.execute(validatedData)
+
+        return c.json({
+          success: true,
+          theme: theme.getContent(),
+          message: theme.getContent(),
+          data: {
+            id: theme.getId(),
+            content: theme.getContent(),
+            level: theme.getLevel(),
+            type: theme.getGenerationType(),
+            sourceText: extractedText,
+          },
+        })
       }
 
-      const { theme, themeLevel, themeType } = await c.req.json()
+      const body = await c.req.json()
+      const validatedData = themeRequestSchema.parse(body)
+      const theme = await this.generateThemeUseCase.execute(validatedData)
 
-      if (!theme || !themeLevel || !themeType) {
+      return c.json({
+        success: true,
+        message: theme.getContent(),
+        data: {
+          id: theme.getId(),
+          content: theme.getContent(),
+          level: theme.getLevel(),
+          type: theme.getGenerationType(),
+          sourceText: validatedData.theme,
+        },
+      })
+    } catch (error) {
+      console.error('Theme generation error:', error)
+
+      if (error instanceof z.ZodError) {
         return c.json(
-          { error: 'Invalid input, theme, themeLevel, or themeType missing' },
+          {
+            success: false,
+            error: 'Invalid request data',
+            details: error.errors,
+          },
           400,
         )
       }
 
-      const themeData: Theme = {
-        id: '',
-        theme,
-        themeLevel,
-      }
-
-      const generatedTheme = await this.generateThemeUseCase.execute(
-        themeData,
-        themeType,
+      console.error('Theme generation error:', error)
+      return c.json(
+        {
+          success: false,
+          error:
+            error instanceof Error ? error.message : 'Failed to generate theme',
+        },
+        500,
       )
-      return c.json({ message: generatedTheme })
-    } catch (error) {
-      console.error('テーマ生成エラー:', error)
-      return c.json({ error: 'テーマ生成に失敗しました。' }, 500)
     }
   }
 }

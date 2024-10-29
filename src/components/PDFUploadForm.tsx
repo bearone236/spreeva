@@ -30,8 +30,14 @@ const PDFUploadForm = () => {
       })
 
       const data = await response.json()
-      if (data.error) throw new Error(data.error)
+      if (!response.ok) {
+        throw new Error(data.error || '予期しないエラーが発生しました')
+      }
 
+      if (!data.theme) {
+        console.error('API response:', data)
+        throw new Error('テーマが生成されませんでした')
+      }
       router.push(
         `/select?theme=${encodeURIComponent(data.theme)}&themeType=ocr`,
       )

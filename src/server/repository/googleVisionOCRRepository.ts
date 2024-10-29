@@ -35,8 +35,6 @@ export class GoogleVisionOCRRepository {
     const gcsUri = await this.uploadToGCS(pdfFile, fileName)
     const outputPrefix = `output/${uuidv4()}-`
 
-    console.log(`Starting OCR process for: ${gcsUri}`)
-
     const request = {
       requests: [
         {

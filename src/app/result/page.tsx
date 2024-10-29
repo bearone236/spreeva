@@ -37,17 +37,19 @@ export default function ResultPage() {
     setIsLoading(true)
 
     try {
+      const requestData = {
+        userId: session?.user?.id || null,
+        theme,
+        level,
+        transcript: spokenText,
+        thinkTime,
+        speakTime,
+      }
+
       const response = await fetch('/api/evaluate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: session?.user?.id || null,
-          theme,
-          level,
-          thinkTime,
-          speakTime,
-          transcript: spokenText,
-        }),
+        body: JSON.stringify(requestData),
       })
 
       if (!response.ok) throw new Error('Failed to evaluate speech')
