@@ -23,6 +23,7 @@ export class SpeechRepository {
       }
       this.storage = new Storage()
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error initializing GoogleAuth:', error)
       throw error
     }
@@ -81,7 +82,6 @@ export class SpeechRepository {
         : 'No transcription available'
       return transcription
     } catch (error) {
-      console.error('Error recognizing speech:', error)
       throw new Error('Failed to recognize speech')
     }
   }

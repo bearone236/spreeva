@@ -1,4 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Player } from '@lottiefiles/react-lottie-player'
@@ -105,12 +107,10 @@ export default function SpeakingPage() {
         setTranscribedText(data.transcription || '')
         setIsLoading(false)
       } else {
-        console.error('Failed to transcribe audio', response.statusText)
         setIsLoading(false)
         handleSkipAndEvaluate('音声が検出されませんでした')
       }
     } catch (error) {
-      console.error('Error while sending audio to server', error)
       setIsLoading(false)
       handleSkipAndEvaluate('音声が検出されませんでした')
     }
@@ -155,7 +155,7 @@ export default function SpeakingPage() {
   }
 
   return (
-    <div className=' flex flex-col items-center justify-center pt-20'>
+    <div className='flex flex-col items-center justify-center pt-20'>
       <Card className='w-full max-w-2xl bg-white shadow-lg border-t-4 border-[#ed9600]'>
         <CardContent className='p-12'>
           <h2 className='text-3xl font-bold text-[#ed7e00] mb-8 text-center'>

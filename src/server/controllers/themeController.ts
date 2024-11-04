@@ -56,7 +56,6 @@ export class ThemeController {
       )
       return c.json({ message: generatedTheme })
     } catch (error) {
-      console.error('テーマ生成エラー:', error)
       return c.json({ error: 'テーマ生成に失敗しました。' }, 500)
     }
   }

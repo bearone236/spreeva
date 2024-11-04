@@ -2,7 +2,7 @@ import prisma from '@/lib/prisma'
 import { signInSchema } from '@/lib/zod'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import bcrypt from 'bcryptjs'
-import NextAuth, { type User } from 'next-auth'
+import NextAuth, { type User, type Session } from 'next-auth'
 import type { JWT } from 'next-auth/jwt'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import Google from 'next-auth/providers/google'
@@ -72,7 +72,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
 
   callbacks: {
-    async signIn({ account, user }) {
+    async signIn({
+      account,
+      user,
+    }: { account: Record<string, unknown>; user: User }) {
       if (account?.provider === 'google') {
         return true
       }
@@ -92,13 +95,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token
     },
 
-    async session({ session, token }) {
+    async session({ session, token }: { session: Session; token: JWT }) {
       session.id = token.sub || ''
       session.userType = token.userType as string
       return session
     },
 
-    async redirect({ url, baseUrl }) {
+    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
       if (url.includes('callback') && url.includes('google')) {
         return baseUrl
       }
