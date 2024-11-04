@@ -1,6 +1,6 @@
 'use client'
 
-import { History, Home, LogOut, User } from 'lucide-react'
+import { User } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -28,6 +28,7 @@ export default function Header() {
                 width={130}
                 height={50}
                 className='mr-2'
+                priority={true}
               />
               <span className='sr-only'>Spreeva</span>
             </div>
@@ -36,9 +37,8 @@ export default function Header() {
           <nav className='flex items-center space-x-4'>
             <Button
               variant='ghost'
-              className='text-white hover:bg-white hover:bg-opacity-90 transition-colors flex items-center'
+              className='text-white hover:bg-white hover:bg-opacity-90 transition-colors flex items-center border border-white'
             >
-              <Home className='h-5 w-5 mr-2' />
               <Link href={'/'}>ホーム</Link>
             </Button>
 
@@ -46,20 +46,10 @@ export default function Header() {
               <>
                 <Button
                   variant='ghost'
-                  className='text-white hover:bg-white hover:bg-opacity-90 transition-colors flex items-center'
+                  className='text-white hover:bg-white hover:bg-opacity-90 transition-colors flex items-center border border-white'
                 >
-                  <History className='h-5 w-5 mr-2' />
                   <Link href={'/history'}>履歴</Link>
                 </Button>
-
-                {/* <Button
-                  variant='ghost'
-                  size='icon'
-                  className='text-white hover:bg-white hover:bg-opacity-90 transition-colors flex items-center'
-                >
-                  <User className='h-5 w-5' />
-                  <span className='sr-only'>ユーザープロフィール</span>
-                </Button> */}
 
                 {session.user.image ? (
                   <Image
@@ -70,15 +60,19 @@ export default function Header() {
                     className='rounded-full'
                   />
                 ) : (
-                  <User className='h-5 w-5 text-white' />
+                  <div className='flex text-white'>
+                    <User />
+                    <p className='pl-1'>
+                      {session.userType === 'admin' ? '管理者' : 'ユーザー'}
+                    </p>
+                  </div>
                 )}
 
                 <Button
                   variant='ghost'
-                  className='text-white hover:bg-white hover:bg-opacity-90 transition-colors flex items-center'
+                  className='text-white hover:bg-white hover:bg-opacity-90 transition-colors flex items-center border border-white'
                   onClick={() => signOut({ callbackUrl: '/' })}
                 >
-                  <LogOut className='h-5 w-5 mr-2' />
                   ログアウト
                 </Button>
               </>
