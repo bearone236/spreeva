@@ -47,6 +47,7 @@ export default function ResultPage() {
           thinkTime,
           speakTime,
           transcript: spokenText,
+          themeType,
         }),
       })
 
