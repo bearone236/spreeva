@@ -2,7 +2,7 @@ import prisma from '@/lib/prisma'
 import { signInSchema } from '@/lib/zod'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import bcrypt from 'bcryptjs'
-import NextAuth, { type User, type Session } from 'next-auth'
+import NextAuth, { type User, type Session, type Account } from 'next-auth'
 import type { JWT } from 'next-auth/jwt'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import Google from 'next-auth/providers/google'
@@ -20,17 +20,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID || '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-      profile(profile) {
+      profile(profile: {
+        sub: string
+        email: string
+        name: string
+        picture: string
+      }) {
         return {
           id: profile.sub,
-          email: profile.email,
           name: profile.name,
+          email: profile.email,
           image: profile.picture,
-          userType: 'user',
         }
       },
     }),
-
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
@@ -60,7 +63,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             throw new Error('Invalid password')
           }
 
-          return user
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            userType: user.userType,
+          }
         } catch (error) {
           if (error instanceof Error) {
             throw new Error(error.message || 'Invalid credentials')
@@ -72,10 +80,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
 
   callbacks: {
-    async signIn({
-      account,
-      user,
-    }: { account: Record<string, unknown>; user: User }) {
+    async signIn({ account, user }: { account: Account | null; user: User }) {
       if (account?.provider === 'google') {
         return true
       }
@@ -96,8 +101,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
 
     async session({ session, token }: { session: Session; token: JWT }) {
-      session.id = token.sub || ''
-      session.userType = token.userType as string
+      if (session.user) {
+        session.user.id = token.sub || ''
+        session.user.userType = token.userType as string
+      }
       return session
     },
 
