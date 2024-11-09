@@ -1,21 +1,20 @@
 import prisma from '@/lib/prisma'
 import { signInSchema } from '@/lib/zod'
+import type { Adapter } from '@auth/core/adapters'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import bcrypt from 'bcryptjs'
-import NextAuth, { type User, type Session, type Account } from 'next-auth'
-import type { JWT } from 'next-auth/jwt'
+import NextAuth, { type NextAuthConfig } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import Google from 'next-auth/providers/google'
 
 const { compare } = bcrypt
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const authConfig: NextAuthConfig = {
   pages: {
     signIn: '/login',
     error: '/auth/error',
   },
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  adapter: PrismaAdapter(prisma) as any,
+  adapter: PrismaAdapter(prisma) as Adapter,
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     Google({
@@ -82,19 +81,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
 
   callbacks: {
-    async signIn({ account, user }: { account: Account | null; user: User }) {
+    async signIn({ account, user }) {
       if (account?.provider === 'google') {
         return true
       }
 
-      if (user?.userType === 'admin' || user?.userType === 'member') {
+      if (user.userType === 'admin' || user.userType === 'member') {
         return true
       }
 
       return false
     },
 
-    async jwt({ token, user }: { token: JWT; user?: User }) {
+    async jwt({ token, user }) {
       if (user) {
         token.sub = user.id
         token.userType = user.userType
@@ -102,15 +101,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token
     },
 
-    async session({ session, token }: { session: Session; token: JWT }) {
-      if (session.user) {
-        session.user.id = token.sub || ''
-        session.user.userType = token.userType as string
+    async session({ session, token }) {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.sub || '',
+          userType: token.userType || 'user',
+        },
       }
-      return session
     },
 
-    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
+    async redirect({ url, baseUrl }) {
       if (url.includes('callback') && url.includes('google')) {
         return baseUrl
       }
@@ -140,4 +142,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     maxAge: 7 * 24 * 60 * 60,
     updateAge: 1 * 60 * 60,
   },
-})
+}
+
+export const { handlers, auth, signIn, signOut } = NextAuth(authConfig)

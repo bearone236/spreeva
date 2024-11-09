@@ -1,6 +1,7 @@
 'use client'
 
 import { User } from 'lucide-react'
+import type { Session } from 'next-auth'
 import { signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -63,7 +64,10 @@ export default function Header() {
                   <div className='flex text-white'>
                     <User />
                     <p className='pl-1'>
-                      {session.userType === 'admin' ? '管理者' : 'ユーザー'}
+                      {(session as Session & { userType?: string }).userType ===
+                      'admin'
+                        ? '管理者'
+                        : 'ユーザー'}
                     </p>
                   </div>
                 )}

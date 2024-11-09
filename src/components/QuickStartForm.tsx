@@ -12,7 +12,6 @@ const QuickStartForm = () => {
 
   const handleThemeSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // themeType=quickstart を URL に追加
     router.push(`/select?theme=${theme || 'random'}&themeType=quickstart`)
   }
 
