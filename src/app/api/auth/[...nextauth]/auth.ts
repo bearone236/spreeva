@@ -14,7 +14,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: '/login',
     error: '/auth/error',
   },
-  adapter: PrismaAdapter(prisma),
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  adapter: PrismaAdapter(prisma) as any,
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     Google({
