@@ -9,6 +9,15 @@ const nextConfig = {
       },
     ],
   },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push({
+        '@lottiefiles/react-lottie-player':
+          'commonjs @lottiefiles/react-lottie-player',
+      })
+    }
+    return config
+  },
 }
 
 export default nextConfig
