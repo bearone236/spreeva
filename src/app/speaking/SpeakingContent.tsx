@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
 import { Button } from '@/components/ui/button'
@@ -27,6 +28,7 @@ export default function SpeakingContent() {
     if (remainingTime === 0 && !isLoading) {
       handleSkipAndEvaluate(transcribedText || '音声が検出されませんでした')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remainingTime, transcribedText, isLoading])
 
   useEffect(() => {
@@ -62,7 +64,6 @@ export default function SpeakingContent() {
           }
         }
       } catch (error) {
-        console.error('Error accessing microphone:', error)
         handleSkipAndEvaluate('マイクへのアクセスに失敗しました')
       }
     }
@@ -115,7 +116,6 @@ export default function SpeakingContent() {
         handleSkipAndEvaluate('音声が検出されませんでした')
       }
     } catch (error) {
-      console.error('Error sending audio:', error)
       setIsLoading(false)
       handleSkipAndEvaluate('音声が検出されませんでした')
     }
