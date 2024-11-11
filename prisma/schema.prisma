@@ -13,11 +13,14 @@ model User {
   email           String           @unique
   emailVerified   DateTime?
   image           String?
+  userType        String           @default("user")
   accounts        Account[]
   sessions        Session[]
   speakingResults SpeakingResult[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+
+  @@map("users")
 }
 
 model Account {
@@ -35,7 +38,7 @@ model Account {
   id_token          String?
   session_state     String?
   createdAt         DateTime @default(now())
-  updatedAt         DateTime @default(now()) @updatedAt
+  updatedAt         DateTime @updatedAt
 
   @@unique([provider, providerAccountId])
 }
@@ -48,6 +51,8 @@ model Session {
   expires      DateTime
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  @@map("sessions")
 }
 
 model SpeakingResult {
@@ -79,4 +84,38 @@ model EvaluationRequest {
   requestBody      String
   responseBody     String
   createdAt        DateTime       @default(now())
+}
+
+model OrganizationUser {
+  id             String       @id @default(cuid())
+  name           String
+  email          String       @unique
+  password       String
+  userType       String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  groups         Group[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Organization {
+  id               String             @id @default(cuid())
+  name             String
+  description      String
+  organizationType String
+  users            OrganizationUser[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  Group            Group[]
+}
+
+model Group {
+  id             String             @id @default(cuid())
+  name           String
+  organizationId String
+  organization   Organization       @relation(fields: [organizationId], references: [id])
+  members        OrganizationUser[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
 }
