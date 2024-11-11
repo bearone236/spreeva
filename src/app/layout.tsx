@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { Suspense } from 'react'
 import './globals.css'
 import Header from '@/components/Header'
+import LoadingAnimation from '@/components/Loading'
 import AuthProvider from '@/provider/AuthProvider'
 
 const inter = Inter({
@@ -29,7 +31,9 @@ export default async function RootLayout({
       <body className={`${inter.className} bg-orange-50`}>
         <AuthProvider>
           <Header />
-          <div className='pt-8 px-8'>{children}</div>
+          <div className='pt-8 px-8'>
+            <Suspense fallback={<LoadingAnimation />}>{children}</Suspense>
+          </div>
         </AuthProvider>
       </body>
     </html>
