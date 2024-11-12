@@ -10,6 +10,7 @@ const inter = Inter({
   subsets: ['latin'],
   weight: ['400', '700'],
   display: 'swap',
+  variable: '--font-inter',
 })
 
 export const metadata: Metadata = {
@@ -27,7 +28,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='en'>
+    <html lang='en' className={`${inter.variable} font-sans`}>
       <body className={`${inter.className} bg-orange-50`}>
         <AuthProvider>
           <Header />
