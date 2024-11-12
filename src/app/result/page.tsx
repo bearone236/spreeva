@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import useStore from '../../provider/store/useStore'
 
 export default function ResultPage() {
@@ -19,18 +19,12 @@ export default function ResultPage() {
     speakTime,
     themeType,
     setEvaluation,
+    retryCount,
+    incrementRetryCount,
   } = useStore()
   const [isLoading, setIsLoading] = useState(false)
 
-  const maxRetries = 3
-  const [retryCount, setRetryCount] = useState<number>(() => {
-    const storedRetryCount = localStorage.getItem('retryCount')
-    return storedRetryCount ? Number.parseInt(storedRetryCount, 10) : 0
-  })
-
-  useEffect(() => {
-    localStorage.setItem('retryCount', retryCount.toString())
-  }, [retryCount])
+  const maxRetries = 1
 
   const handleEvaluate = async () => {
     setIsLoading(true)
@@ -66,7 +60,7 @@ export default function ResultPage() {
 
   const handleRetry = () => {
     if (retryCount < maxRetries) {
-      setRetryCount(retryCount + 1)
+      incrementRetryCount()
       router.push('/speaking')
     } else {
       alert('これ以上再試行できません。')
