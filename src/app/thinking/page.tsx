@@ -2,27 +2,15 @@
 
 import LevelDisplay from '@/components/LevelDisplay'
 import { Card, CardContent } from '@/components/ui/card'
-import { useRouter, useSearchParams } from 'next/navigation'
-import React from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
-
-type Level = 'Low' | 'Middle' | 'High'
+import useStore from '../../provider/store/useStore'
 
 export default function ThinkingPage() {
-  const searchParams = useSearchParams()
   const router = useRouter()
-
-  const theme = searchParams.get('theme') || 'No theme provided'
-  const thinkingTimeParam = searchParams.get('thinkTime') || '30'
-  const speakingTime = searchParams.get('speakTime') || '60'
-  const level = (searchParams.get('level') || 'Middle') as Level
-  const themeType = searchParams.get('themeType') || 'quickstart'
-  const showTheme = searchParams.get('showTheme') === 'true'
-  const readTheme = searchParams.get('readTheme') === 'true'
-  const [remainingTime, setRemainingTime] = useState(
-    Number.parseInt(thinkingTimeParam),
-  )
+  const { theme, thinkTime, level, showTheme, readTheme } = useStore()
+  const [remainingTime, setRemainingTime] = useState(Number.parseInt(thinkTime))
   const [gracePeriod, setGracePeriod] = useState(0)
   const [isSpeaking, setIsSpeaking] = useState(false)
   const hasStarted = useRef(false)
@@ -85,27 +73,14 @@ export default function ThinkingPage() {
         setGracePeriod(prev => {
           if (prev <= 1) {
             clearInterval(graceTimer)
-            router.push(
-              `/speaking?theme=${encodeURIComponent(
-                theme,
-              )}&thinkTime=${thinkingTimeParam}&speakTime=${speakingTime}&level=${level}&themeType=${themeType}`,
-            )
+            router.push('/speaking')
           }
           return prev - 1
         })
       }, 1000)
       return () => clearInterval(graceTimer)
     }
-  }, [
-    remainingTime,
-    gracePeriod,
-    router,
-    theme,
-    thinkingTimeParam,
-    speakingTime,
-    level,
-    themeType,
-  ])
+  }, [remainingTime, gracePeriod, router])
 
   return (
     <div className='flex flex-col items-center justify-center pt-20'>

@@ -8,30 +8,37 @@ import { Switch } from '@/components/ui/switch'
 import { Player } from '@lottiefiles/react-lottie-player'
 import { Label } from '@radix-ui/react-label'
 import { Clock, Eye, Mic, Volume2 } from 'lucide-react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import useStore from '../../provider/store/useStore'
 
 export default function SelectPage() {
-  const [thinkingTime, setThinkingTime] = useState('30')
-  const [speakingTime, setSpeakingTime] = useState('60')
+  const {
+    theme,
+    themeType,
+    thinkTime,
+    speakTime,
+    level,
+    showTheme,
+    readTheme,
+    setTheme,
+    setThinkTime,
+    setSpeakTime,
+    setLevel,
+    setShowTheme,
+    setReadTheme,
+  } = useStore()
+
   const [customThinkingTime, setCustomThinkingTime] = useState('')
   const [customSpeakingTime, setCustomSpeakingTime] = useState('')
-  const [themeLevel, setThemeLevel] = useState('Middle')
-  const [showTheme, setShowTheme] = useState(true)
-  const [readTheme, setReadTheme] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-
   const router = useRouter()
-  const searchParams = useSearchParams()
-
-  const theme = searchParams.get('theme') || 'random'
-  const themeType = searchParams.get('themeType') || 'quickstart'
 
   useEffect(() => {
     if (!showTheme && !readTheme) {
       setReadTheme(true)
     }
-  }, [showTheme, readTheme])
+  }, [showTheme, readTheme, setReadTheme])
 
   const handleThemeDisplayChange = (checked: boolean) => {
     if (!checked && !readTheme) {
@@ -54,29 +61,22 @@ export default function SelectPage() {
     try {
       const response = await fetch('/api/theme', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          theme,
-          themeLevel,
-          themeType,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ theme, themeLevel: level, themeType }),
       })
 
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`)
-      }
-
+      if (!response.ok) throw new Error(`Error: ${response.statusText}`)
       const data = await response.json()
+      setTheme(data.message)
 
       const effectiveThinkTime =
-        thinkingTime === 'custom' ? customThinkingTime : thinkingTime
+        thinkTime === 'custom' ? customThinkingTime : thinkTime
       const effectiveSpeakTime =
-        speakingTime === 'custom' ? customSpeakingTime : speakingTime
+        speakTime === 'custom' ? customSpeakingTime : speakTime
 
-      const href = `/thinking?theme=${data.message}&thinkTime=${effectiveThinkTime}&speakTime=${effectiveSpeakTime}&level=${themeLevel}&showTheme=${showTheme}&readTheme=${readTheme}`
-      router.push(href)
+      setThinkTime(effectiveThinkTime)
+      setSpeakTime(effectiveSpeakTime)
+      router.push('/thinking')
     } catch (error) {
       alert('セッションの開始に失敗しました。もう一度お試しください。')
     } finally {
@@ -95,12 +95,11 @@ export default function SelectPage() {
         <form onSubmit={handleSubmit} className='space-y-8'>
           <div className='space-y-2'>
             <Label className='text-md font-semibold text-[#ed7e00] flex items-center'>
-              <Clock className='w-5 h-5 mr-2' />
-              シンキングタイム
+              <Clock className='w-5 h-5 mr-2' /> シンキングタイム
             </Label>
             <RadioGroup
-              value={thinkingTime}
-              onValueChange={setThinkingTime}
+              value={thinkTime}
+              onValueChange={setThinkTime}
               className='flex flex-wrap gap-4'
             >
               {['15', '30', '45', '60'].map(value => (
@@ -114,7 +113,7 @@ export default function SelectPage() {
                 <Label htmlFor='thinking-custom'>カスタム</Label>
               </div>
             </RadioGroup>
-            {thinkingTime === 'custom' && (
+            {thinkTime === 'custom' && (
               <Input
                 type='number'
                 placeholder='秒数を入力'
@@ -127,15 +126,14 @@ export default function SelectPage() {
 
           <div className='space-y-2'>
             <Label className='text-md font-semibold text-[#ed7e00] flex items-center'>
-              <Volume2 className='w-5 h-5 mr-2' />
-              スピーキングタイム
+              <Volume2 className='w-5 h-5 mr-2' /> スピーキングタイム
             </Label>
             <RadioGroup
-              value={speakingTime}
-              onValueChange={setSpeakingTime}
+              value={speakTime}
+              onValueChange={setSpeakTime}
               className='flex flex-wrap gap-4'
             >
-              {['30', '60', '90', '120'].map(value => (
+              {['15', '30', '45', '60'].map(value => (
                 <div key={value} className='flex items-center space-x-2'>
                   <RadioGroupItem value={value} id={`speaking-${value}`} />
                   <Label htmlFor={`speaking-${value}`}>{value}秒</Label>
@@ -146,7 +144,7 @@ export default function SelectPage() {
                 <Label htmlFor='speaking-custom'>カスタム</Label>
               </div>
             </RadioGroup>
-            {speakingTime === 'custom' && (
+            {speakTime === 'custom' && (
               <Input
                 type='number'
                 placeholder='秒数を入力'
@@ -162,14 +160,14 @@ export default function SelectPage() {
               テーマレベル
             </Label>
             <RadioGroup
-              value={themeLevel}
-              onValueChange={setThemeLevel}
+              value={level}
+              onValueChange={setLevel}
               className='flex gap-4'
             >
-              {['Low', 'Middle', 'High'].map(level => (
-                <div key={level} className='flex items-center space-x-2'>
-                  <RadioGroupItem value={level} id={`level-${level}`} />
-                  <Label htmlFor={`level-${level}`}>{level}</Label>
+              {['Low', 'Middle', 'High'].map(lvl => (
+                <div key={lvl} className='flex items-center space-x-2'>
+                  <RadioGroupItem value={lvl} id={`level-${lvl}`} />
+                  <Label htmlFor={`level-${lvl}`}>{lvl}</Label>
                 </div>
               ))}
             </RadioGroup>
@@ -182,8 +180,7 @@ export default function SelectPage() {
                 htmlFor='show-theme'
                 className='flex items-center space-x-2'
               >
-                <Eye className='w-5 h-5 text-[#ed7e00]' />
-                <span>テーマの表示</span>
+                <Eye className='w-5 h-5 text-[#ed7e00]' /> テーマの表示
               </Label>
               <Switch
                 id='show-theme'
@@ -196,8 +193,7 @@ export default function SelectPage() {
                 htmlFor='read-theme'
                 className='flex items-center space-x-2'
               >
-                <Mic className='w-5 h-5 text-[#ed7e00]' />
-                <span>テーマの読み上げ</span>
+                <Mic className='w-5 h-5 text-[#ed7e00]' /> テーマの読み上げ
               </Label>
               <Switch
                 id='read-theme'

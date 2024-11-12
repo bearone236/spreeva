@@ -18,7 +18,7 @@ const ContributionGraphClient: React.FC<ContributionGraphProps> = ({
 }) => {
   const [year, setYear] = useState<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const today = new Date()
+  const today = useMemo(() => new Date(), [])
 
   useEffect(() => {
     setYear(new Date().getFullYear())

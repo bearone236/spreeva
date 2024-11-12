@@ -4,7 +4,6 @@ import prisma from '@/lib/prisma'
 import HistoryPageClient from './HistoryPageClient'
 
 export default async function HistoryPage() {
-  // Authenticate the user
   const session = await auth()
 
   if (!session || !session.user?.email) {

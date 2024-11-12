@@ -13,12 +13,15 @@ model User {
   email           String           @unique
   emailVerified   DateTime?
   image           String?
+  userType        String           @default("user")
   accounts        Account[]
   sessions        Session[]
   speakingResults SpeakingResult[]
   preferences     UserPreference?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+
+  @@map("users")
 }
 
 model Account {
@@ -50,6 +53,8 @@ model Session {
   expires      DateTime
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  @@map("sessions")
 }
 
 // ユーザー設定モデル
@@ -94,4 +99,38 @@ model EvaluationRequest {
   createdAt        DateTime       @default(now())
 
   @@index([speakingResultId])
+}
+
+model OrganizationUser {
+  id             String       @id @default(cuid())
+  name           String
+  email          String       @unique
+  password       String
+  userType       String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  groups         Group[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Organization {
+  id               String             @id @default(cuid())
+  name             String
+  description      String
+  organizationType String
+  users            OrganizationUser[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  Group            Group[]
+}
+
+model Group {
+  id             String             @id @default(cuid())
+  name           String
+  organizationId String
+  organization   Organization       @relation(fields: [organizationId], references: [id])
+  members        OrganizationUser[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
 }

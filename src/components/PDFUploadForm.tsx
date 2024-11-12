@@ -4,11 +4,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import useStore from '../provider/store/useStore'
 
 const PDFUploadForm = () => {
   const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const { setTheme, setThemeType } = useStore()
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -34,13 +36,9 @@ const PDFUploadForm = () => {
         throw new Error(data.error || '予期しないエラーが発生しました')
       }
 
-      if (!data.theme) {
-        console.error('API response:', data)
-        throw new Error('テーマが生成されませんでした')
-      }
-      router.push(
-        `/select?theme=${encodeURIComponent(data.theme)}&themeType=ocr`,
-      )
+      setTheme(data.theme)
+      setThemeType('ocr')
+      router.push('/select')
     } catch (error) {
       alert('PDFのアップロードに失敗しました。もう一度お試しください。')
     } finally {

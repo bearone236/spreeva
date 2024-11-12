@@ -2,22 +2,15 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Player } from '@lottiefiles/react-lottie-player'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import useStore from '../../provider/store/useStore'
 
 export default function SpeakingPage() {
-  const searchParams = useSearchParams()
   const router = useRouter()
+  const { speakTime, setSpokenText } = useStore()
 
-  const theme = searchParams.get('theme') || 'No theme provided'
-  const speakingTimeParam = searchParams.get('speakTime') || '60'
-  const thinkTime = searchParams.get('thinkTime') || '30'
-  const level = searchParams.get('level') || 'Middle'
-  const themeType = searchParams.get('themeType') || 'quickstart'
-
-  const [remainingTime, setRemainingTime] = useState(
-    Number.parseInt(speakingTimeParam),
-  )
+  const [remainingTime, setRemainingTime] = useState(Number.parseInt(speakTime))
   const [transcribedText, setTranscribedText] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
@@ -26,6 +19,7 @@ export default function SpeakingPage() {
     if (remainingTime === 0 && !isLoading) {
       handleSkipAndEvaluate(transcribedText || '音声が検出されませんでした')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remainingTime, transcribedText, isLoading])
 
   useEffect(() => {
@@ -51,7 +45,7 @@ export default function SpeakingPage() {
 
       const timer = setTimeout(() => {
         mediaRecorder.stop()
-      }, Number(speakingTimeParam) * 1000)
+      }, Number(speakTime) * 1000)
 
       return () => {
         clearTimeout(timer)
@@ -88,7 +82,8 @@ export default function SpeakingPage() {
         }
       }
     }
-  }, [speakingTimeParam])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [speakTime])
 
   const sendAudioToServer = async (audioBlob: Blob) => {
     const formData = new FormData()
@@ -105,12 +100,10 @@ export default function SpeakingPage() {
         setTranscribedText(data.transcription || '')
         setIsLoading(false)
       } else {
-        console.error('Failed to transcribe audio', response.statusText)
         setIsLoading(false)
         handleSkipAndEvaluate('音声が検出されませんでした')
       }
     } catch (error) {
-      console.error('Error while sending audio to server', error)
       setIsLoading(false)
       handleSkipAndEvaluate('音声が検出されませんでした')
     }
@@ -124,9 +117,8 @@ export default function SpeakingPage() {
       mediaRecorderRef.current.stop()
     }
 
-    router.push(
-      `/result?theme=${theme}&thinkTime=${thinkTime}&speakTime=${speakingTimeParam}&level=${level}&spokenText=${encodeURIComponent(transcription)}&themeType=${themeType}`,
-    )
+    setSpokenText(transcription)
+    router.push('/result')
   }
 
   if (isLoading) {
@@ -155,7 +147,7 @@ export default function SpeakingPage() {
   }
 
   return (
-    <div className=' flex flex-col items-center justify-center pt-20'>
+    <div className='flex flex-col items-center justify-center pt-20'>
       <Card className='w-full max-w-2xl bg-white shadow-lg border-t-4 border-[#ed9600]'>
         <CardContent className='p-12'>
           <h2 className='text-3xl font-bold text-[#ed7e00] mb-8 text-center'>

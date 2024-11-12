@@ -5,15 +5,18 @@ import { Input } from '@/components/ui/input'
 import { Mic } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import useStore from '../provider/store/useStore'
 
 const QuickStartForm = () => {
-  const [theme, setTheme] = useState('')
+  const [theme, setThemeInput] = useState('')
   const router = useRouter()
+  const { setTheme, setThemeType } = useStore()
 
   const handleThemeSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // themeType=quickstart を URL に追加
-    router.push(`/select?theme=${theme || 'random'}&themeType=quickstart`)
+    setTheme(theme || 'random')
+    setThemeType('quickstart')
+    router.push('/select')
   }
 
   return (
@@ -23,9 +26,11 @@ const QuickStartForm = () => {
         <Button
           className='w-full bg-gradient-to-r from-[#f1c40f] to-[#e67e22] text-white hover:from-[#f39c12] hover:to-[#d35400] py-3 rounded-md'
           size='lg'
-          onClick={() =>
-            router.push('/select?theme=random&themeType=quickstart')
-          }
+          onClick={() => {
+            setTheme('random')
+            setThemeType('quickstart')
+            router.push('/select')
+          }}
         >
           <Mic className='mr-2 h-4 w-4' />
           ランダムテーマで始める
@@ -44,7 +49,7 @@ const QuickStartForm = () => {
               type='text'
               placeholder='テーマを入力'
               value={theme}
-              onChange={e => setTheme(e.target.value)}
+              onChange={e => setThemeInput(e.target.value)}
               className='flex-grow border-[#f39c12] focus:border-[#e67e22] focus:ring-[#e67e22] rounded-md'
             />
             <Button

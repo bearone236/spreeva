@@ -4,60 +4,60 @@ import LevelDisplay from '@/components/LevelDisplay'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useSession } from 'next-auth/react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
-
-type Level = 'Low' | 'Middle' | 'High'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import useStore from '../../provider/store/useStore'
 
 export default function ResultPage() {
   const { data: session } = useSession()
-  const searchParams = useSearchParams()
   const router = useRouter()
+  const {
+    theme,
+    level,
+    spokenText,
+    thinkTime,
+    speakTime,
+    themeType,
+    setEvaluation,
+    retryCount,
+    incrementRetryCount,
+  } = useStore()
   const [isLoading, setIsLoading] = useState(false)
 
-  const maxRetries = 3
-  const [retryCount, setRetryCount] = useState<number>(() => {
-    const storedRetryCount = localStorage.getItem('retryCount')
-    return storedRetryCount ? Number.parseInt(storedRetryCount, 10) : 0
-  })
-
-  useEffect(() => {
-    localStorage.setItem('retryCount', retryCount.toString())
-  }, [retryCount])
-
-  const theme = searchParams.get('theme') || 'No theme provided.'
-  const level = (searchParams.get('level') as Level) || 'Middle'
-  const spokenText =
-    searchParams.get('spokenText') || '音声が検出されませんでした'
-  const thinkTime = searchParams.get('thinkTime') || '30'
-  const speakTime = searchParams.get('speakTime') || '60'
-  const themeType = searchParams.get('themeType') || 'quickstart'
+  const maxRetries = 1
 
   const handleEvaluate = async () => {
     setIsLoading(true)
 
-    try {
-      const requestData = {
-        userId: session?.user?.id || null,
-        theme,
-        level,
-        transcript: spokenText,
-        thinkTime,
-        speakTime,
-      }
+    const evaluationData = {
+      userId: session?.user?.id || null,
+      theme,
+      themeType: themeType as 'quickstart' | 'ocr',
+      level,
+      thinkTime: Number(thinkTime),
+      speakTime: Number(speakTime),
+      transcript: spokenText,
+    }
 
+    try {
       const response = await fetch('/api/evaluate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestData),
+        body: JSON.stringify(evaluationData),
       })
 
-      if (!response.ok) throw new Error('Failed to evaluate speech')
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to evaluate speech')
+      }
 
       const data = await response.json()
-      router.push(
-        `/evaluate?theme=${encodeURIComponent(theme)}&level=${encodeURIComponent(level)}&spokenText=${encodeURIComponent(spokenText)}&thinkTime=${thinkTime}&speakTime=${speakTime}&evaluation=${encodeURIComponent(data.evaluation)}&themeType=${themeType}`,
-      )
+      if (data.success) {
+        setEvaluation(data.evaluation)
+        router.push('/evaluate')
+      } else {
+        throw new Error(data.error || 'Failed to evaluate speech')
+      }
     } catch (error) {
       alert('評価に失敗しました。もう一度お試しください。')
     } finally {
@@ -67,10 +67,8 @@ export default function ResultPage() {
 
   const handleRetry = () => {
     if (retryCount < maxRetries) {
-      setRetryCount(retryCount + 1)
-      router.push(
-        `/speaking?theme=${encodeURIComponent(theme)}&level=${encodeURIComponent(level)}&thinkTime=${thinkTime}&speakTime=${speakTime}&retryCount=${retryCount + 1}&themeType=${themeType}`,
-      )
+      incrementRetryCount()
+      router.push('/speaking')
     } else {
       alert('これ以上再試行できません。')
     }

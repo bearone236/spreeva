@@ -21,14 +21,7 @@ export default async function Page() {
                 <div className='md:w-1/2'>
                   <QuickStartForm />
                 </div>
-                {/* <div className='md:w-1/2'>
-                  <GamificationCard
-                    streak={7}
-                    level={5}
-                    points={78}
-                    nextReward={10}
-                  />
-                </div> */}
+
                 <div className='md:w-1/2'>
                   <PDFUploadForm />
                 </div>
