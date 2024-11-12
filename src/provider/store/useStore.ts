@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { createJSONStorage, persist } from 'zustand/middleware'
 
 type Level = 'Low' | 'Middle' | 'High'
 
@@ -13,6 +12,7 @@ interface AppState {
   readTheme: boolean
   spokenText: string
   evaluation: string
+  retryCount: number
   setTheme: (theme: string) => void
   setThemeType: (themeType: string) => void
   setThinkTime: (time: string) => void
@@ -22,35 +22,39 @@ interface AppState {
   setReadTheme: (read: boolean) => void
   setSpokenText: (text: string) => void
   setEvaluation: (evaluation: string) => void
+  incrementRetryCount: () => void
+  resetRetryCount: () => void
+  resetState: () => void
 }
 
-const useStore = create<AppState>()(
-  persist(
-    set => ({
-      theme: '',
-      themeType: '',
-      thinkTime: '30',
-      speakTime: '60',
-      level: 'Middle',
-      showTheme: true,
-      readTheme: false,
-      spokenText: '',
-      evaluation: '',
-      setTheme: theme => set({ theme }),
-      setThemeType: themeType => set({ themeType }),
-      setThinkTime: time => set({ thinkTime: time }),
-      setSpeakTime: time => set({ speakTime: time }),
-      setLevel: level => set({ level }),
-      setShowTheme: show => set({ showTheme: show }),
-      setReadTheme: read => set({ readTheme: read }),
-      setSpokenText: text => set({ spokenText: text }),
-      setEvaluation: evaluation => set({ evaluation }),
-    }),
-    {
-      name: 'app-state',
-      storage: createJSONStorage(() => localStorage),
-    },
-  ),
-)
+const initialState = {
+  theme: '',
+  themeType: '',
+  thinkTime: '30',
+  speakTime: '0',
+  level: 'Middle' as Level,
+  showTheme: true,
+  readTheme: false,
+  spokenText: '',
+  evaluation: '',
+  retryCount: 0,
+}
+
+const useStore = create<AppState>(set => ({
+  ...initialState,
+  setTheme: theme => set({ theme }),
+  setThemeType: themeType => set({ themeType }),
+  setThinkTime: time => set({ thinkTime: time }),
+  setSpeakTime: time => set({ speakTime: time }),
+  setLevel: level => set({ level }),
+  setShowTheme: show => set({ showTheme: show }),
+  setReadTheme: read => set({ readTheme: read }),
+  setSpokenText: text => set({ spokenText: text }),
+  setEvaluation: evaluation => set({ evaluation }),
+  incrementRetryCount: () =>
+    set(state => ({ retryCount: state.retryCount + 1 })),
+  resetRetryCount: () => set({ retryCount: 0 }),
+  resetState: () => set(initialState),
+}))
 
 export default useStore
