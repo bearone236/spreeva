@@ -1,3 +1,4 @@
+import path from 'node:path'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
@@ -37,3 +38,10 @@ const nextConfig = {
 }
 
 export default nextConfig
+
+module.exports = {
+  webpack: config => {
+    config.resolve.alias['@'] = path.resolve(__dirname, 'src')
+    return config
+  },
+}

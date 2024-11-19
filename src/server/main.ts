@@ -13,7 +13,7 @@ import { Hono } from 'hono'
 import { hc } from 'hono/client'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
-import { GoogleVisionOcrRepository } from './repository'
+import { GoogleVisionOcrRepository } from './repository/GoogleVisionOcrRepository'
 
 const GEMINI_API_URL = process.env.GEMINI_API_URL as string
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY as string
