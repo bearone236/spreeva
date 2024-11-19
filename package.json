@@ -2,7 +2,6 @@
   "name": "spreeva",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "NODE_OPTIONS='--max-old-space-size=8192' next dev",
     "build": "prisma generate && next build",
