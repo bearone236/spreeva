@@ -1,8 +1,5 @@
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+// biome-ignore lint/style/useNodejsImportProtocol: <explanation>
+import path from 'path'
 
 const config = {
   output: 'standalone',
@@ -31,7 +28,7 @@ const config = {
       }
     }
 
-    config.resolve.alias['@'] = path.resolve(__dirname, 'src')
+    config.resolve.alias['@'] = path.resolve(process.cwd(), 'src')
     return config
   },
   experimental: {
