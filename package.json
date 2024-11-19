@@ -14,9 +14,6 @@
   "prisma": {
     "seed": "node --loader ts-node/esm prisma/seed.ts"
   },
-  "engines": {
-    "node": ">=18.17.0"
-  },
   "dependencies": {
     "@auth/core": "^0.37.3",
     "@auth/prisma-adapter": "^2.7.4",
