@@ -3,7 +3,6 @@ import { SpeechController } from '@/server/controllers/SpeechController'
 import { ThemeController } from '@/server/controllers/ThemeController'
 import { GeminiEvaluationRepository } from '@/server/repository/GeminiEvaluationRepository'
 import { GeminiThemeRepository } from '@/server/repository/GeminiThemeRepository'
-import { GoogleVisionOCRRepository } from '@/server/repository/GoogleVisionOCRRepository'
 import { SpeechRepository } from '@/server/repository/speechRepository'
 import { EvaluateSpeakingUseCase } from '@/server/usecase/EvaluateSpeakingUseCase'
 import { ThemeUseCase } from '@/server/usecase/ThemeUseCase'
@@ -14,6 +13,7 @@ import { Hono } from 'hono'
 import { hc } from 'hono/client'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
+import { GoogleVisionOcrRepository } from './repository'
 
 const GEMINI_API_URL = process.env.GEMINI_API_URL as string
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY as string
@@ -40,7 +40,7 @@ const evaluateSpeakingUseCase = new EvaluateSpeakingUseCase(
   evaluationRepository,
 )
 
-const googleVisionOCRRepository = new GoogleVisionOCRRepository()
+const googleVisionOCRRepository = new GoogleVisionOcrRepository()
 const pdfThemeGenerationUsecase = new PDFThemeGenerationUsecase(
   googleVisionOCRRepository,
 )

@@ -1,4 +1,4 @@
-import type { GoogleVisionOCRRepository } from '../repository/GoogleVisionOCRRepository'
+import type { GoogleVisionOCRRepository } from '../repository/GoogleVisionOcrRepository'
 
 export class PDFThemeGenerationUsecase {
   constructor(private ocrRepository: GoogleVisionOCRRepository) {}
