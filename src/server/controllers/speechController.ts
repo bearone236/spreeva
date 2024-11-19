@@ -1,4 +1,3 @@
-// server/controllers/speechController.ts
 import type { Context } from 'hono'
 import type { RecognizeSpeechUsecase } from '../usecase/recognizeSpeech'
 

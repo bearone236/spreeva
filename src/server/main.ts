@@ -4,7 +4,6 @@ import { hc } from 'hono/client'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import { SpeakingEvaluationController } from './controllers/SpeakingEvaluationController'
-
 import { SpeechController } from './controllers/SpeechController'
 import { ThemeController } from './controllers/ThemeController'
 import { GeminiEvaluationRepository } from './repository/GeminiEvaluationRepository'
