@@ -1,6 +1,5 @@
-import path from 'node:path'
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+// eslint-disable-next-line import/no-anonymous-default-export
+export default {
   output: 'standalone',
   images: {
     remotePatterns: [
@@ -34,14 +33,5 @@ const nextConfig = {
       '@google-cloud/vision',
       '@google-cloud/storage',
     ],
-  },
-}
-
-export default nextConfig
-
-module.exports = {
-  webpack: config => {
-    config.resolve.alias['@'] = path.resolve(__dirname, 'src')
-    return config
   },
 }

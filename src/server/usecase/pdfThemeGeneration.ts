@@ -1,7 +1,7 @@
-import type { GoogleVisionOCRRepository } from '../repository/GoogleVisionOcrRepository'
+import type { GoogleVisionOcrRepository } from '../repository/GoogleVisionOcrRepository'
 
 export class PDFThemeGenerationUsecase {
-  constructor(private ocrRepository: GoogleVisionOCRRepository) {}
+  constructor(private ocrRepository: GoogleVisionOcrRepository) {}
 
   async execute(pdfBlob: Blob): Promise<string> {
     try {
