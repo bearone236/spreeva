@@ -1,5 +1,7 @@
-// eslint-disable-next-line import/no-anonymous-default-export
-export default {
+// eslint-disable-next-line import/no-anonymous-default-export, @typescript-eslint/no-var-requires
+const path = require('node:path')
+
+const config = {
   output: 'standalone',
   images: {
     remotePatterns: [
@@ -26,6 +28,7 @@ export default {
       }
     }
 
+    config.resolve.alias['@'] = path.resolve(__dirname, 'src')
     return config
   },
   experimental: {
@@ -35,3 +38,5 @@ export default {
     ],
   },
 }
+
+export default config
