@@ -26,7 +26,6 @@ export class GoogleVisionOCRRepository {
       contentType: 'application/pdf',
     })
 
-    console.log(`Uploaded PDF to GCS: gs://${bucketName}/${fileName}`)
     return `gs://${bucketName}/${fileName}`
   }
 
@@ -45,7 +44,7 @@ export class GoogleVisionOCRRepository {
           features: [{ type: 'DOCUMENT_TEXT_DETECTION' as const }],
           outputConfig: {
             gcsDestination: {
-              uri: `gs://spreeva-ocr-output/${outputPrefix}`, // プレフィックスを指定
+              uri: `gs://spreeva-ocr-output/${outputPrefix}`,
             },
           },
         },
@@ -55,16 +54,10 @@ export class GoogleVisionOCRRepository {
     const [operation] = await this.client.asyncBatchAnnotateFiles(request)
     await operation.promise()
 
-    console.log('OCR processing completed. Waiting for output files...')
-
     for (let attempt = 0; attempt < 10; attempt++) {
       const [files] = await this.storage.bucket('spreeva-ocr-output').getFiles({
         prefix: outputPrefix,
       })
-
-      console.log(
-        `Attempt ${attempt + 1}: Found ${files.length} files with prefix ${outputPrefix}`,
-      )
 
       if (files.length > 0) {
         const ocrData = JSON.parse(
@@ -76,11 +69,10 @@ export class GoogleVisionOCRRepository {
           throw new Error('OCRテキストが見つかりません。')
         }
 
-        console.log(`OCR Text Extracted: ${fullText}`)
         return fullText
       }
 
-      await new Promise(resolve => setTimeout(resolve, 3000)) // 3秒待機
+      await new Promise(resolve => setTimeout(resolve, 3000))
     }
 
     throw new Error(

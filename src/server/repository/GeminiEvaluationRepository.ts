@@ -1,12 +1,11 @@
-import prisma from '@/lib/prisma'
 import type { PrismaClient } from '@prisma/client'
 import type { SpeakingEvaluation } from '../domain/entities/SpeakingEvaluation'
 import type {
   EvaluationParams,
-  IEvaluationRepository,
-} from '../domain/interfaces/IEvaluationRepository'
+  IEvaluationInterface,
+} from '../domain/interfaces/IEvaluationInterface'
 
-export class GeminiEvaluationRepository implements IEvaluationRepository {
+export class GeminiEvaluationRepository implements IEvaluationInterface {
   constructor(
     private prisma: PrismaClient,
     private apiUrl: string,
@@ -16,31 +15,37 @@ export class GeminiEvaluationRepository implements IEvaluationRepository {
   async generateEvaluation(params: EvaluationParams): Promise<string> {
     const prompt = this.createPrompt(params)
 
-    const response = await fetch(`${this.apiUrl}?key=${this.apiKey}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-      }),
-    })
+    try {
+      const response = await fetch(`${this.apiUrl}?key=${this.apiKey}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+        }),
+      })
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch from Gemini API')
+      if (!response.ok) {
+        throw new Error('Failed to fetch from Gemini API')
+      }
+
+      const data = await response.json()
+      return data.candidates[0].content.parts[0].text
+    } catch (error) {
+      throw new Error('Failed to generate evaluation')
     }
-
-    const data = await response.json()
-    return data.candidates[0].content.parts[0].text
   }
 
   async saveEvaluation(evaluation: SpeakingEvaluation): Promise<void> {
     const userId = evaluation.getUserId()
-    if (!userId) return
+    if (!userId) {
+      throw new Error('User ID is required')
+    }
 
     try {
-      await this.prisma.$transaction(async () => {
-        const speakingResult = await prisma.speakingResult.create({
+      await this.prisma.$transaction(async tx => {
+        const speakingResult = await tx.speakingResult.create({
           data: {
             userId,
             theme: evaluation.getTheme(),
@@ -52,8 +57,7 @@ export class GeminiEvaluationRepository implements IEvaluationRepository {
           },
         })
 
-        // 評価リクエストの保存
-        await prisma.evaluationRequest.create({
+        await tx.evaluationRequest.create({
           data: {
             speakingResultId: speakingResult.id,
             requestBody: JSON.stringify({
@@ -64,12 +68,46 @@ export class GeminiEvaluationRepository implements IEvaluationRepository {
             responseBody: JSON.stringify({
               evaluation: evaluation.getEvaluation(),
             }),
-            status: 'completed',
+            status: 'pending',
           },
         })
       })
     } catch (error) {
-      console.error('Failed to save evaluation:', error)
+      if (error instanceof Error && error.message.includes('status')) {
+        try {
+          await this.prisma.$transaction(async tx => {
+            const speakingResult = await tx.speakingResult.create({
+              data: {
+                userId,
+                theme: evaluation.getTheme(),
+                level: evaluation.getLevel(),
+                thinkTime: evaluation.getThinkTime(),
+                speakTime: evaluation.getSpeakTime(),
+                spokenText: evaluation.getSpokenText(),
+                aiEvaluation: evaluation.getEvaluation(),
+              },
+            })
+
+            await tx.evaluationRequest.create({
+              data: {
+                speakingResultId: speakingResult.id,
+                requestBody: JSON.stringify({
+                  theme: evaluation.getTheme(),
+                  level: evaluation.getLevel(),
+                  transcript: evaluation.getSpokenText(),
+                }),
+                responseBody: JSON.stringify({
+                  evaluation: evaluation.getEvaluation(),
+                }),
+                status: 'pending',
+              },
+            })
+          })
+          return
+        } catch (retryError) {
+          throw new Error('Failed to save evaluation results')
+        }
+      }
       throw new Error('Failed to save evaluation results')
     }
   }

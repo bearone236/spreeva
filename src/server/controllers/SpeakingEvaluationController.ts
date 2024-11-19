@@ -79,8 +79,6 @@ export class SpeakingEvaluationController {
         evaluation: evaluation.getEvaluation(),
       })
     } catch (error) {
-      console.error('Detailed evaluation error:', error)
-
       if (error instanceof z.ZodError) {
         return c.json(
           {

@@ -1,9 +1,9 @@
+import type { ThemeLevel } from '../../types/theme.types'
 import { SpeakingEvaluation } from '../domain/entities/SpeakingEvaluation'
-import type { IEvaluationRepository } from '../domain/interfaces/IEvaluationRepository'
-import type { ThemeLevel } from '../domain/types/theme.types'
+import type { IEvaluationInterface } from '../domain/interfaces/IEvaluationInterface'
 
 export class EvaluateSpeakingUseCase {
-  constructor(private evaluationRepository: IEvaluationRepository) {}
+  constructor(private evaluationRepository: IEvaluationInterface) {}
 
   async execute(params: {
     userId: string | null
@@ -13,41 +13,30 @@ export class EvaluateSpeakingUseCase {
     thinkTime: number
     speakTime: number
   }): Promise<SpeakingEvaluation> {
-    try {
-      // 入力の検証
-      this.validateInput(params)
+    this.validateInput(params)
+    const evaluationText = await this.evaluationRepository.generateEvaluation({
+      theme: params.theme,
+      level: params.level,
+      spokenText: params.spokenText,
+    })
 
-      // 評価の生成
-      const evaluationText = await this.evaluationRepository.generateEvaluation(
-        {
-          theme: params.theme,
-          level: params.level,
-          spokenText: params.spokenText,
-        },
-      )
+    const evaluation = new SpeakingEvaluation(
+      crypto.randomUUID(),
+      params.userId,
+      params.theme,
+      params.spokenText,
+      params.level,
+      params.thinkTime,
+      params.speakTime,
+      evaluationText,
+      new Date(),
+    )
 
-      const evaluation = new SpeakingEvaluation(
-        crypto.randomUUID(),
-        params.userId,
-        params.theme,
-        params.spokenText,
-        params.level,
-        params.thinkTime,
-        params.speakTime,
-        evaluationText,
-        new Date(),
-      )
-
-      // ユーザーが認証されている場合のみ保存
-      if (params.userId) {
-        await this.evaluationRepository.saveEvaluation(evaluation)
-      }
-
-      return evaluation
-    } catch (error) {
-      console.error('Evaluation execution error:', error)
-      throw error
+    if (params.userId) {
+      await this.evaluationRepository.saveEvaluation(evaluation)
     }
+
+    return evaluation
   }
 
   private validateInput(params: {

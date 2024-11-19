@@ -1,7 +1,7 @@
 import type { Context } from 'hono'
 import { z } from 'zod'
-import type { ThemeLevel } from '../domain/types/theme.types'
-import type { GenerateThemeUseCase } from '../usecase/GenerateThemeUseCase'
+import type { ThemeLevel } from '../../types/theme.types'
+import type { ThemeUseCase } from '../usecase/ThemeUseCase'
 import type { PDFThemeGenerationUsecase } from '../usecase/pdfThemeGeneration'
 
 const themeRequestSchema = z.object({
@@ -10,9 +10,34 @@ const themeRequestSchema = z.object({
   themeType: z.enum(['quickstart', 'ocr']),
 })
 
+const themeResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  data: z.object({
+    id: z.string(),
+    content: z.string(),
+    theme: z.string(),
+    level: z.enum(['Low', 'Middle', 'High']),
+    type: z.enum(['quickstart', 'ocr']),
+  }),
+})
+
+const ocrThemeResponseSchema = z.object({
+  success: z.boolean(),
+  theme: z.string(),
+  message: z.string(),
+  data: z.object({
+    id: z.string(),
+    content: z.string(),
+    level: z.enum(['Low', 'Middle', 'High']),
+    type: z.enum(['quickstart', 'ocr']),
+    sourceText: z.string(),
+  }),
+})
+
 export class ThemeController {
   constructor(
-    private generateThemeUseCase: GenerateThemeUseCase,
+    private generateThemeUseCase: ThemeUseCase,
     private pdfThemeGenerationUsecase: PDFThemeGenerationUsecase,
   ) {}
 
@@ -46,7 +71,7 @@ export class ThemeController {
 
         const theme = await this.generateThemeUseCase.execute(validatedData)
 
-        return c.json({
+        const response = ocrThemeResponseSchema.parse({
           success: true,
           theme: theme.getContent(),
           message: theme.getContent(),
@@ -54,30 +79,32 @@ export class ThemeController {
             id: theme.getId(),
             content: theme.getContent(),
             level: theme.getLevel(),
-            type: theme.getGenerationType(),
+            type: theme.getThemeType(),
             sourceText: extractedText,
           },
         })
+
+        return c.json(response)
       }
 
       const body = await c.req.json()
       const validatedData = themeRequestSchema.parse(body)
       const theme = await this.generateThemeUseCase.execute(validatedData)
 
-      return c.json({
+      const response = themeResponseSchema.parse({
         success: true,
         message: theme.getContent(),
         data: {
           id: theme.getId(),
           content: theme.getContent(),
+          theme: theme.getTheme(),
           level: theme.getLevel(),
-          type: theme.getGenerationType(),
-          sourceText: validatedData.theme,
+          type: theme.getThemeType(),
         },
       })
-    } catch (error) {
-      console.error('Theme generation error:', error)
 
+      return c.json(response)
+    } catch (error) {
       if (error instanceof z.ZodError) {
         return c.json(
           {
@@ -89,7 +116,6 @@ export class ThemeController {
         )
       }
 
-      console.error('Theme generation error:', error)
       return c.json(
         {
           success: false,

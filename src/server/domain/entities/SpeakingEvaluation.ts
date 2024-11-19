@@ -1,4 +1,4 @@
-import type { ThemeLevel } from '../types/theme.types'
+import type { ThemeLevel } from '../../../types/theme.types'
 
 export class SpeakingEvaluation {
   constructor(

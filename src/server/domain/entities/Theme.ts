@@ -1,16 +1,12 @@
-import type { GenerationType, ThemeLevel } from '../types/theme.types'
+import type { ThemeLevel, ThemeType } from '../../../types/theme.types'
 
 export class Theme {
-  [x: string]: unknown
-  getSpeakingResultId() {
-    throw new Error('Method not implemented.')
-  }
   constructor(
     private id: string,
     private content: string,
+    private theme: string,
     private level: ThemeLevel,
-    private generationType: GenerationType,
-    private sourceText?: string,
+    private themeType: ThemeType,
   ) {}
 
   getId(): string {
@@ -21,15 +17,15 @@ export class Theme {
     return this.content
   }
 
+  getTheme(): string {
+    return this.theme
+  }
+
   getLevel(): ThemeLevel {
     return this.level
   }
 
-  getGenerationType(): GenerationType {
-    return this.generationType
-  }
-
-  getSourceText(): string | undefined {
-    return this.sourceText
+  getThemeType(): ThemeType {
+    return this.themeType
   }
 }

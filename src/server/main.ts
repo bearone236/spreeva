@@ -4,14 +4,15 @@ import { hc } from 'hono/client'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import { SpeakingEvaluationController } from './controllers/SpeakingEvaluationController'
+
+import { SpeechController } from './controllers/SpeechController'
 import { ThemeController } from './controllers/ThemeController'
-import { SpeechController } from './controllers/speechController'
 import { GeminiEvaluationRepository } from './repository/GeminiEvaluationRepository'
 import { GeminiThemeRepository } from './repository/GeminiThemeRepository'
-import { GoogleVisionOCRRepository } from './repository/googleVisionOCRRepository'
+import { GoogleVisionOCRRepository } from './repository/GoogleVisionOCRRepository'
 import { SpeechRepository } from './repository/speechRepository'
 import { EvaluateSpeakingUseCase } from './usecase/EvaluateSpeakingUseCase'
-import { GenerateThemeUseCase } from './usecase/GenerateThemeUseCase'
+import { ThemeUseCase } from './usecase/ThemeUseCase'
 import { PDFThemeGenerationUsecase } from './usecase/pdfThemeGeneration'
 import { RecognizeSpeechUsecase } from './usecase/recognizeSpeech'
 
@@ -35,7 +36,7 @@ const evaluationRepository = new GeminiEvaluationRepository(
   GEMINI_API_KEY,
 )
 
-const generateThemeUseCase = new GenerateThemeUseCase(themeRepository)
+const generateThemeUseCase = new ThemeUseCase(themeRepository)
 const evaluateSpeakingUseCase = new EvaluateSpeakingUseCase(
   evaluationRepository,
 )
@@ -47,7 +48,6 @@ const pdfThemeGenerationUsecase = new PDFThemeGenerationUsecase(
 
 const app = new Hono().basePath('/api')
 
-// ThemeControllerのインスタンスに引数を渡して作成
 const themeController = new ThemeController(
   generateThemeUseCase,
   pdfThemeGenerationUsecase,
@@ -59,7 +59,6 @@ const speechRepository = new SpeechRepository()
 const recognizeSpeechUsecase = new RecognizeSpeechUsecase(speechRepository)
 const speechController = new SpeechController(recognizeSpeechUsecase)
 
-// CORS設定
 app.use('*', cors())
 app.use(logger())
 
