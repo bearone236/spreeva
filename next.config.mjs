@@ -1,5 +1,4 @@
-// eslint-disable-next-line import/no-anonymous-default-export, @typescript-eslint/no-var-requires
-const path = require('node:path')
+import path from 'node:path'
 
 const config = {
   output: 'standalone',
