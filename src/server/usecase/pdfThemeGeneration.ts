@@ -5,11 +5,9 @@ export class PDFThemeGenerationUsecase {
 
   async execute(pdfBlob: Blob): Promise<string> {
     try {
-      // BlobからBufferに変換
       const arrayBuffer = await pdfBlob.arrayBuffer()
       const buffer = Buffer.from(arrayBuffer)
 
-      // PDFからテキストを抽出
       const blob = new Blob([buffer], { type: 'application/pdf' })
       const extractedText = await this.ocrRepository.extractTextFromPDF(blob)
 
@@ -19,7 +17,6 @@ export class PDFThemeGenerationUsecase {
 
       return extractedText
     } catch (error) {
-      console.error('PDF processing error:', error)
       throw new Error('PDFの処理に失敗しました')
     }
   }

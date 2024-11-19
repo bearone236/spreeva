@@ -1,4 +1,4 @@
-import type { ThemeType } from '@/types/theme.types'
+import type { ThemeLevel } from '@/types/theme.types'
 import { create } from 'zustand'
 
 interface AppState {
@@ -6,7 +6,7 @@ interface AppState {
   themeType: string
   thinkTime: string
   speakTime: string
-  level: ThemeType
+  level: ThemeLevel
   showTheme: boolean
   readTheme: boolean
   spokenText: string
@@ -16,7 +16,7 @@ interface AppState {
   setThemeType: (themeType: string) => void
   setThinkTime: (time: string) => void
   setSpeakTime: (time: string) => void
-  setLevel: (level: ThemeType) => void
+  setLevel: (level: ThemeLevel) => void
   setShowTheme: (show: boolean) => void
   setReadTheme: (read: boolean) => void
   setSpokenText: (text: string) => void
@@ -31,7 +31,7 @@ const initialState = {
   themeType: '',
   thinkTime: '30',
   speakTime: '30',
-  level: 'Middle' as ThemeType,
+  level: 'Middle' as ThemeLevel,
   showTheme: true,
   readTheme: false,
   spokenText: '',

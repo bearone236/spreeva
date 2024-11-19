@@ -1,11 +1,11 @@
-type Level = 'Low' | 'Middle' | 'High'
+import type { ThemeLevel } from '@/types/theme.types'
 
 interface LevelDisplayProps {
-  level: Level
+  level: ThemeLevel
 }
 
 const LevelDisplay: React.FC<LevelDisplayProps> = ({ level }) => {
-  const getLevelColor = (level: Level) => {
+  const getLevelColor = (level: ThemeLevel) => {
     switch (level) {
       case 'Low':
         return 'bg-green-600'
