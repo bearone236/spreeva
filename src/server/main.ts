@@ -4,11 +4,11 @@ import { hc } from 'hono/client'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import { SpeakingEvaluationController } from './controllers/SpeakingEvaluationController'
-import { SpeechController } from './controllers/SpeechController'
-import { ThemeController } from './controllers/ThemeController'
+import { SpeechController } from './controllers/speechController'
+import { ThemeController } from './controllers/themeController'
 import { GeminiEvaluationRepository } from './repository/GeminiEvaluationRepository'
 import { GeminiThemeRepository } from './repository/GeminiThemeRepository'
-import { GoogleVisionOcrRepository } from './repository/GoogleVisionOcrRepository'
+import { GoogleVisionOCRRepository } from './repository/GoogleVisionOCRRepository'
 import { SpeechRepository } from './repository/speechRepository'
 import { EvaluateSpeakingUseCase } from './usecase/EvaluateSpeakingUseCase'
 import { ThemeUseCase } from './usecase/ThemeUseCase'
@@ -40,7 +40,7 @@ const evaluateSpeakingUseCase = new EvaluateSpeakingUseCase(
   evaluationRepository,
 )
 
-const googleVisionOCRRepository = new GoogleVisionOcrRepository()
+const googleVisionOCRRepository = new GoogleVisionOCRRepository()
 const pdfThemeGenerationUsecase = new PDFThemeGenerationUsecase(
   googleVisionOCRRepository,
 )
