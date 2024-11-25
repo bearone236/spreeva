@@ -1,26 +1,14 @@
-/*
-  Warnings:
+-- First, drop all foreign key constraints
+ALTER TABLE "Account" DROP CONSTRAINT IF EXISTS "Account_userId_fkey";
+ALTER TABLE "Session" DROP CONSTRAINT IF EXISTS "Session_userId_fkey";
+ALTER TABLE "SpeakingResult" DROP CONSTRAINT IF EXISTS "SpeakingResult_userId_fkey";
+ALTER TABLE "UserPreference" DROP CONSTRAINT IF EXISTS "UserPreference_userId_fkey";
 
-  - You are about to drop the `Session` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `User` table. If the table is not empty, all the data it contains will be lost.
+-- Now we can safely drop the tables
+DROP TABLE IF EXISTS "Session";
+DROP TABLE IF EXISTS "User";
 
-*/
--- DropForeignKey
-ALTER TABLE "Account" DROP CONSTRAINT "Account_userId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Session" DROP CONSTRAINT "Session_userId_fkey";
-
--- DropForeignKey
-ALTER TABLE "SpeakingResult" DROP CONSTRAINT "SpeakingResult_userId_fkey";
-
--- DropTable
-DROP TABLE "Session";
-
--- DropTable
-DROP TABLE "User";
-
--- CreateTable
+-- Create new tables
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
     "name" TEXT,
@@ -34,7 +22,6 @@ CREATE TABLE "users" (
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "sessions" (
     "id" TEXT NOT NULL,
     "sessionToken" TEXT NOT NULL,
@@ -46,17 +33,20 @@ CREATE TABLE "sessions" (
     CONSTRAINT "sessions_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
+-- Create indexes
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
-
--- CreateIndex
 CREATE UNIQUE INDEX "sessions_sessionToken_key" ON "sessions"("sessionToken");
 
--- AddForeignKey
-ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- Add back foreign key constraints
+ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" 
+    FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
-ALTER TABLE "sessions" ADD CONSTRAINT "sessions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "sessions" ADD CONSTRAINT "sessions_userId_fkey" 
+    FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
-ALTER TABLE "SpeakingResult" ADD CONSTRAINT "SpeakingResult_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "SpeakingResult" ADD CONSTRAINT "SpeakingResult_userId_fkey" 
+    FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- If UserPreference table exists and needs to be linked
+ALTER TABLE "UserPreference" ADD CONSTRAINT "UserPreference_userId_fkey"
+    FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -2,11 +2,19 @@
 
 import LevelDisplay from '@/components/LevelDisplay'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import type { ThemeLevel } from '@/types/theme.types'
 import ReactMarkdown from 'react-markdown'
 import useStore from '../../provider/store/useStore'
 
 export default function EvaluatePage() {
-  const { theme, level, thinkTime, speakTime, evaluation } = useStore()
+  const {
+    theme,
+    level: themeLevel,
+    thinkTime,
+    speakTime,
+    evaluation,
+  } = useStore()
+  const level: ThemeLevel = themeLevel as ThemeLevel
 
   return (
     <div className='flex flex-col items-center justify-center p-3'>

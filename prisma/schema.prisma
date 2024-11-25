@@ -17,6 +17,7 @@ model User {
   accounts        Account[]
   sessions        Session[]
   speakingResults SpeakingResult[]
+  preferences     UserPreference?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
@@ -26,21 +27,22 @@ model User {
 model Account {
   id                String   @id @default(cuid())
   userId            String
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String?
-  access_token      String?
+  refresh_token     String?  @db.Text
+  access_token      String?  @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?
+  id_token          String?  @db.Text
   session_state     String?
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -55,35 +57,47 @@ model Session {
   @@map("sessions")
 }
 
+model UserPreference {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id])
+  defaultThinkTime  Int      @default(30)
+  defaultSpeakTime  Int      @default(60)
+  defaultThemeLevel String   @default("Middle")
+  autoReadTheme     Boolean  @default(false)
+  showTheme         Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
 model SpeakingResult {
-  id                   String              @id @default(cuid())
-  userId               String
-  user                 User                @relation(fields: [userId], references: [id])
-  theme                String
-  level                String
-  thinkTime            Int
-  speakTime            Int
-  spokenText           String
-  aiEvaluation         String?
-  aiImprovedText       String?
-  speechScore          Int?
-  grammarAccuracy      Int?
-  vocabularyRange      Int?
-  pronunciationClarity Int?
-  fluency              Int?
-  contentRelevance     Int?
-  evaluationRequests   EvaluationRequest[]
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
+  id                 String              @id @default(cuid())
+  userId             String
+  theme              String              @db.Text
+  user               User                @relation(fields: [userId], references: [id])
+  level              String // ThemeLevelからStringに変更
+  thinkTime          Int
+  speakTime          Int
+  spokenText         String              @db.Text // 長文対応
+  aiEvaluation       String?             @db.Text
+  aiImprovedText     String?             @db.Text
+  evaluationRequests EvaluationRequest[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@index([userId, createdAt])
 }
 
 model EvaluationRequest {
   id               String         @id @default(cuid())
   speakingResultId String
   speakingResult   SpeakingResult @relation(fields: [speakingResultId], references: [id])
-  requestBody      String
-  responseBody     String
+  requestBody      String         @db.Text
+  responseBody     String         @db.Text
+  status           String // 処理状態
   createdAt        DateTime       @default(now())
+
+  @@index([speakingResultId])
 }
 
 model OrganizationUser {

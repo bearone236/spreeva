@@ -32,7 +32,9 @@ const PDFUploadForm = () => {
       })
 
       const data = await response.json()
-      if (data.error) throw new Error(data.error)
+      if (!response.ok) {
+        throw new Error(data.error || '予期しないエラーが発生しました')
+      }
 
       setTheme(data.theme)
       setThemeType('ocr')

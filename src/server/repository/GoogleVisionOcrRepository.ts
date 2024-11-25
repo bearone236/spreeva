@@ -2,7 +2,7 @@ import { Storage } from '@google-cloud/storage'
 import { v1 as vision } from '@google-cloud/vision'
 import { v4 as uuidv4 } from 'uuid'
 
-export class GoogleVisionOCRRepository {
+export class GoogleVisionOcrRepository {
   private client: vision.ImageAnnotatorClient
   private storage: Storage = new Storage()
 

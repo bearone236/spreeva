@@ -32,10 +32,10 @@ export default function ResultPage() {
     const evaluationData = {
       userId: session?.user?.id || null,
       theme,
-      themeType,
+      themeType: themeType as 'quickstart' | 'ocr',
       level,
-      thinkTime,
-      speakTime,
+      thinkTime: Number(thinkTime),
+      speakTime: Number(speakTime),
       transcript: spokenText,
     }
 
@@ -46,11 +46,18 @@ export default function ResultPage() {
         body: JSON.stringify(evaluationData),
       })
 
-      if (!response.ok) throw new Error('Failed to evaluate speech')
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to evaluate speech')
+      }
 
       const data = await response.json()
-      setEvaluation(data.evaluation)
-      router.push('/evaluate')
+      if (data.success) {
+        setEvaluation(data.evaluation)
+        router.push('/evaluate')
+      } else {
+        throw new Error(data.error || 'Failed to evaluate speech')
+      }
     } catch (error) {
       alert('評価に失敗しました。もう一度お試しください。')
     } finally {
