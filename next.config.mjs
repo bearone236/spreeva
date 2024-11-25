@@ -39,12 +39,7 @@ const config = {
     }
     return config
   },
-  experimental: {
-    serverComponentsExternalPackages: [
-      '@google-cloud/vision',
-      '@google-cloud/storage',
-    ],
-  },
+  serverExternalPackages: ['@google-cloud/vision', '@google-cloud/storage'],
 }
 
 export default config
