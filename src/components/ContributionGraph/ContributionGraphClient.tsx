@@ -160,11 +160,14 @@ const ContributionGraphClient: React.FC<ContributionGraphProps> = ({
           <div className='overflow-x-auto' ref={containerRef}>
             <div className='flex'>
               <div className='flex flex-col mr-2 text-xs text-gray-500 mt-7'>
-                {displayDayLabels.map(day => (
-                  <span key={day} className='h-[16px]'>
-                    {day}
-                  </span>
-                ))}
+                {displayDayLabels.map((day, index) => {
+                  const dayKey = day || `empty-${index}`
+                  return (
+                    <span key={dayKey} className='h-[16px]'>
+                      {day}
+                    </span>
+                  )
+                })}
               </div>
               <div>
                 <div className='flex mb-2 text-xs text-gray-500 justify-center'>
