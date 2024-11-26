@@ -28,6 +28,10 @@ export default function Header() {
                 alt='Spreeva'
                 width={130}
                 height={50}
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                }}
                 className='mr-2'
                 priority={true}
               />
