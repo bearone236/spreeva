@@ -26,7 +26,7 @@ export default function Header() {
               <Image
                 src='/spreeva-icon.png'
                 alt='Spreeva'
-                width={130}
+                width={120}
                 height={50}
                 style={{
                   width: '100%',

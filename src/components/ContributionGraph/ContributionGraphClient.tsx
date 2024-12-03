@@ -220,7 +220,7 @@ const ContributionGraphClient: React.FC<ContributionGraphProps> = ({
                             </TooltipTrigger>
                             <TooltipContent>
                               <span>
-                                {count} {count === 1 ? 'lesson' : 'lessons'} on
+                                {count} {count === 1 ? 'lesson' : 'lessons'} on{' '}
                                 {dayLabels[dayOfWeek]} {dateString}
                               </span>
                             </TooltipContent>

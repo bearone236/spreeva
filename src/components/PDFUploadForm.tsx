@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Player } from '@lottiefiles/react-lottie-player'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import useStore from '../provider/store/useStore'
@@ -75,7 +76,19 @@ const PDFUploadForm = () => {
               : 'bg-gray-400 cursor-not-allowed'
           }`}
         >
-          {loading ? 'アップロード中...' : 'アップロード'}
+          {loading ? (
+            <>
+              <Player
+                autoplay
+                loop
+                src={'/select-loading.json'}
+                style={{ height: '40px', width: '40px' }}
+              />
+              <span className='ml-2'>アップロード中</span>
+            </>
+          ) : (
+            'アップロード'
+          )}
         </Button>
       </div>
     </div>

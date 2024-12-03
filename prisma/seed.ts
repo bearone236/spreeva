@@ -9,6 +9,7 @@ async function main() {
     where: { id: 'unique-organization-id' },
     update: {},
     create: {
+      id: 'unique-organization-id',
       name: 'Test Organization',
       description: 'This is a test organization',
       organizationType: 'School',

@@ -14,12 +14,12 @@ model User {
   emailVerified   DateTime?
   image           String?
   userType        String           @default("user")
-  accounts        Account[]
-  sessions        Session[]
-  speakingResults SpeakingResult[]
-  preferences     UserPreference?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+  accounts        Account[]
+  speakingResults SpeakingResult[]
+  preferences     UserPreference?
+  sessions        Session[]
 
   @@map("users")
 }
@@ -30,16 +30,16 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String?  @db.Text
-  access_token      String?  @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?  @db.Text
+  id_token          String?
   session_state     String?
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -49,10 +49,10 @@ model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
   userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expires      DateTime
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
@@ -60,7 +60,6 @@ model Session {
 model UserPreference {
   id                String   @id @default(cuid())
   userId            String   @unique
-  user              User     @relation(fields: [userId], references: [id])
   defaultThinkTime  Int      @default(30)
   defaultSpeakTime  Int      @default(60)
   defaultThemeLevel String   @default("Middle")
@@ -68,22 +67,23 @@ model UserPreference {
   showTheme         Boolean  @default(true)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id])
 }
 
 model SpeakingResult {
   id                 String              @id @default(cuid())
   userId             String
-  theme              String              @db.Text
-  user               User                @relation(fields: [userId], references: [id])
-  level              String // ThemeLevelからStringに変更
   thinkTime          Int
   speakTime          Int
-  spokenText         String              @db.Text // 長文対応
-  aiEvaluation       String?             @db.Text
-  aiImprovedText     String?             @db.Text
-  evaluationRequests EvaluationRequest[]
+  spokenText         String
+  aiEvaluation       String?
+  aiImprovedText     String?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
+  level              String
+  theme              String
+  evaluationRequests EvaluationRequest[]
+  user               User                @relation(fields: [userId], references: [id])
 
   @@index([userId, createdAt])
 }
@@ -91,11 +91,11 @@ model SpeakingResult {
 model EvaluationRequest {
   id               String         @id @default(cuid())
   speakingResultId String
-  speakingResult   SpeakingResult @relation(fields: [speakingResultId], references: [id])
-  requestBody      String         @db.Text
-  responseBody     String         @db.Text
-  status           String // 処理状態
+  requestBody      String
+  responseBody     String
   createdAt        DateTime       @default(now())
+  status           String
+  speakingResult   SpeakingResult @relation(fields: [speakingResultId], references: [id])
 
   @@index([speakingResultId])
 }
@@ -107,10 +107,10 @@ model OrganizationUser {
   password       String
   userType       String
   organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  groups         Group[]
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  groups         Group[]      @relation("GroupToOrganizationUser")
 }
 
 model Organization {
@@ -118,18 +118,18 @@ model Organization {
   name             String
   description      String
   organizationType String
-  users            OrganizationUser[]
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   Group            Group[]
+  users            OrganizationUser[]
 }
 
 model Group {
   id             String             @id @default(cuid())
   name           String
   organizationId String
-  organization   Organization       @relation(fields: [organizationId], references: [id])
-  members        OrganizationUser[]
   createdAt      DateTime           @default(now())
   updatedAt      DateTime           @updatedAt
+  organization   Organization       @relation(fields: [organizationId], references: [id])
+  members        OrganizationUser[] @relation("GroupToOrganizationUser")
 }
