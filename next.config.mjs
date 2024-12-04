@@ -12,6 +12,10 @@ const config = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'accounts.google.com',
+      },
+      {
+        protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
       },
     ],
