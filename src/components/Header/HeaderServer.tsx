@@ -1,8 +1,10 @@
+import auth from 'middleware'
 import Image from 'next/image'
 import Link from 'next/link'
 import HeaderClient from './HeaderClient'
 
 export default async function HeaderServer() {
+  const session = await auth()
   return (
     <header className='bg-[#1a2b3c] py-4 px-6 shadow-md fixed top-0 left-0 w-full z-50'>
       <div className='container mx-auto flex justify-between items-center'>
@@ -19,7 +21,7 @@ export default async function HeaderServer() {
             <span className='sr-only'>Spreeva</span>
           </div>
         </Link>
-        <HeaderClient />
+        <HeaderClient session={session} />
       </div>
     </header>
   )

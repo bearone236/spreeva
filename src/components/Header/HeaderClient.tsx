@@ -1,15 +1,10 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
+import type { Session } from 'next-auth'
 import { Button } from '../ui/button'
 import HeaderUserMenu from './HeaderUserMenu'
 
-export default function HeaderClient() {
-  const { data: session, status } = useSession()
-
-  if (status === 'loading') {
-    return null
-  }
+export default function HeaderClient({ session }: { session: Session | null }) {
   return (
     <nav className='flex items-center space-x-4'>
       <Button
