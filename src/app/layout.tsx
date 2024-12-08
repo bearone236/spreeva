@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Suspense } from 'react'
 import './globals.css'
-import Header from '@/components/Header'
+import HeaderServer from '@/components/Header/HeaderServer'
 import LoadingAnimation from '@/components/Loading'
 import AuthProvider from '@/provider/AuthProvider'
 
@@ -31,8 +31,8 @@ export default async function RootLayout({
     <html lang='en' className={`${inter.variable} font-sans`}>
       <body className={`${inter.className} bg-orange-50`}>
         <AuthProvider>
-          <Header />
-          <div className='pt-8 px-8'>
+          <HeaderServer />
+          <div className='pt-24 px-8 '>
             <Suspense fallback={<LoadingAnimation />}>{children}</Suspense>
           </div>
         </AuthProvider>
