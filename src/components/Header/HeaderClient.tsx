@@ -1,8 +1,7 @@
 'use client'
 
-import { History, Home, LogIn, LogOut } from 'lucide-react'
+import { History, Home, LogIn } from 'lucide-react'
 import type { Session } from 'next-auth'
-import { signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { Button } from '../ui/button'
 import HeaderUserMenu from './HeaderUserMenu'
@@ -30,15 +29,6 @@ export default function HeaderClient({ session }: { session: Session | null }) {
       </Button>
       {session ? (
         <>
-          <Button
-            variant='ghost'
-            size='sm'
-            className='text-white hover:text-[#1a2b3c] hover:bg-white'
-            onClick={() => signOut({ callbackUrl: '/' })}
-          >
-            <LogOut className='mr-2 h-4 w-4' />
-            ログアウト
-          </Button>
           <HeaderUserMenu session={session} />
         </>
       ) : (
