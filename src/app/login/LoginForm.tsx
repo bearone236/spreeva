@@ -50,7 +50,7 @@ export default function LoginForm() {
   }
 
   return (
-    <div className='min-h-screen flex justify-center items-center bg-orange-50 '>
+    <div className='pt-20 flex justify-center items-center bg-orange-50 '>
       <div className='max-w-md mx-auto p-8 bg-white rounded-lg shadow-md'>
         <div className='flex justify-center'>
           <Image

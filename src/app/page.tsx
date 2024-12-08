@@ -13,9 +13,9 @@ export default async function Page() {
       <main>
         {session?.user ? (
           <>
-            <h2 className='text-2xl font-bold'>
+            {/* <h2 className='text-2xl font-bold'>
               {`Hello, ${session.user.name}`}
-            </h2>
+            </h2> */}
             <div className='flex flex-col'>
               <div className='flex flex-col md:flex-row gap-6 mt-5'>
                 <div className='md:w-1/2'>
@@ -33,7 +33,7 @@ export default async function Page() {
           </>
         ) : (
           <div>
-            <h2 className='text-2xl font-bold'>Hello, Guest</h2>
+            {/* <h2 className='text-2xl font-bold'>Hello, Guest</h2> */}
             <div className='flex flex-col'>
               <div className='flex flex-col md:flex-row gap-6 mt-5'>
                 <div className='md:w-1/2'>
