@@ -1,4 +1,4 @@
-import auth from 'middleware'
+import { auth } from '@/app/api/auth/[...nextauth]/auth'
 import Image from 'next/image'
 import Link from 'next/link'
 import HeaderClient from './HeaderClient'
