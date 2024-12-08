@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/tooltip'
 import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { Skeleton } from '../ui/skeleton'
 
 type ContributionGraphProps = {
   contributions: { [key: string]: number }
@@ -127,7 +128,49 @@ const ContributionGraphClient: React.FC<ContributionGraphProps> = ({
   ]
 
   if (!year) {
-    return <div>Loading...</div>
+    return (
+      <div className='bg-white p-6 rounded-lg shadow-md'>
+        <h1 className='text-[#e67e22] text-2xl font-bold'>
+          <Skeleton className='h-7 w-[150px] mb-4' />
+        </h1>
+        <div className='flex justify-between items-center mb-4'>
+          <Skeleton className='h-6 w-[200px] mb-2' />
+          <Skeleton className='h-6 w-[80px]' />
+        </div>
+
+        <div className='overflow-x-auto'>
+          <div className='flex'>
+            <div className='flex flex-col mr-2 text-xs text-gray-500 mt-7'>
+              <Skeleton className='h-[16px] w-[20px] mb-1' />
+              <Skeleton className='h-[16px] w-[20px] mb-1' />
+              <Skeleton className='h-[16px] w-[20px] mb-1' />
+              <Skeleton className='h-[16px] w-[20px] mb-1' />
+              <Skeleton className='h-[16px] w-[20px] mb-1' />
+              <Skeleton className='h-[16px] w-[20px] mb-1' />
+              <Skeleton className='h-[16px] w-[20px]' />
+            </div>
+
+            <div className='w-full'>
+              <Skeleton className='h-[15px] w-full mb-2' />
+              <div className='flex'>
+                <Skeleton className='w-[15px] h-[15px] m-[1px]' />
+                <Skeleton className='w-[15px] h-[15px] m-[1px]' />
+                <Skeleton className='w-[15px] h-[15px] m-[1px]' />
+                <Skeleton className='w-[15px] h-[15px] m-[1px]' />
+                <Skeleton className='w-[15px] h-[15px] m-[1px]' />
+              </div>
+              <div className='flex'>
+                <Skeleton className='w-[15px] h-[15px] m-[1px]' />
+                <Skeleton className='w-[15px] h-[15px] m-[1px]' />
+                <Skeleton className='w-[15px] h-[15px] m-[1px]' />
+                <Skeleton className='w-[15px] h-[15px] m-[1px]' />
+                <Skeleton className='w-[15px] h-[15px] m-[1px]' />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
