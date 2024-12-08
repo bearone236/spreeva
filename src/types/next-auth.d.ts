@@ -7,22 +7,31 @@ declare module 'next-auth' {
     user: {
       id: string
       userType: string
+      organizationId?: string
+      organizationName?: string
     } & DefaultSession['user']
   }
+
   interface User extends DefaultUser {
     id: string
     userType: string
+    organizationId?: string
+    organizationName?: string
   }
 }
 
 declare module 'next-auth/jwt' {
   interface JWT extends DefaultJWT {
     userType: string
+    organizationId?: string
+    organizationName?: string
   }
 }
 
 declare module '@auth/core/adapters' {
   interface AdapterUser extends BaseAdapterUser {
     userType: string
+    organizationId?: string
+    organizationName?: string
   }
 }
