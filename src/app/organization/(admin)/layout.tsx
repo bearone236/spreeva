@@ -5,8 +5,6 @@ import type { FC, ReactNode } from 'react'
 const AdminLayout: FC<{ children: ReactNode }> = async ({ children }) => {
   const session = await auth()
 
-  console.log('organization/layout.tsx Session', session)
-
   if (
     !session?.user ||
     (session.user as { userType?: string }).userType !== 'admin'

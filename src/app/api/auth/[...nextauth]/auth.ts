@@ -41,7 +41,6 @@ export const { auth, handlers, signOut } = NextAuth({
         userType: session.user.userType,
       }
       session.user = user
-      console.log('session', session)
       return session
     },
 
@@ -50,7 +49,6 @@ export const { auth, handlers, signOut } = NextAuth({
         token.id = user.id
         token.userType = user.userType
       }
-      console.log('jwt', token)
       return token
     },
   },
