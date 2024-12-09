@@ -32,7 +32,7 @@ export default async function RootLayout({
       <body className={`${inter.className} bg-orange-50`}>
         <AuthProvider>
           <HeaderServer />
-          <div className='pt-24 px-8 '>
+          <div className='pt-20 px-8 '>
             <Suspense fallback={<LoadingAnimation />}>{children}</Suspense>
           </div>
         </AuthProvider>

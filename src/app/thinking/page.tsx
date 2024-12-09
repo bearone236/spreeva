@@ -99,9 +99,23 @@ export default function ThinkingPage() {
                   Theme
                 </h3>
                 {showTheme ? (
-                  <p className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
-                    <ReactMarkdown>{theme}</ReactMarkdown>
-                  </p>
+                  <div className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
+                    <ReactMarkdown
+                      components={{
+                        p: ({ children }) => (
+                          <div
+                            style={{
+                              userSelect: 'none',
+                            }}
+                          >
+                            {children}
+                          </div>
+                        ),
+                      }}
+                    >
+                      {theme}
+                    </ReactMarkdown>
+                  </div>
                 ) : (
                   <div className='flex items-center justify-center text-lg text-gray-500 bg-[#f6f6f6] p-4 rounded-lg border-l-4 border-gray-300'>
                     <span className='italic'>テーマが非表示です</span>
@@ -122,15 +136,17 @@ export default function ThinkingPage() {
               </div>
             </>
           ) : gracePeriod > 0 ? (
-            <div className='flex justify-center items-center'>
-              <div className='text-center'>
-                <div className='text-2xl font-bold text-[#ed7e00] mb-2'>
+            <div className='flex justify-center items-center p-20'>
+              <div className='text-center space-y-4'>
+                <div className='text-3xl font-bold text-[#ed7e00]'>
                   Speaking画面に遷移します
                 </div>
-                <div className='text-5xl font-bold text-[#ed9600] mb-2'>
+                <div className='text-6xl font-extrabold text-[#ed9600]'>
                   {gracePeriod}
                 </div>
-                <p className='text-xl text-[#ed9600]'>秒後に遷移します</p>
+                <p className='text-2xl text-[#ed9600] font-semibold'>
+                  秒後に遷移します
+                </p>
               </div>
             </div>
           ) : null}

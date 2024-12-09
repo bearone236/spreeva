@@ -110,7 +110,7 @@ export default function ResultPage() {
             </Button>
             {isLoading ? (
               <Button className='bg-[#ed7e00] text-white' disabled>
-                Loading...
+                評価中...
               </Button>
             ) : (
               <Button
