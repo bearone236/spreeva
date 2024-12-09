@@ -51,6 +51,19 @@ export default function ResultPage() {
       }
 
       const data = await response.json()
+      // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
+      let evaluationObject
+      if (data.evaluation && typeof data.evaluation === 'string') {
+        try {
+          evaluationObject = JSON.parse(data.evaluation)
+        } catch (error) {
+          evaluationObject = null
+        }
+      } else {
+        evaluationObject = data.evaluation
+      }
+
+      console.log('evaluationObject', evaluationObject)
 
       if (data.success) {
         setEvaluation(data.evaluation)
