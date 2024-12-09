@@ -1,3 +1,4 @@
+import { GoogleGenerativeAI } from '@google/generative-ai'
 import type { PrismaClient } from '@prisma/client'
 import type { SpeakingEvaluation } from '../domain/entities/SpeakingEvaluation'
 import type {
@@ -6,35 +7,41 @@ import type {
 } from '../domain/interfaces/IEvaluationInterface'
 
 export class GeminiEvaluationRepository implements IEvaluationInterface {
-  constructor(
-    private prisma: PrismaClient,
-    private apiUrl: string,
-    private apiKey: string,
-  ) {}
+  private genAI: GoogleGenerativeAI
+
+  constructor(private prisma: PrismaClient) {
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY is not defined')
+    }
+    this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
+  }
+
+  private async generateContentFromAI(prompt: string): Promise<string> {
+    try {
+      const model = this.genAI.getGenerativeModel({
+        model: 'gemini-1.5-flash',
+        generationConfig: { responseMimeType: 'application/json' },
+      })
+
+      const result = await model.generateContent(prompt)
+      if (!result || !result.response) {
+        throw new Error('Failed to generate content from Gemini AI')
+      }
+      return result.response.text()
+    } catch (error) {
+      console.error('Error generating content from Gemini AI:', error)
+      throw new Error('Failed to generate content from Gemini AI')
+    }
+  }
 
   async generateEvaluation(params: EvaluationParams): Promise<string> {
     const prompt = this.createPrompt(params)
+    return this.generateContentFromAI(prompt)
+  }
 
-    try {
-      const response = await fetch(`${this.apiUrl}?key=${this.apiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch from Gemini API')
-      }
-
-      const data = await response.json()
-      return data.candidates[0].content.parts[0].text
-    } catch (error) {
-      throw new Error('Failed to generate evaluation')
-    }
+  async generateImprovedText(params: EvaluationParams): Promise<string> {
+    const prompt = this.createImprovementPrompt(params)
+    return this.generateContentFromAI(prompt)
   }
 
   async saveEvaluation(evaluation: SpeakingEvaluation): Promise<void> {
@@ -53,26 +60,19 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
             thinkTime: evaluation.getThinkTime(),
             speakTime: evaluation.getSpeakTime(),
             spokenText: evaluation.getSpokenText(),
-            aiEvaluation: evaluation.getEvaluation(),
           },
         })
 
-        await tx.evaluationRequest.create({
+        await tx.evaluation.create({
           data: {
             speakingResultId: speakingResult.id,
-            requestBody: JSON.stringify({
-              theme: evaluation.getTheme(),
-              level: evaluation.getLevel(),
-              transcript: evaluation.getSpokenText(),
-            }),
-            responseBody: JSON.stringify({
-              evaluation: evaluation.getEvaluation(),
-            }),
-            status: 'pending',
+            aiEvaluation: evaluation.getEvaluation(),
+            aiImprovedText: evaluation.getImprovedText(),
           },
         })
       })
     } catch (error) {
+      console.error('Error during saveEvaluation (initial attempt):', error)
       if (error instanceof Error && error.message.includes('status')) {
         try {
           await this.prisma.$transaction(async tx => {
@@ -84,28 +84,20 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
                 thinkTime: evaluation.getThinkTime(),
                 speakTime: evaluation.getSpeakTime(),
                 spokenText: evaluation.getSpokenText(),
-                aiEvaluation: evaluation.getEvaluation(),
               },
             })
 
-            await tx.evaluationRequest.create({
+            await tx.evaluation.create({
               data: {
                 speakingResultId: speakingResult.id,
-                requestBody: JSON.stringify({
-                  theme: evaluation.getTheme(),
-                  level: evaluation.getLevel(),
-                  transcript: evaluation.getSpokenText(),
-                }),
-                responseBody: JSON.stringify({
-                  evaluation: evaluation.getEvaluation(),
-                }),
-                status: 'pending',
+                aiEvaluation: evaluation.getEvaluation(),
+                aiImprovedText: evaluation.getImprovedText(),
               },
             })
           })
           return
         } catch (retryError) {
-          throw new Error('Failed to save evaluation results')
+          throw new Error('Failed to save evaluation results after retry')
         }
       }
       throw new Error('Failed to save evaluation results')
@@ -119,13 +111,49 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
 レベル: ${params.level}
 スピーチ: ${params.spokenText}
 
-以下の点について、Markdown形式で評価を提供してください：
+以下の点について、評価を行い、その評価結果をJSON形式で返してください：
 
 1. 文法の正確性
 2. 語彙の適切性と多様性
 3. テーマとの関連性
 4. 改善のための具体的な提案
 
-また、改善された表現例も含めてください。`
+以下のようなJSONフォーマットで評価を返してください：
+
+\`\`\`
+{
+  "grammarAccuracy": "評価内容",
+  "vocabularyAppropriateness": "評価内容",
+  "relevanceToTheme": "評価内容",
+  "improvementSuggestions": "評価内容",
+  "improvedExpressionExamples": [
+    "改善された表現例1",
+    "改善された表現例2"
+  ]
+}
+\`\`\`
+
+注意: 各評価項目に対する具体的なコメントと、改善された表現例をJSONの \`improvedExpressionExamples\` 配列に含めてください。`
+  }
+
+  private createImprovementPrompt(params: EvaluationParams): string {
+    return `以下のスピーチの改善案を提供してください。
+
+テーマ: ${params.theme}
+レベル: ${params.level}
+スピーチ: ${params.spokenText}
+
+改善案には、より自然で流暢な表現を含め、文法や語彙の使い方を改善してください。
+
+改善案をJSON形式で返してください。以下のJSONフォーマットに従ってください：
+
+\`\`\`
+{
+  "improvedText": "改善されたスピーチ内容",
+  "explanation": "改善の説明"
+}
+\`\`\`
+
+注意: JSON内の \`improvedText\` にスピーチの改善案を含め、\`explanation\` にはどの部分が改善されたかの説明を記載してください。`
   }
 }

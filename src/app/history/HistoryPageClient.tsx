@@ -15,9 +15,9 @@ type HistoryEntry = {
   level: 'Low' | 'Middle' | 'High'
   speakTime: number
   thinkTime: number
+  spokenText: string
   aiEvaluation: string
   aiImprovedText: string | null
-  spokenText: string
 }
 
 const HistoryCard = ({ entry }: { entry: HistoryEntry }) => {

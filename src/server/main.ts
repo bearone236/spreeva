@@ -29,11 +29,7 @@ const themeRepository = new GeminiThemeRepository(
   GEMINI_API_KEY,
 )
 
-const evaluationRepository = new GeminiEvaluationRepository(
-  prisma,
-  GEMINI_API_URL,
-  GEMINI_API_KEY,
-)
+const evaluationRepository = new GeminiEvaluationRepository(prisma)
 
 const generateThemeUseCase = new ThemeUseCase(themeRepository)
 const evaluateSpeakingUseCase = new EvaluateSpeakingUseCase(

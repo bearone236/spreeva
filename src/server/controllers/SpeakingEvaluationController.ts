@@ -58,17 +58,14 @@ export class SpeakingEvaluationController {
               thinkTime: validatedData.thinkTime,
               speakTime: validatedData.speakTime,
               spokenText: validatedData.transcript,
-              aiEvaluation: evaluation.getEvaluation(),
-              aiImprovedText: null,
             },
           })
 
-          await prisma.evaluationRequest.create({
+          await prisma.evaluation.create({
             data: {
               speakingResultId: speakingResult.id,
-              requestBody: JSON.stringify(requestData),
-              responseBody: JSON.stringify(evaluation),
-              status: 'completed',
+              aiEvaluation: evaluation.getEvaluation(),
+              aiImprovedText: null,
             },
           })
         }

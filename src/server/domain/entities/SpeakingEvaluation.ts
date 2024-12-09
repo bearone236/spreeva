@@ -10,6 +10,7 @@ export class SpeakingEvaluation {
     private thinkTime: number,
     private speakTime: number,
     private evaluation: string,
+    private improvedText: string,
     private createdAt: Date = new Date(),
   ) {}
 
@@ -43,6 +44,10 @@ export class SpeakingEvaluation {
 
   getEvaluation(): string {
     return this.evaluation
+  }
+
+  getImprovedText(): string {
+    return this.improvedText
   }
 
   getCreatedAt(): Date {

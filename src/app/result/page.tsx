@@ -45,13 +45,13 @@ export default function ResultPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(evaluationData),
       })
-
       if (!response.ok) {
         const errorData = await response.json()
         throw new Error(errorData.error || 'Failed to evaluate speech')
       }
 
       const data = await response.json()
+
       if (data.success) {
         setEvaluation(data.evaluation)
         router.push('/evaluate')

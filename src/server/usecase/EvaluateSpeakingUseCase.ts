@@ -20,6 +20,12 @@ export class EvaluateSpeakingUseCase {
       spokenText: params.spokenText,
     })
 
+    const improvedText = await this.evaluationRepository.generateImprovedText({
+      theme: params.theme,
+      level: params.level,
+      spokenText: params.spokenText,
+    })
+
     const evaluation = new SpeakingEvaluation(
       crypto.randomUUID(),
       params.userId,
@@ -29,7 +35,7 @@ export class EvaluateSpeakingUseCase {
       params.thinkTime,
       params.speakTime,
       evaluationText,
-      new Date(),
+      improvedText,
     )
 
     if (params.userId) {

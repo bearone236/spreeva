@@ -25,10 +25,14 @@ export default async function HistoryPage() {
       level: true,
       thinkTime: true,
       speakTime: true,
-      aiEvaluation: true,
-      aiImprovedText: true,
       spokenText: true,
       createdAt: true,
+      Evaluation: {
+        select: {
+          aiEvaluation: true,
+          aiImprovedText: true,
+        },
+      },
     },
   })
 
@@ -39,9 +43,10 @@ export default async function HistoryPage() {
     level: entry.level as 'Low' | 'Middle' | 'High',
     thinkTime: entry.thinkTime,
     speakTime: entry.speakTime,
-    aiEvaluation: entry.aiEvaluation ?? '',
-    aiImprovedText: entry.aiImprovedText ?? '',
     spokenText: entry.spokenText,
+    aiEvaluation:
+      entry.Evaluation?.[0]?.aiEvaluation || 'No AI evaluation available',
+    aiImprovedText: entry.Evaluation?.[0]?.aiImprovedText || null,
   }))
 
   return <HistoryPageClient history={history} />
