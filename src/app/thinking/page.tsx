@@ -102,7 +102,15 @@ export default function ThinkingPage() {
                   <div className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
                     <ReactMarkdown
                       components={{
-                        p: ({ children }) => <div>{children}</div>,
+                        p: ({ children }) => (
+                          <div
+                            style={{
+                              userSelect: 'none',
+                            }}
+                          >
+                            {children}
+                          </div>
+                        ),
                       }}
                     >
                       {theme}
