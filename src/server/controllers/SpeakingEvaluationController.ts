@@ -65,7 +65,6 @@ export class SpeakingEvaluationController {
             data: {
               speakingResultId: speakingResult.id,
               aiEvaluation: evaluation.getEvaluation(),
-              aiImprovedText: null,
             },
           })
         }

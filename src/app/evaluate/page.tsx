@@ -2,8 +2,7 @@
 
 import LevelDisplay from '@/components/LevelDisplay'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import type { ThemeLevel } from '@/types/theme.types'
-import ReactMarkdown from 'react-markdown'
+import type { Evaluation, ThemeLevel } from '@/types/theme.types'
 import useStore from '../../provider/store/useStore'
 
 export default function EvaluatePage() {
@@ -15,6 +14,19 @@ export default function EvaluatePage() {
     evaluation,
   } = useStore()
   const level: ThemeLevel = themeLevel as ThemeLevel
+
+  const {
+    grammarAccuracy,
+    vocabularyAppropriateness,
+    relevanceToTheme,
+    improvementSuggestions,
+    improvedExpressionExamples,
+  }: Evaluation = JSON.parse(evaluation)
+
+  const suggestions =
+    typeof improvementSuggestions === 'string'
+      ? [improvementSuggestions]
+      : improvementSuggestions
 
   return (
     <div className='flex flex-col items-center justify-center p-3'>
@@ -45,8 +57,25 @@ export default function EvaluatePage() {
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
               AI評価
             </h3>
-            <div className='overflow-auto max-h-80 text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
-              <ReactMarkdown>{evaluation}</ReactMarkdown>
+            <div className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
+              <h4 className='font-bold'>文法の正確さ</h4>
+              <p>{grammarAccuracy}</p>
+              <h4 className='font-bold mt-4'>語彙の適切性</h4>
+              <p>{vocabularyAppropriateness}</p>
+              <h4 className='font-bold mt-4'>テーマの関連性</h4>
+              <p>{relevanceToTheme}</p>
+              <h4 className='font-bold mt-4'>改善の提案</h4>
+              <ul className='list-disc pl-5'>
+                {suggestions.map(suggestion => (
+                  <li key={suggestion}>{suggestion}</li>
+                ))}
+              </ul>
+              <h4 className='font-bold mt-4'>改善例</h4>
+              <ul className='list-disc pl-5'>
+                {improvedExpressionExamples.map(example => (
+                  <li key={example}>{example}</li>
+                ))}
+              </ul>
             </div>
           </div>
         </CardContent>

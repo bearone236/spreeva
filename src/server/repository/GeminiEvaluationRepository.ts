@@ -29,18 +29,12 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
       }
       return result.response.text()
     } catch (error) {
-      console.error('Error generating content from Gemini AI:', error)
       throw new Error('Failed to generate content from Gemini AI')
     }
   }
 
   async generateEvaluation(params: EvaluationParams): Promise<string> {
     const prompt = this.createPrompt(params)
-    return this.generateContentFromAI(prompt)
-  }
-
-  async generateImprovedText(params: EvaluationParams): Promise<string> {
-    const prompt = this.createImprovementPrompt(params)
     return this.generateContentFromAI(prompt)
   }
 
@@ -67,12 +61,10 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
           data: {
             speakingResultId: speakingResult.id,
             aiEvaluation: evaluation.getEvaluation(),
-            aiImprovedText: evaluation.getImprovedText(),
           },
         })
       })
     } catch (error) {
-      console.error('Error during saveEvaluation (initial attempt):', error)
       if (error instanceof Error && error.message.includes('status')) {
         try {
           await this.prisma.$transaction(async tx => {
@@ -91,7 +83,6 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
               data: {
                 speakingResultId: speakingResult.id,
                 aiEvaluation: evaluation.getEvaluation(),
-                aiImprovedText: evaluation.getImprovedText(),
               },
             })
           })
@@ -119,6 +110,7 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
 4. 改善のための具体的な提案
 
 以下のようなJSONフォーマットで評価を返してください：
+grammarAccuracy、vocabularyAppropriateness、relevanceToTheme、improvementSuggestionsには、それぞれ評価内容を日本語で記載してください。improvedExpressionExamplesに関しては、英語の文章で改善された表現例を記載してください。
 
 \`\`\`
 {
@@ -134,26 +126,5 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
 \`\`\`
 
 注意: 各評価項目に対する具体的なコメントと、改善された表現例をJSONの \`improvedExpressionExamples\` 配列に含めてください。`
-  }
-
-  private createImprovementPrompt(params: EvaluationParams): string {
-    return `以下のスピーチの改善案を提供してください。
-
-テーマ: ${params.theme}
-レベル: ${params.level}
-スピーチ: ${params.spokenText}
-
-改善案には、より自然で流暢な表現を含め、文法や語彙の使い方を改善してください。
-
-改善案をJSON形式で返してください。以下のJSONフォーマットに従ってください：
-
-\`\`\`
-{
-  "improvedText": "改善されたスピーチ内容",
-  "explanation": "改善の説明"
-}
-\`\`\`
-
-注意: JSON内の \`improvedText\` にスピーチの改善案を含め、\`explanation\` にはどの部分が改善されたかの説明を記載してください。`
   }
 }

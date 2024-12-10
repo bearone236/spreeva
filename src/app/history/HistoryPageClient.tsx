@@ -3,10 +3,10 @@
 import LevelDisplay from '@/components/LevelDisplay'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import type { Evaluation } from '@/types/theme.types'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useState } from 'react'
 import React from 'react'
-import ReactMarkdown from 'react-markdown'
 
 type HistoryEntry = {
   id: string
@@ -17,12 +17,23 @@ type HistoryEntry = {
   thinkTime: number
   spokenText: string
   aiEvaluation: string
-  aiImprovedText: string | null
 }
 
 const HistoryCard = ({ entry }: { entry: HistoryEntry }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
+  let evaluationData: Evaluation | null = null
+
+  evaluationData = entry.aiEvaluation ? JSON.parse(entry.aiEvaluation) : null
+
+  evaluationData = JSON.parse(entry.aiEvaluation)
+  const {
+    grammarAccuracy = 'No data available',
+    vocabularyAppropriateness = 'No data available',
+    relevanceToTheme = 'No data available',
+    improvementSuggestions = 'No data available',
+    improvedExpressionExamples = [],
+  } = evaluationData || {}
   return (
     <Card className='mb-4 overflow-hidden shadow-lg border rounded-lg'>
       <CardContent className='p-4'>
@@ -38,35 +49,53 @@ const HistoryCard = ({ entry }: { entry: HistoryEntry }) => {
           </div>
         </div>
         {isExpanded && (
-          <div className='mt-4 text-sm text-gray-600'>
-            <div className='border p-2 rounded mb-2 bg-gray-50'>
-              <span className='font-semibold'>あなたの文章:</span>{' '}
-              <span className='whitespace-pre-wrap break-words'>
+          <div className='mt-4 text-sm text-gray-600 space-y-4'>
+            <div className='border p-2 rounded bg-gray-50'>
+              <span className='font-semibold'>あなたの文章:</span>
+              <p className='mt-2 whitespace-pre-wrap break-words'>
                 {entry.spokenText}
-              </span>
+              </p>
             </div>
-            <div className='border p-2 rounded mb-2 bg-gray-50'>
+            <div className='border p-2 rounded bg-gray-50'>
               <span className='font-semibold'>シンキング時間:</span>{' '}
-              {entry.thinkTime} seconds
+              {entry.thinkTime} 秒
             </div>
-            <div className='border p-2 rounded mb-2 bg-gray-50'>
+            <div className='border p-2 rounded bg-gray-50'>
               <span className='font-semibold'>スピーキング時間:</span>{' '}
-              {entry.speakTime} seconds
+              {entry.speakTime} 秒
             </div>
-            <div className='border p-2 rounded mb-2 bg-gray-50'>
-              <span className='font-semibold'>AI評価:</span>
-              <span className='whitespace-pre-wrap break-words block mt-2'>
-                <ReactMarkdown>{entry.aiEvaluation}</ReactMarkdown>
-              </span>
+            <div className='border p-2 rounded bg-gray-50'>
+              <span className='font-semibold'>文法の正確さ:</span>
+              <p className='mt-2 whitespace-pre-wrap break-words'>
+                {grammarAccuracy}
+              </p>
             </div>
-            {entry.aiImprovedText && (
-              <div className='border p-2 rounded bg-gray-50'>
-                <span className='font-semibold'>AIの改善案:</span>{' '}
-                <span className='whitespace-pre-wrap break-words block mt-2'>
-                  {entry.aiImprovedText}
-                </span>
-              </div>
-            )}
+            <div className='border p-2 rounded bg-gray-50'>
+              <span className='font-semibold'>語彙の適切性:</span>
+              <p className='mt-2 whitespace-pre-wrap break-words'>
+                {vocabularyAppropriateness}
+              </p>
+            </div>
+            <div className='border p-2 rounded bg-gray-50'>
+              <span className='font-semibold'>テーマの関連性:</span>
+              <p className='mt-2 whitespace-pre-wrap break-words'>
+                {relevanceToTheme}
+              </p>
+            </div>
+            <div className='border p-2 rounded bg-gray-50'>
+              <span className='font-semibold'>改善の提案:</span>
+              <p className='mt-2 whitespace-pre-wrap break-words'>
+                {improvementSuggestions}
+              </p>
+            </div>
+            <div className='border p-2 rounded bg-gray-50'>
+              <span className='font-semibold'>改善例:</span>
+              <ul className='list-disc pl-5 mt-2'>
+                {improvedExpressionExamples.map(example => (
+                  <li key={example}>{example}</li>
+                ))}
+              </ul>
+            </div>
           </div>
         )}
         <Button
