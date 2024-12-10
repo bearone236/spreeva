@@ -66,8 +66,8 @@ model SpeakingResult {
   updatedAt  DateTime     @updatedAt
   level      String
   theme      String
-  user       User         @relation(fields: [userId], references: [id])
   Evaluation Evaluation[]
+  user       User         @relation(fields: [userId], references: [id])
 
   @@index([userId, createdAt])
 }
@@ -76,7 +76,6 @@ model Evaluation {
   id               String         @id @default(cuid())
   speakingResultId String
   aiEvaluation     String
-  aiImprovedText   String?
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   speakingResult   SpeakingResult @relation(fields: [speakingResultId], references: [id])
