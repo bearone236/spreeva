@@ -20,7 +20,7 @@ export class SpeechController {
         const result = await this.recognizeSpeechUsecase.execute(audioBuffer)
         return c.json(result, 200)
       } catch (error) {
-        return c.json({ error: 'Speech recognition failed' }, 500)
+        return c.json({ error: 'スピーチの取得に失敗しました' }, 500)
       }
     } else {
       return c.json({ error: 'Invalid file type' }, 400)

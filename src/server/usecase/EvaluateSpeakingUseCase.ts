@@ -29,7 +29,6 @@ export class EvaluateSpeakingUseCase {
       params.thinkTime,
       params.speakTime,
       evaluationText,
-      new Date(),
     )
 
     if (params.userId) {

@@ -18,7 +18,6 @@ model User {
   updatedAt       DateTime         @updatedAt
   accounts        Account[]
   speakingResults SpeakingResult[]
-  preferences     UserPreference?
   sessions        Session[]
 
   @@map("users")
@@ -57,44 +56,28 @@ model Session {
   @@map("sessions")
 }
 
-model UserPreference {
-  id                String   @id @default(cuid())
-  userId            String   @unique
-  defaultThinkTime  Int      @default(30)
-  defaultSpeakTime  Int      @default(60)
-  defaultThemeLevel String   @default("Middle")
-  autoReadTheme     Boolean  @default(false)
-  showTheme         Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  user              User     @relation(fields: [userId], references: [id])
-}
-
 model SpeakingResult {
-  id                 String              @id @default(cuid())
-  userId             String
-  thinkTime          Int
-  speakTime          Int
-  spokenText         String
-  aiEvaluation       String?
-  aiImprovedText     String?
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  level              String
-  theme              String
-  evaluationRequests EvaluationRequest[]
-  user               User                @relation(fields: [userId], references: [id])
+  id         String       @id @default(cuid())
+  userId     String
+  thinkTime  Int
+  speakTime  Int
+  spokenText String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  level      String
+  theme      String
+  Evaluation Evaluation[]
+  user       User         @relation(fields: [userId], references: [id])
 
   @@index([userId, createdAt])
 }
 
-model EvaluationRequest {
+model Evaluation {
   id               String         @id @default(cuid())
   speakingResultId String
-  requestBody      String
-  responseBody     String
+  aiEvaluation     String
   createdAt        DateTime       @default(now())
-  status           String
+  updatedAt        DateTime       @updatedAt
   speakingResult   SpeakingResult @relation(fields: [speakingResultId], references: [id])
 
   @@index([speakingResultId])
