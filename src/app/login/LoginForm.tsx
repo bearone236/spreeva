@@ -3,48 +3,31 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export default function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const router = useRouter()
+  const { data: session } = useSession()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      })
+    const result = await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+    })
 
-      if (result?.error) {
-        setError(
-          'ログインに失敗しました。メールアドレスまたはパスワードを確認してください。',
-        )
-        setPassword('')
-      } else {
-        setError('')
-
-        if (result?.ok) {
-          if (result.url) {
-            router.push(result.url)
-          }
-        }
+    if (result?.ok === true) {
+      if (session?.user.userType === 'admin') {
+        window.location.href = '/organization/dashboard'
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message)
-      } else {
-        setError('ログインに失敗しました。')
-        setPassword('')
+      if (session?.user.userType === 'member') {
+        window.location.href = '/organization'
       }
     }
   }
@@ -127,7 +110,6 @@ export default function LoginForm() {
                       className='w-full p-2 border rounded-md'
                     />
                   </div>
-                  {error && <p className='text-red-500'>{error}</p>}
                   <Button
                     type='submit'
                     className='w-full bg-orange-400 text-white p-2 rounded-md'
