@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from '@/lib/prisma'
 import type { Adapter } from '@auth/core/adapters'
 import { PrismaAdapter } from '@auth/prisma-adapter'
@@ -20,25 +21,32 @@ export const { auth, handlers, signOut } = NextAuth({
       }
 
       if (user.userType === 'admin') {
-        return '/organization/dashboard'
+        return true
       }
 
       if (user.userType === 'member') {
-        return '/organization'
+        return true
       }
 
-      return '/login'
+      return true
     },
 
-    session({ session }) {
-      if (!session.user) return session
+    redirect: async ({ baseUrl }) => {
+      return baseUrl
+    },
+
+    session({ session, token }) {
+      if (!token) return session
       const user = {
-        id: session.user.id,
-        name: session.user.name,
-        email: session.user.email,
-        emailVerified: session.user.emailVerified,
-        image: session.user.image,
-        userType: session.user.userType,
+        id: token.id as string,
+        name: token.name,
+        email: token.email || '',
+        emailVerified:
+          token.emailVerified && typeof token.emailVerified === 'string'
+            ? new Date(token.emailVerified)
+            : null,
+        image: token.picture || null,
+        userType: token.userType,
       }
       session.user = user
       return session

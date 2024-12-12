@@ -26,6 +26,8 @@ export default {
     }),
     Credentials({
       async authorize(credentials: Record<string, unknown>) {
+        if (!credentials) return null
+
         const { email, password } = credentials as {
           email: string
           password: string
@@ -39,7 +41,7 @@ export default {
           const { email, password } = validatedFields.data
 
           const user = await prisma?.organizationUser.findUnique({
-            where: { email: email.toLowerCase() },
+            where: { email: email },
             include: { organization: true },
           })
           if (!user || !user.password) return null
