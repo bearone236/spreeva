@@ -12,6 +12,7 @@ export default function EvaluatePage() {
     thinkTime,
     speakTime,
     evaluation,
+    spokenText,
   } = useStore()
   const level: ThemeLevel = themeLevel as ThemeLevel
 
@@ -51,6 +52,15 @@ export default function EvaluatePage() {
               </div>
               <LevelDisplay level={level} />
             </div>
+          </div>
+
+          <div>
+            <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
+              あなたのスピーチ
+            </h3>
+            <p className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
+              {spokenText}
+            </p>
           </div>
 
           <div>
