@@ -1,16 +1,13 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Nunito } from 'next/font/google'
 import { Suspense } from 'react'
 import './globals.css'
 import HeaderServer from '@/components/Header/HeaderServer'
 import LoadingAnimation from '@/components/Loading'
 import AuthProvider from '@/provider/AuthProvider'
 
-const inter = Inter({
+const font = Nunito({
   subsets: ['latin'],
-  weight: ['400', '700'],
-  display: 'swap',
-  variable: '--font-inter',
 })
 
 export const metadata: Metadata = {
@@ -28,8 +25,8 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='en' className={`${inter.variable} font-sans`}>
-      <body className={`${inter.className} bg-orange-50`}>
+    <html lang='en'>
+      <body className={`${font.className} bg-orange-50`}>
         <AuthProvider>
           <HeaderServer />
           <div className='pt-20 px-8 '>
