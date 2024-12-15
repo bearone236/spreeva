@@ -1,5 +1,3 @@
-import { auth } from '@/app/api/auth/[...nextauth]/auth'
-import prisma from '@/lib/prisma'
 import type { Context } from 'hono'
 import { z } from 'zod'
 import type { EvaluateSpeakingUseCase } from '../usecase/EvaluateSpeakingUseCase'
@@ -7,6 +5,7 @@ import type { EvaluateSpeakingUseCase } from '../usecase/EvaluateSpeakingUseCase
 const evaluationRequestSchema = z
   .object({
     userId: z.string().nullable(),
+    organizationUserId: z.string().nullable(),
     theme: z.string(),
     level: z.enum(['Low', 'Middle', 'High']),
     transcript: z.string(),
@@ -23,7 +22,8 @@ export class SpeakingEvaluationController {
       const body = await c.req.json()
 
       const requestData = {
-        userId: body.userId || null,
+        userId: body.userId,
+        organizationUserId: body.organizationUserId,
         theme: body.theme,
         level: body.level,
         transcript: body.transcript,
@@ -34,41 +34,14 @@ export class SpeakingEvaluationController {
       const validatedData = evaluationRequestSchema.parse(requestData)
 
       const evaluation = await this.evaluateSpeakingUseCase.execute({
-        userId: validatedData.userId,
+        userId: validatedData.userId ?? '',
+        organizationUserId: validatedData.organizationUserId ?? '',
         theme: validatedData.theme,
         level: validatedData.level,
         spokenText: validatedData.transcript,
         thinkTime: validatedData.thinkTime,
         speakTime: validatedData.speakTime,
       })
-
-      const session = await auth()
-      const sessionEmail = session?.user?.email
-      if (sessionEmail) {
-        const user = await prisma.user.findUnique({
-          where: { email: sessionEmail },
-        })
-
-        if (user) {
-          const speakingResult = await prisma.speakingResult.create({
-            data: {
-              userId: user.id,
-              theme: validatedData.theme,
-              level: validatedData.level,
-              thinkTime: validatedData.thinkTime,
-              speakTime: validatedData.speakTime,
-              spokenText: validatedData.transcript,
-            },
-          })
-
-          await prisma.evaluation.create({
-            data: {
-              speakingResultId: speakingResult.id,
-              aiEvaluation: evaluation.getEvaluation(),
-            },
-          })
-        }
-      }
 
       return c.json({
         success: true,

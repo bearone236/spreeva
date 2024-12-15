@@ -9,16 +9,39 @@ export default async function ContributionGraph() {
     throw new Error('User session not found')
   }
 
-  const speakingResults = await prisma.speakingResult.findMany({
-    where: {
-      user: {
+  let speakingResults = []
+
+  if (session.user.userType === 'user') {
+    speakingResults = await prisma.speakingResult.findMany({
+      where: {
+        user: {
+          email: session.user.email,
+        },
+      },
+      select: {
+        createdAt: true,
+      },
+    })
+  } else {
+    const organizationUser = await prisma.organizationUser.findUnique({
+      where: {
         email: session.user.email,
       },
-    },
-    select: {
-      createdAt: true,
-    },
-  })
+    })
+
+    if (!organizationUser) {
+      throw new Error('OrganizationUser not found')
+    }
+
+    speakingResults = await prisma.speakingResult.findMany({
+      where: {
+        organizationUserId: organizationUser.id,
+      },
+      select: {
+        createdAt: true,
+      },
+    })
+  }
 
   const contributions: { [key: string]: number } = {}
   // biome-ignore lint/complexity/noForEach: <explanation>
