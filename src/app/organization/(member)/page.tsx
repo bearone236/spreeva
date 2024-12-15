@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 
 export default async function MemberPage() {
   const session = await auth()
-  if (!session || session.user?.userType !== 'admin') {
+  if (!session || session.user?.userType !== 'member') {
     redirect('/')
   }
   return (

@@ -9,7 +9,7 @@ const AdminLayout: FC<{ children: ReactNode }> = async ({ children }) => {
     !session?.user ||
     (session.user as { userType?: string }).userType !== 'admin'
   ) {
-    redirect('/login')
+    return redirect('/404')
   }
 
   return <>{children}</>

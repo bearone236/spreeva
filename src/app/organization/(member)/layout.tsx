@@ -1,15 +1,15 @@
 import { auth } from '@/app/api/auth/[...nextauth]/auth'
-import type { Session } from 'next-auth'
+import { redirect } from 'next/navigation'
 import type { FC, ReactNode } from 'react'
 
 const MemberLayout: FC<{ children: ReactNode }> = async ({ children }) => {
   const session = await auth()
 
   if (
-    !session ||
-    (session as Session & { userType?: string }).userType !== 'admin'
+    !session?.user ||
+    (session.user as { userType?: string }).userType !== 'member'
   ) {
-    return <div>Member権限がありません。</div>
+    return redirect('/404')
   }
 
   return <>{children}</>
