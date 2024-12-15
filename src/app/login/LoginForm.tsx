@@ -29,6 +29,9 @@ export default function LoginForm() {
       if (session?.user.userType === 'member') {
         window.location.href = '/organization'
       }
+      if (session?.user?.userType === 'user') {
+        window.location.href = '/404'
+      }
     }
   }
 
