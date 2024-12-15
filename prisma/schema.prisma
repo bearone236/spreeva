@@ -57,19 +57,23 @@ model Session {
 }
 
 model SpeakingResult {
-  id         String       @id @default(cuid())
-  userId     String
-  thinkTime  Int
-  speakTime  Int
-  spokenText String
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  level      String
-  theme      String
-  Evaluation Evaluation[]
-  user       User         @relation(fields: [userId], references: [id])
+  id                 String            @id @default(cuid())
+  userId             String?
+  organizationUserId String?
+  thinkTime          Int
+  speakTime          Int
+  spokenText         String
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @default(now())
+  level              String
+  theme              String
+  Evaluation         Evaluation[]
+  user               User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationUser   OrganizationUser? @relation(fields: [organizationUserId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, organizationUserId])
   @@index([userId, createdAt])
+  @@index([organizationUserId, createdAt])
 }
 
 model Evaluation {
@@ -84,16 +88,17 @@ model Evaluation {
 }
 
 model OrganizationUser {
-  id             String       @id @default(cuid())
+  id             String           @id @default(cuid())
   name           String
-  email          String       @unique
+  email          String           @unique
   password       String
   userType       String
   organizationId String
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  groups         Group[]      @relation("GroupToOrganizationUser")
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  organization   Organization     @relation(fields: [organizationId], references: [id])
+  groups         Group[]          @relation("GroupToOrganizationUser")
+  SpeakingResult SpeakingResult[]
 }
 
 model Organization {

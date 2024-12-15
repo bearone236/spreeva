@@ -6,7 +6,8 @@ export class EvaluateSpeakingUseCase {
   constructor(private evaluationRepository: IEvaluationInterface) {}
 
   async execute(params: {
-    userId: string | null
+    userId: string
+    organizationUserId: string
     theme: string
     level: ThemeLevel
     spokenText: string
@@ -22,7 +23,8 @@ export class EvaluateSpeakingUseCase {
 
     const evaluation = new SpeakingEvaluation(
       crypto.randomUUID(),
-      params.userId,
+      params.userId ?? '',
+      params.organizationUserId ?? '',
       params.theme,
       params.spokenText,
       params.level,
@@ -31,7 +33,7 @@ export class EvaluateSpeakingUseCase {
       evaluationText,
     )
 
-    if (params.userId) {
+    if (params.userId || params.organizationUserId) {
       await this.evaluationRepository.saveEvaluation(evaluation)
     }
 

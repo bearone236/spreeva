@@ -40,15 +40,38 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
 
   async saveEvaluation(evaluation: SpeakingEvaluation): Promise<void> {
     const userId = evaluation.getUserId()
-    if (!userId) {
-      throw new Error('User ID is required')
+    const organizationUserId = evaluation.getOrganizationUserId()
+
+    if (!userId && !organizationUserId) {
+      throw new Error('Either User ID or Organization User ID is required')
     }
 
     try {
       await this.prisma.$transaction(async tx => {
-        const speakingResult = await tx.speakingResult.create({
+        if (userId) {
+          const userExists = await tx.user.findUnique({
+            where: { id: userId },
+          })
+          if (!userExists) {
+            throw new Error(`User with ID ${userId} does not exist.`)
+          }
+        }
+
+        if (organizationUserId) {
+          const organizationUserExists = await tx.organizationUser.findUnique({
+            where: { id: organizationUserId },
+          })
+          if (!organizationUserExists) {
+            throw new Error(
+              `OrganizationUser with ID ${organizationUserId} does not exist.`,
+            )
+          }
+        }
+
+        await tx.speakingResult.create({
           data: {
-            userId,
+            userId: userId || null,
+            organizationUserId: organizationUserId || null,
             theme: evaluation.getTheme(),
             level: evaluation.getLevel(),
             thinkTime: evaluation.getThinkTime(),
@@ -56,41 +79,8 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
             spokenText: evaluation.getSpokenText(),
           },
         })
-
-        await tx.evaluation.create({
-          data: {
-            speakingResultId: speakingResult.id,
-            aiEvaluation: evaluation.getEvaluation(),
-          },
-        })
       })
     } catch (error) {
-      if (error instanceof Error && error.message.includes('status')) {
-        try {
-          await this.prisma.$transaction(async tx => {
-            const speakingResult = await tx.speakingResult.create({
-              data: {
-                userId,
-                theme: evaluation.getTheme(),
-                level: evaluation.getLevel(),
-                thinkTime: evaluation.getThinkTime(),
-                speakTime: evaluation.getSpeakTime(),
-                spokenText: evaluation.getSpokenText(),
-              },
-            })
-
-            await tx.evaluation.create({
-              data: {
-                speakingResultId: speakingResult.id,
-                aiEvaluation: evaluation.getEvaluation(),
-              },
-            })
-          })
-          return
-        } catch (retryError) {
-          throw new Error('Failed to save evaluation results after retry')
-        }
-      }
       throw new Error('Failed to save evaluation results')
     }
   }

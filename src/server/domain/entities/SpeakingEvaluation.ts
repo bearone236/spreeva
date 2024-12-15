@@ -4,6 +4,7 @@ export class SpeakingEvaluation {
   constructor(
     private id: string,
     private userId: string | null,
+    private organizationUserId: string | null,
     private theme: string,
     private spokenText: string,
     private level: ThemeLevel,
@@ -17,12 +18,16 @@ export class SpeakingEvaluation {
     return this.id
   }
 
-  getTheme(): string {
-    return this.theme
-  }
-
   getUserId(): string | null {
     return this.userId
+  }
+
+  getOrganizationUserId(): string | null {
+    return this.organizationUserId
+  }
+
+  getTheme(): string {
+    return this.theme
   }
 
   getSpokenText(): string {
