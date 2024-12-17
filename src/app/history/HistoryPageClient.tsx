@@ -16,6 +16,7 @@ type HistoryEntry = {
   speakTime: number
   thinkTime: number
   spokenText: string
+  audioUrl?: string
   aiEvaluation: string
 }
 
@@ -70,6 +71,16 @@ const HistoryCard = ({ entry }: { entry: HistoryEntry }) => {
                 {grammarAccuracy}
               </p>
             </div>
+            {entry.audioUrl && (
+              <div className='border p-2 rounded bg-gray-50'>
+                <span className='font-semibold'>録音データ:</span>
+                <audio controls className='mt-2 w-full'>
+                  <source src={entry.audioUrl} type='audio/wav' />
+                  <track kind='captions' />
+                  あなたのブラウザはaudio要素をサポートしていません。
+                </audio>
+              </div>
+            )}
             <div className='border p-2 rounded bg-gray-50'>
               <span className='font-semibold'>語彙の適切性:</span>
               <p className='mt-2 whitespace-pre-wrap break-words'>

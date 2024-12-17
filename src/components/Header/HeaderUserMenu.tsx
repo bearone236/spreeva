@@ -19,7 +19,7 @@ import { Skeleton } from '../ui/skeleton'
 
 export default function HeaderUserMenu({ session }: { session: Session }) {
   return (
-    <div className='ml-4 flex items-center'>
+    <div className='ml-4 pl-4 flex items-center'>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button className='relative h-9 w-9 rounded-full transform hover:scale-105 transition-transform duration-300'>
