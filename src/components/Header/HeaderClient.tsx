@@ -18,17 +18,18 @@ export default function HeaderClient({ session }: { session: Session | null }) {
           ホーム
         </Link>
       </Button>
-      <Button variant='ghost' size='sm' asChild>
-        <Link
-          href='/history'
-          className='text-white hover:text-[#1a2b3c] hover:bg-white'
-        >
-          <History className='mr-2 h-4 w-4' />
-          履歴
-        </Link>
-      </Button>
+
       {session ? (
         <>
+          <Button variant='ghost' size='sm' asChild>
+            <Link
+              href='/history'
+              className='text-white hover:text-[#1a2b3c] hover:bg-white'
+            >
+              <History className='mr-2 h-4 w-4' />
+              履歴
+            </Link>
+          </Button>
           <HeaderUserMenu session={session} />
         </>
       ) : (

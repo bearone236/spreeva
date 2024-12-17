@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { LogOut } from 'lucide-react'
+import { LogOut, User, UserCog } from 'lucide-react'
 import type { Session } from 'next-auth'
 import { signOut } from 'next-auth/react'
 import Image from 'next/image'
@@ -17,7 +17,29 @@ import { Suspense } from 'react'
 import { Button } from '../ui/button'
 import { Skeleton } from '../ui/skeleton'
 
-export default function HeaderUserMenu({ session }: { session: Session }) {
+export default function HeaderUserMenu({
+  session,
+}: {
+  session: Session
+}) {
+  const userType = session.user.userType
+  const renderIcon = () => {
+    if (userType === 'admin') return <UserCog className='w-6 mx-auto h-auto ' />
+    if (userType === 'member') return <User className='w-6 mx-auto h-auto' />
+    return session.user.image ? (
+      <Image
+        src={session.user.image}
+        alt='User Profile'
+        width={40}
+        height={40}
+        className='rounded-full'
+        priority
+      />
+    ) : (
+      <AvatarFallback>{session.user.name?.charAt(0)}</AvatarFallback>
+    )
+  }
+
   return (
     <div className='ml-4 pl-4 flex items-center'>
       <DropdownMenu>
@@ -25,20 +47,7 @@ export default function HeaderUserMenu({ session }: { session: Session }) {
           <Button className='relative h-9 w-9 rounded-full transform hover:scale-105 transition-transform duration-300'>
             <Avatar className='h-9 w-9'>
               <Suspense fallback={<Skeleton className='rounded-full' />}>
-                {session.user.image ? (
-                  <Image
-                    src={session.user.image}
-                    alt='User Profile'
-                    width={40}
-                    height={40}
-                    className='rounded-full'
-                    priority
-                  />
-                ) : (
-                  <AvatarFallback>
-                    {session.user.name?.charAt(0)}
-                  </AvatarFallback>
-                )}{' '}
+                {renderIcon()}
               </Suspense>
             </Avatar>
           </Button>
