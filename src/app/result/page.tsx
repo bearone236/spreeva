@@ -3,41 +3,92 @@
 import LevelDisplay from '@/components/LevelDisplay'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import type { ThemeLevel } from '@/types/theme.types'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import useStore from '../../provider/store/useStore'
 
 export default function ResultPage() {
   const { data: session } = useSession()
   const router = useRouter()
   const {
-    theme,
-    level,
-    spokenText,
-    thinkTime,
-    speakTime,
-    themeType,
-    setEvaluation,
     retryCount,
-    incrementRetryCount,
+    setRetryCount,
+    theme: storeTheme,
+    level: storeLevel,
+    spokenText: storeSpokenText,
+    thinkTime: storeThinkTime,
+    speakTime: storeSpeakTime,
+    themeType: storeThemeType,
+    setTheme,
+    setThinkTime,
+    setSpeakTime,
+    setLevel,
+    setThemeType,
+    setEvaluation,
   } = useStore()
-  const [isLoading, setIsLoading] = useState(false)
 
-  const maxRetries = 1
+  const [theme, setThemeState] = useState<string>(storeTheme || '')
+  const [level, setLevelState] = useState<ThemeLevel>(
+    (storeLevel as ThemeLevel) || 'Low',
+  )
+  const [spokenText, setSpokenTextState] = useState<string>(
+    storeSpokenText || '',
+  )
+  const [thinkTime, setThinkTimeState] = useState<number>(
+    Number(storeThinkTime) || 0,
+  )
+  const [speakTime, setSpeakTimeState] = useState<number>(
+    Number(storeSpeakTime) || 0,
+  )
+  const [themeType, setThemeTypeState] = useState<string>(
+    storeThemeType || 'quickstart',
+  )
+  const [isLoading, setIsLoading] = useState(false)
+  const [isDataLoaded, setIsDataLoaded] = useState(false)
+
+  useEffect(() => {
+    const savedData = localStorage.getItem('resultPageData')
+    if (savedData) {
+      const { theme, level, spokenText, thinkTime, speakTime, themeType } =
+        JSON.parse(savedData)
+      setThemeState(theme || '')
+      setLevelState((level as ThemeLevel) || 'Low')
+      setSpokenTextState(spokenText || '')
+      setThinkTimeState(thinkTime || 0)
+      setSpeakTimeState(speakTime || 0)
+      setThemeTypeState(themeType || 'quickstart')
+    }
+    setIsDataLoaded(true)
+  }, [])
+
+  useEffect(() => {
+    const dataToSave = {
+      theme,
+      level,
+      spokenText,
+      thinkTime,
+      speakTime,
+      themeType,
+    }
+    localStorage.setItem('resultPageData', JSON.stringify(dataToSave))
+  }, [theme, level, spokenText, thinkTime, speakTime, themeType])
 
   const handleEvaluate = async () => {
     setIsLoading(true)
 
+    const savedData = JSON.parse(localStorage.getItem('resultPageData') || '{}')
     const evaluationData = {
       userId: session?.user?.id || null,
       organizationUserId: session?.user?.organizationId || null,
-      theme,
-      themeType: themeType as 'quickstart' | 'ocr',
-      level,
-      thinkTime: Number(thinkTime),
-      speakTime: Number(speakTime),
-      transcript: spokenText,
+      theme: theme || savedData.theme || '',
+      themeType: themeType || savedData.themeType || '',
+      level: level || (savedData.level as ThemeLevel) || 'Low',
+      thinkTime: thinkTime || savedData.thinkTime || 0,
+      speakTime: speakTime || savedData.speakTime || 0,
+      transcript: spokenText || savedData.spokenText || '',
     }
 
     try {
@@ -46,6 +97,7 @@ export default function ResultPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(evaluationData),
       })
+
       if (!response.ok) {
         const errorData = await response.json()
         throw new Error(errorData.error || 'Failed to evaluate speech')
@@ -67,12 +119,30 @@ export default function ResultPage() {
   }
 
   const handleRetry = () => {
-    if (retryCount < maxRetries) {
-      incrementRetryCount()
-      router.push('/speaking')
-    } else {
-      alert('これ以上再試行できません。')
-    }
+    if (retryCount >= 1) return
+
+    setRetryCount(retryCount + 1)
+    setTheme(theme)
+    setThinkTime(String(thinkTime))
+    setSpeakTime(String(speakTime))
+    setLevel(level)
+    setThemeType(themeType)
+    router.push('/speaking')
+  }
+
+  if (!isDataLoaded) {
+    return (
+      <div className='flex flex-col items-center justify-center pt-20'>
+        <Card className='w-full max-w-3xl bg-white shadow-lg border-t-4 border-[#ed9600] pt-10'>
+          <CardContent className='space-y-6'>
+            <Skeleton className='h-6 w-32 mb-4' />
+            <Skeleton className='h-10 w-full mb-4' />
+            <Skeleton className='h-8 w-40 mb-4' />
+            <Skeleton className='h-6 w-96 mb-4' />
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
@@ -104,26 +174,23 @@ export default function ResultPage() {
           <div className='flex justify-between'>
             <Button
               onClick={handleRetry}
-              className='bg-[#ed9600] hover:bg-[#ed7e00] text-white'
-              disabled={retryCount >= maxRetries}
+              disabled={retryCount >= 1}
+              className={`bg-[#ed7e00] hover:bg-[#ed9600] text-white font-semibold ${
+                retryCount >= 1 ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
             >
-              Retry ({maxRetries - retryCount} 残り)
+              {retryCount >= 1 ? 'やり直す（0回）' : 'やり直す（1回）'}
             </Button>
-            {isLoading ? (
-              <Button className='bg-[#ed7e00] text-white' disabled>
-                評価中...
-              </Button>
-            ) : (
-              <Button
-                onClick={handleEvaluate}
-                className='bg-[#ed7e00] hover:bg-[#ed9600] text-white font-semibold'
-                disabled={
-                  spokenText === '音声が検出されませんでした' || isLoading
-                }
-              >
-                評価
-              </Button>
-            )}
+
+            <Button
+              onClick={handleEvaluate}
+              className='bg-[#ed7e00] hover:bg-[#ed9600] text-white font-semibold'
+              disabled={
+                spokenText === '音声が検出されませんでした' || isLoading
+              }
+            >
+              評価
+            </Button>
           </div>
         </CardContent>
       </Card>

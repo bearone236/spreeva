@@ -45,7 +45,9 @@ const Timer = ({
               seconds remaining
             </p>
             <div
-              className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 text-[#ed7e00] transition-all duration-300 ${animateMic ? 'scale-110' : 'scale-100'}`}
+              className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 text-[#ed7e00] transition-all duration-300 ${
+                animateMic ? 'scale-110' : 'scale-100'
+              }`}
             >
               <Mic size={32} />
             </div>
