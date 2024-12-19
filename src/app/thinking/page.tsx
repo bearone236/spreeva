@@ -73,7 +73,8 @@ export default function ThinkingPage() {
         setGracePeriod(prev => {
           if (prev <= 1) {
             clearInterval(graceTimer)
-            router.push('/speaking')
+            // 状態変更後に遷移処理を非同期で実行
+            setTimeout(() => router.push('/speaking'), 0)
           }
           return prev - 1
         })
