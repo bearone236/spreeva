@@ -1,6 +1,7 @@
 'use client'
-import { Button } from '@/components/ui/button'
+
 import { Card, CardContent } from '@/components/ui/card'
+import { Mic } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
@@ -11,6 +12,53 @@ const Player = dynamic(
   { ssr: false },
 )
 
+const Timer = ({
+  remainingTime,
+  isRecording,
+}: { remainingTime: number; isRecording: boolean }) => {
+  const [animateMic, setAnimateMic] = useState(false)
+
+  useEffect(() => {
+    if (isRecording) {
+      const interval = setInterval(() => {
+        setAnimateMic(prev => !prev)
+      }, 500)
+      return () => clearInterval(interval)
+    }
+  }, [isRecording])
+
+  return (
+    <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-orange-50 to-orange-100'>
+      <Card className='w-full max-w-2xl bg-white shadow-lg border-t-4 border-[#ed9600]'>
+        <CardContent className='p-8 md:p-12'>
+          <h2 className='text-3xl font-bold text-[#ed7e00] mb-6 text-center'>
+            Speaking Time
+          </h2>
+          <p className='text-center text-gray-600 mb-8'>
+            Please speak clearly. Your response is being recorded.
+          </p>
+          <div className='text-center py-8 relative'>
+            <div className='text-8xl md:text-9xl font-bold text-[#ed7e00] mb-6'>
+              {remainingTime}
+            </div>
+            <p className='text-xl md:text-2xl text-[#ed9600] mb-4'>
+              seconds remaining
+            </p>
+            <div
+              className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 text-[#ed7e00] transition-all duration-300 ${animateMic ? 'scale-110' : 'scale-100'}`}
+            >
+              <Mic size={32} />
+            </div>
+          </div>
+          <p className='text-center text-sm text-gray-500 mt-6'>
+            The recording will automatically stop when the timer reaches zero.
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
 export default function SpeakingPage() {
   const router = useRouter()
   const { speakTime, setSpokenText } = useStore()
@@ -18,6 +66,7 @@ export default function SpeakingPage() {
   const [remainingTime, setRemainingTime] = useState(Number.parseInt(speakTime))
   const [transcribedText, setTranscribedText] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isRecording, setIsRecording] = useState(true)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
 
   useEffect(() => {
@@ -67,6 +116,7 @@ export default function SpeakingPage() {
         if (prev <= 1) {
           clearInterval(interval)
           setIsLoading(true)
+          setIsRecording(false)
           return 0
         }
         return prev - 1
@@ -151,33 +201,5 @@ export default function SpeakingPage() {
     )
   }
 
-  return (
-    <div className='flex flex-col items-center justify-center pt-20'>
-      <Card className='w-full max-w-2xl bg-white shadow-lg border-t-4 border-[#ed9600]'>
-        <CardContent className='p-12'>
-          <h2 className='text-3xl font-bold text-[#ed7e00] mb-8 text-center'>
-            Speaking Time
-          </h2>
-          <div className='text-center'>
-            <div className='text-9xl font-bold text-[#ed7e00] mb-4'>
-              {remainingTime}
-            </div>
-            <p className='text-2xl text-[#ed9600]'>seconds remaining</p>
-          </div>
-          <div className='mt-8 flex justify-center'>
-            <Button
-              onClick={() =>
-                handleSkipAndEvaluate(
-                  transcribedText || '音声が検出されませんでした',
-                )
-              }
-              className='bg-[#ff4a4a] hover:bg-[#dc4343] text-white py-2 px-4 rounded-md'
-            >
-              Skip and Evaluate
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
+  return <Timer remainingTime={remainingTime} isRecording={isRecording} />
 }
