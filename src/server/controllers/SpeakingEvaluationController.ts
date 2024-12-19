@@ -2,17 +2,15 @@ import type { Context } from 'hono'
 import { z } from 'zod'
 import type { EvaluateSpeakingUseCase } from '../usecase/EvaluateSpeakingUseCase'
 
-const evaluationRequestSchema = z
-  .object({
-    userId: z.string().nullable(),
-    organizationUserId: z.string().nullable(),
-    theme: z.string(),
-    level: z.enum(['Low', 'Middle', 'High']),
-    transcript: z.string(),
-    thinkTime: z.union([z.string(), z.number()]).transform(v => Number(v)),
-    speakTime: z.union([z.string(), z.number()]).transform(v => Number(v)),
-  })
-  .strict()
+const evaluationRequestSchema = z.object({
+  userId: z.string().nullable().default(null),
+  organizationUserId: z.string().nullable().default(null),
+  theme: z.string(),
+  level: z.enum(['Low', 'Middle', 'High']),
+  transcript: z.string(),
+  thinkTime: z.union([z.string(), z.number()]).transform(v => Number(v)),
+  speakTime: z.union([z.string(), z.number()]).transform(v => Number(v)),
+})
 
 export class SpeakingEvaluationController {
   constructor(private evaluateSpeakingUseCase: EvaluateSpeakingUseCase) {}
