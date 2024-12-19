@@ -24,10 +24,12 @@ const HistoryCard = ({ entry }: { entry: HistoryEntry }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
   let evaluationData: Evaluation | null = null
+  try {
+    evaluationData = entry.aiEvaluation ? JSON.parse(entry.aiEvaluation) : null
+  } catch (error) {
+    evaluationData = null
+  }
 
-  evaluationData = entry.aiEvaluation ? JSON.parse(entry.aiEvaluation) : null
-
-  evaluationData = JSON.parse(entry.aiEvaluation)
   const {
     grammarAccuracy = 'No data available',
     vocabularyAppropriateness = 'No data available',
@@ -35,6 +37,7 @@ const HistoryCard = ({ entry }: { entry: HistoryEntry }) => {
     improvementSuggestions = 'No data available',
     improvedExpressionExamples = [],
   } = evaluationData || {}
+
   return (
     <Card className='mb-4 overflow-hidden shadow-lg border rounded-lg'>
       <CardContent className='p-4'>
