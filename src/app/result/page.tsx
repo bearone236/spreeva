@@ -31,6 +31,7 @@ export default function ResultPage() {
 
     const evaluationData = {
       userId: session?.user?.id || null,
+      organizationUserId: session?.user?.organizationId || null,
       theme,
       themeType: themeType as 'quickstart' | 'ocr',
       level,
