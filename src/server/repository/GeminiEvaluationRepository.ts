@@ -76,7 +76,7 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
           }
         }
 
-        await tx.speakingResult.create({
+        const speakingResult = await tx.speakingResult.create({
           data: {
             userId: userId || null,
             organizationUserId: organizationUserId || null,
@@ -85,6 +85,13 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
             thinkTime: evaluation.getThinkTime(),
             speakTime: evaluation.getSpeakTime(),
             spokenText: evaluation.getSpokenText(),
+          },
+        })
+
+        await tx.evaluation.create({
+          data: {
+            speakingResultId: speakingResult.id,
+            aiEvaluation: evaluation.getEvaluation(),
           },
         })
       })
