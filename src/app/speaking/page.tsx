@@ -71,7 +71,7 @@ export default function SpeakingPage() {
 
   useEffect(() => {
     if (remainingTime === 0 && !isLoading) {
-      handleSkipAndEvaluate(transcribedText || '音声が検出されませんでした')
+      processRecording(transcribedText || '音声が検出されませんでした')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remainingTime, transcribedText, isLoading])
@@ -115,8 +115,14 @@ export default function SpeakingPage() {
       setRemainingTime(prev => {
         if (prev <= 1) {
           clearInterval(interval)
-          setIsLoading(true)
           setIsRecording(false)
+          setIsLoading(true)
+          if (
+            mediaRecorderRef.current &&
+            mediaRecorderRef.current.state !== 'inactive'
+          ) {
+            mediaRecorderRef.current.stop()
+          }
           return 0
         }
         return prev - 1
@@ -156,15 +162,15 @@ export default function SpeakingPage() {
         setIsLoading(false)
       } else {
         setIsLoading(false)
-        handleSkipAndEvaluate('音声が検出されませんでした')
+        processRecording('音声が検出されませんでした')
       }
     } catch (error) {
       setIsLoading(false)
-      handleSkipAndEvaluate('音声が検出されませんでした')
+      processRecording('音声が検出されませんでした')
     }
   }
 
-  const handleSkipAndEvaluate = (transcription: string = transcribedText) => {
+  const processRecording = (transcription: string = transcribedText) => {
     if (
       mediaRecorderRef.current &&
       mediaRecorderRef.current.state !== 'inactive'
