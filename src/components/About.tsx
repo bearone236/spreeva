@@ -39,6 +39,32 @@ export default function AboutPage() {
           <div className='absolute top-0 right-0 w-2/5 h-full bg-[#F5B642] skew-x-12 transform origin-top-right'></div>
         </section>
 
+        <section className='py-20 bg-gradient-to-r from-[#1B2B3A] to-[#2C3E50] text-white mb-16'>
+          <div className='container mx-auto px-4'>
+            <div className='max-w-4xl mx-auto text-center'>
+              <h2 className='text-4xl md:text-5xl font-bold mb-8'>
+                Spreevaとは？
+              </h2>
+              <p className='text-xl md:text-2xl leading-relaxed mb-10'>
+                Spreevaは
+                <span className='text-[#F5B642] font-semibold'>
+                  「短い時間で質問の意図を瞬時に理解し、話に厚みを持たせる力」
+                </span>
+                {'　　　'}
+                を習得することを目指す、革新的な英語学習プラットフォームです
+              </p>
+              <div className='bg-white/10 backdrop-blur-lg rounded-xl p-8 inline-block'>
+                <p className='text-lg md:text-xl font-semibold'>
+                  私たちの目標：
+                </p>
+                <p className='text-2xl md:text-3xl font-bold text-[#F5B642] mt-4'>
+                  瞬時の理解と豊かな表現力の獲得
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className='container mx-auto px-4 mb-16 pt-12'>
           <h2 className='text-4xl font-bold mb-12 text-center text-[#1B2B3A]'>
             <span className='border-b-4 border-[#F5B642] pb-2'>主な機能</span>
@@ -118,13 +144,13 @@ export default function AboutPage() {
             <div className='flex items-center gap-6 p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300'>
               <Mic className='w-12 h-12 text-[#F5B642]' />
               <p className='text-gray-700 text-xl'>
-                英語スピーキング力を向上させたい方
+                スピーキング力を向上したい方
               </p>
             </div>
             <div className='flex items-center gap-6 p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300'>
               <Target className='w-12 h-12 text-[#F5B642]' />
               <p className='text-gray-700 text-xl'>
-                英語検定やTOEFLの対策をしたい方
+                英語検定やTOEFL対策をしたい方
               </p>
             </div>
             <div className='flex items-center gap-6 p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300'>
@@ -148,7 +174,7 @@ export default function AboutPage() {
               あなたの英語力を解き放つ
             </h2>
             <p className='text-2xl mb-12 max-w-3xl mx-auto'>
-              Spreevaで、英語スピーキングの新たな可能性を探求しましょう。今すぐ始めて、あなたの英語力を次のレベルへ。
+              Spreevaで英語スピーキングの新たな可能性を探求しましょう。今すぐ始めて、あなたの英語力を次のレベルへ。
             </p>
             <Button
               size='lg'
