@@ -29,7 +29,7 @@ export default async function RootLayout({
       <body className={`${font.className} bg-orange-50`}>
         <AuthProvider>
           <HeaderServer />
-          <div className='pt-20 px-8 '>
+          <div className='pt-20'>
             <Suspense fallback={<LoadingAnimation />}>{children}</Suspense>
           </div>
         </AuthProvider>
