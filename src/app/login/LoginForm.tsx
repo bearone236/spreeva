@@ -6,12 +6,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { signIn, useSession } from 'next-auth/react'
 
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,18 +22,24 @@ export default function LoginForm() {
       redirect: false,
     })
 
-    if (result?.ok === true) {
-      if (session?.user.userType === 'admin') {
+    if (result?.ok) {
+      console.log('Login successful, redirecting...')
+    } else {
+      console.error('Login failed')
+    }
+  }
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      if (session?.user?.userType === 'admin') {
         window.location.href = '/organization/dashboard'
-      }
-      if (session?.user.userType === 'member') {
+      } else if (session?.user?.userType === 'member') {
         window.location.href = '/organization'
-      }
-      if (session?.user?.userType === 'user') {
+      } else if (session?.user?.userType === 'user') {
         window.location.href = '/404'
       }
     }
-  }
+  }, [status, session]) // `status`と`session`を監視
 
   return (
     <div className='pt-20 flex justify-center items-center bg-orange-50 '>

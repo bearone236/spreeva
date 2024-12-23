@@ -17,6 +17,10 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
   }
 
   private async generateContentFromAI(prompt: string): Promise<string> {
+    if (!prompt || typeof prompt !== 'string' || prompt.trim() === '') {
+      throw new Error('Invalid or empty prompt provided to generateContent')
+    }
+
     try {
       const model = this.genAI.getGenerativeModel({
         model: 'gemini-1.5-flash',
@@ -34,6 +38,10 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
   }
 
   async generateEvaluation(params: EvaluationParams): Promise<string> {
+    if (!params.theme || !params.level || !params.spokenText) {
+      throw new Error('Invalid evaluation parameters')
+    }
+
     const prompt = this.createPrompt(params)
     return this.generateContentFromAI(prompt)
   }
@@ -68,7 +76,7 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
           }
         }
 
-        await tx.speakingResult.create({
+        const speakingResult = await tx.speakingResult.create({
           data: {
             userId: userId || null,
             organizationUserId: organizationUserId || null,
@@ -79,13 +87,23 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
             spokenText: evaluation.getSpokenText(),
           },
         })
+
+        await tx.evaluation.create({
+          data: {
+            speakingResultId: speakingResult.id,
+            aiEvaluation: evaluation.getEvaluation(),
+          },
+        })
       })
     } catch (error) {
-      throw new Error('Failed to save evaluation results')
+      throw new Error(error instanceof Error ? error.message : 'Unknown error')
     }
   }
 
   private createPrompt(params: EvaluationParams): string {
+    if (!params.theme || !params.level || !params.spokenText) {
+      throw new Error('Invalid parameters for prompt creation')
+    }
     return `以下のスピーチを評価してください。
 
 テーマ: ${params.theme}

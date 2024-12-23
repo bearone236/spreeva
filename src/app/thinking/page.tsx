@@ -2,10 +2,15 @@
 
 import LevelDisplay from '@/components/LevelDisplay'
 import { Card, CardContent } from '@/components/ui/card'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import useStore from '../../provider/store/useStore'
+const Player = dynamic(
+  () => import('@lottiefiles/react-lottie-player').then(mod => mod.Player),
+  { ssr: false },
+)
 
 export default function ThinkingPage() {
   const router = useRouter()
@@ -14,6 +19,7 @@ export default function ThinkingPage() {
   const [gracePeriod, setGracePeriod] = useState(0)
   const [isSpeaking, setIsSpeaking] = useState(false)
   const hasStarted = useRef(false)
+  const [isTransitioning, setIsTransitioning] = useState(false)
 
   const readThemeAloud = async () => {
     const utterance = new SpeechSynthesisUtterance(theme)
@@ -73,7 +79,9 @@ export default function ThinkingPage() {
         setGracePeriod(prev => {
           if (prev <= 1) {
             clearInterval(graceTimer)
-            router.push('/speaking')
+            setIsTransitioning(true)
+
+            setTimeout(() => router.push('/speaking'), 0)
           }
           return prev - 1
         })
@@ -81,6 +89,31 @@ export default function ThinkingPage() {
       return () => clearInterval(graceTimer)
     }
   }, [remainingTime, gracePeriod, router])
+
+  if (isTransitioning) {
+    return (
+      <div className='min-h-screen flex flex-col justify-center items-center'>
+        <Player
+          autoplay
+          loop
+          src={'/loading.json'}
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            height: '250px',
+            width: '250px',
+            zIndex: 1,
+            pointerEvents: 'none',
+          }}
+        />
+        <p className='mt-32 text-lg text-center font-bold fixed'>
+          テキストを読み取っています...
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className='flex flex-col items-center justify-center pt-20'>
@@ -141,7 +174,7 @@ export default function ThinkingPage() {
                 <div className='text-3xl font-bold text-[#ed7e00]'>
                   Speaking画面に遷移します
                 </div>
-                <div className='text-6xl font-extrabold text-[#ed9600]'>
+                <div className='text-8xl font-extrabold text-[#ed9600]'>
                   {gracePeriod}
                 </div>
                 <p className='text-2xl text-[#ed9600] font-semibold'>

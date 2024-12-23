@@ -21,9 +21,7 @@ interface AppState {
   setReadTheme: (read: boolean) => void
   setSpokenText: (text: string) => void
   setEvaluation: (evaluation: string) => void
-  incrementRetryCount: () => void
-  resetRetryCount: () => void
-  resetState: () => void
+  setRetryCount: (count: number) => void
 }
 
 const initialState = {
@@ -36,11 +34,11 @@ const initialState = {
   readTheme: false,
   spokenText: '',
   evaluation: '',
-  retryCount: 0,
 }
 
 const useStore = create<AppState>(set => ({
   ...initialState,
+  retryCount: 0,
   setTheme: theme => set({ theme }),
   setThemeType: themeType => set({ themeType }),
   setThinkTime: time => set({ thinkTime: time }),
@@ -50,10 +48,7 @@ const useStore = create<AppState>(set => ({
   setReadTheme: read => set({ readTheme: read }),
   setSpokenText: text => set({ spokenText: text }),
   setEvaluation: evaluation => set({ evaluation }),
-  incrementRetryCount: () =>
-    set(state => ({ retryCount: state.retryCount + 1 })),
-  resetRetryCount: () => set({ retryCount: 0 }),
-  resetState: () => set(initialState),
+  setRetryCount: count => set({ retryCount: count }),
 }))
 
 export default useStore
