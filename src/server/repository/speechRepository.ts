@@ -8,23 +8,25 @@ export class SpeechRepository {
 
   constructor() {
     try {
-      if (process.env.NODE_ENV === 'production') {
-        const credentials = JSON.parse(process.env.GCLOUD_CREDENTIALS || '{}')
-        if (!credentials.client_email) {
-          throw new Error('Invalid GCLOUD_CREDENTIALS: client_email is missing')
-        }
-        const auth = new GoogleAuth({
-          credentials,
-          scopes: ['https://www.googleapis.com/auth/cloud-platform'],
-        })
-        this.client = new SpeechClient({ auth })
-      } else {
-        this.client = new SpeechClient()
+      // GCLOUD_CREDENTIALS を必ず利用する
+      const credentials = JSON.parse(process.env.GCLOUD_CREDENTIALS || '{}')
+
+      if (!credentials.client_email || !credentials.private_key) {
+        throw new Error(
+          'Invalid GCLOUD_CREDENTIALS: Missing client_email or private_key.',
+        )
       }
-      this.storage = new Storage()
+
+      const auth = new GoogleAuth({
+        credentials,
+        scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+      })
+
+      this.client = new SpeechClient({ auth })
+      this.storage = new Storage({ credentials })
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error('Error initializing GoogleAuth:', error)
+      console.error('Error initializing Google Cloud clients:', error)
       throw error
     }
   }

@@ -7,14 +7,27 @@ export class GoogleVisionOCRRepository {
   private storage: Storage = new Storage()
 
   constructor() {
-    this.client =
-      process.env.NODE_ENV === 'production'
-        ? new vision.ImageAnnotatorClient({
-            credentials: JSON.parse(process.env.GCLOUD_CREDENTIALS || '{}'),
-          })
-        : new vision.ImageAnnotatorClient({
-            keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-          })
+    try {
+      const credentials = JSON.parse(process.env.GCLOUD_CREDENTIALS || '{}')
+
+      if (!credentials.client_email || !credentials.private_key) {
+        throw new Error(
+          'Invalid GCLOUD_CREDENTIALS: Missing client_email or private_key.',
+        )
+      }
+
+      this.client = new vision.ImageAnnotatorClient({
+        credentials,
+      })
+
+      this.storage = new Storage({
+        credentials,
+      })
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error initializing Google Cloud clients:', error)
+      throw error
+    }
   }
 
   async uploadToGCS(pdfFile: Blob, fileName: string): Promise<string> {
