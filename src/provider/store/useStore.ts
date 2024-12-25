@@ -1,5 +1,8 @@
+'use client'
+
 import type { ThemeLevel } from '@/types/theme.types'
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 interface AppState {
   theme: string
@@ -36,19 +39,26 @@ const initialState = {
   evaluation: '',
 }
 
-const useStore = create<AppState>(set => ({
-  ...initialState,
-  retryCount: 0,
-  setTheme: theme => set({ theme }),
-  setThemeType: themeType => set({ themeType }),
-  setThinkTime: time => set({ thinkTime: time }),
-  setSpeakTime: time => set({ speakTime: time }),
-  setLevel: level => set({ level }),
-  setShowTheme: show => set({ showTheme: show }),
-  setReadTheme: read => set({ readTheme: read }),
-  setSpokenText: text => set({ spokenText: text }),
-  setEvaluation: evaluation => set({ evaluation }),
-  setRetryCount: count => set({ retryCount: count }),
-}))
+const useStore = create<AppState>()(
+  persist(
+    set => ({
+      ...initialState,
+      retryCount: 0,
+      setTheme: theme => set({ theme }),
+      setThemeType: themeType => set({ themeType }),
+      setThinkTime: time => set({ thinkTime: time }),
+      setSpeakTime: time => set({ speakTime: time }),
+      setLevel: level => set({ level }),
+      setShowTheme: show => set({ showTheme: show }),
+      setReadTheme: read => set({ readTheme: read }),
+      setSpokenText: text => set({ spokenText: text }),
+      setEvaluation: evaluation => set({ evaluation }),
+      setRetryCount: count => set({ retryCount: count }),
+    }),
+    {
+      name: 'app-state',
+    },
+  ),
+)
 
 export default useStore
