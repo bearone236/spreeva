@@ -5,6 +5,7 @@ import './globals.css'
 import HeaderServer from '@/components/Header/HeaderServer'
 import LoadingAnimation from '@/components/Loading'
 import AuthProvider from '@/provider/AuthProvider'
+import { Analytics } from '@vercel/analytics/next'
 
 const font = Nunito({
   subsets: ['latin'],
@@ -31,6 +32,7 @@ export default async function RootLayout({
           <HeaderServer />
           <div className='pt-20'>
             <Suspense fallback={<LoadingAnimation />}>{children}</Suspense>
+            <Analytics />
           </div>
         </AuthProvider>
       </body>
