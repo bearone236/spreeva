@@ -5,8 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Switch } from '@/components/ui/switch'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { Label } from '@radix-ui/react-label'
-import { Clock, Eye, Mic, Volume2 } from 'lucide-react'
+import { Clock, Eye, Info, Mic, Volume2 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -38,6 +44,12 @@ export default function SelectPage() {
   const [customSpeakingTime, setCustomSpeakingTime] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+
+  const levelDescriptions = {
+    Low: '英語学習初心者レベル',
+    Middle: '日常会話が可能で、ある程度の英語力を持つレベル',
+    High: 'ビジネスや学術的な場面で英語を使用するレベル',
+  }
 
   useEffect(() => {
     if (!showTheme && !readTheme) {
@@ -161,8 +173,33 @@ export default function SelectPage() {
           </div>
 
           <div className='space-y-2'>
-            <Label className='text-md font-semibold text-[#ed7e00]'>
+            <Label className='text-md font-semibold text-[#ed7e00] flex items-center'>
               テーマレベル
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className='ml-4 text-orange-600 cursor-pointer'>
+                      <Info className='w-4 h-4' />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side='right'
+                    align='start'
+                    sideOffset={10}
+                    collisionPadding={8}
+                  >
+                    <p>
+                      <strong>Low:</strong> {levelDescriptions.Low}
+                    </p>
+                    <p>
+                      <strong>Middle:</strong> {levelDescriptions.Middle}
+                    </p>
+                    <p>
+                      <strong>High:</strong> {levelDescriptions.High}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </Label>
             <RadioGroup
               value={level}
@@ -208,6 +245,7 @@ export default function SelectPage() {
             </div>
           </div>
 
+          {/* Submit Button */}
           <Button
             type='submit'
             disabled={isLoading}
