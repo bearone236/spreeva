@@ -20,7 +20,7 @@ const QuickStartForm = () => {
   }
 
   return (
-    <div className='bg-white p-6 rounded-lg shadow-md min-h-[340px] flex flex-col justify-center'>
+    <div className='bg-white p-6 rounded-lg shadow-md min-h-[280px] flex flex-col justify-center'>
       <label
         htmlFor='theme-input'
         className='block text-lg font-bold text-[#e67e22] mb-2'
@@ -41,7 +41,7 @@ const QuickStartForm = () => {
           ランダムテーマで始める
         </Button>
 
-        <form onSubmit={handleThemeSubmit} className='pt-8'>
+        <form onSubmit={handleThemeSubmit} className='pt-5'>
           <label
             htmlFor='theme-input'
             className='block text-lg font-bold text-[#e67e22] mb-2'
