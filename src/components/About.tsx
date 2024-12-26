@@ -177,7 +177,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className='bg-[#1B2B3A] text-white py-16 mb-16'>
+        <section className='bg-[#1B2B3A] text-white py-16'>
           <div className='container mx-auto px-4 text-center'>
             <h2 className='text-3xl font-bold mb-6'>
               アプリ向上にご協力ください
@@ -196,6 +196,14 @@ export default function AboutPage() {
             </Link>
           </div>
         </section>
+        <footer className='bg-[#1B2B3A] text-white py-8 mt-0.5'>
+          <div className='container mx-auto px-4 text-center'>
+            <p className='text-sm'>
+              &copy; {new Date().getFullYear()} Spreeva - All rights reserved
+            </p>
+            <p className='text-sm mt-2'>Created by Kumakura Kazuya</p>
+          </div>
+        </footer>
       </main>
     </div>
   )
