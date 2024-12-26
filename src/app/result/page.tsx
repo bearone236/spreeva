@@ -3,12 +3,14 @@
 import LevelDisplay from '@/components/LevelDisplay'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import useStore from '../../provider/store/useStore'
 
 export default function ResultPage() {
   const router = useRouter()
+  const session = useSession()
   const {
     theme,
     level,
@@ -27,12 +29,14 @@ export default function ResultPage() {
     setIsLoading(true)
 
     const evaluationData = {
-      theme,
-      themeType,
-      level,
-      thinkTime,
-      speakTime,
-      transcript: spokenText,
+      userId: session.data?.user?.id || null,
+      organizationUserId: session.data?.user?.organizationId || null,
+      theme: theme || '',
+      themeType: themeType || '',
+      level: level || 'Low',
+      thinkTime: thinkTime || 0,
+      speakTime: speakTime || 0,
+      transcript: spokenText || '',
     }
 
     try {
