@@ -56,12 +56,12 @@ const PDFUploadForm = () => {
     <div className='bg-white p-6 rounded-lg shadow-md min-h-[340px] flex flex-col justify-center'>
       <h1 className='text-[#e67e22] text-2xl font-bold'>PDFからテーマ生成</h1>
       <div className='flex flex-col space-y-4'>
-        <div className='flex flex-col space-y-2'>
+        <div className='flex flex-col space-y-2 mt-4'>
           <label
             htmlFor='pdf-upload'
             className='block text-sm font-semibold text-gray-700'
           >
-            PDFファイルをアップロード
+            PDFファイルをアップロードしてください
           </label>
           <Input
             id='pdf-upload'

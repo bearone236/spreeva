@@ -21,7 +21,12 @@ const QuickStartForm = () => {
 
   return (
     <div className='bg-white p-6 rounded-lg shadow-md min-h-[340px] flex flex-col justify-center'>
-      <h1 className='text-[#e67e22] text-2xl font-bold'>クイックスタート</h1>
+      <label
+        htmlFor='theme-input'
+        className='block text-lg font-bold text-[#e67e22] mb-2'
+      >
+        クイックスタート
+      </label>
       <div className='flex flex-col space-y-4'>
         <Button
           className='w-full bg-gradient-to-r from-[#f1c40f] to-[#e67e22] text-white hover:from-[#f39c12] hover:to-[#d35400] py-3 rounded-md'
@@ -36,10 +41,10 @@ const QuickStartForm = () => {
           ランダムテーマで始める
         </Button>
 
-        <form onSubmit={handleThemeSubmit}>
+        <form onSubmit={handleThemeSubmit} className='pt-8'>
           <label
             htmlFor='theme-input'
-            className='block text-sm font-semibold text-gray-700 mb-2'
+            className='block text-lg font-bold text-[#e67e22] mb-2'
           >
             セレクトテーマ
           </label>
@@ -47,7 +52,7 @@ const QuickStartForm = () => {
             <Input
               id='theme-input'
               type='text'
-              placeholder='テーマを入力'
+              placeholder='好きなテーマを入力 (AI, 動物, スポーツ など)'
               value={theme}
               onChange={e => setThemeInput(e.target.value)}
               className='flex-grow border-[#f39c12] focus:border-[#e67e22] focus:ring-[#e67e22] rounded-md'
