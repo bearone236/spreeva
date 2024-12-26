@@ -3,11 +3,11 @@ import { v1 as vision } from '@google-cloud/vision'
 import { v4 as uuidv4 } from 'uuid'
 
 export class GoogleVisionOCRRepository {
-  private client: vision.ImageAnnotatorClient
-  private storage: Storage = new Storage()
+  private client: vision.ImageAnnotatorClient | null = null
+  private storage: Storage | null = null
 
-  constructor() {
-    try {
+  private initializeClients() {
+    if (!this.client || !this.storage) {
       const credentials = JSON.parse(process.env.GCLOUD_CREDENTIALS || '{}')
 
       if (!credentials.client_email || !credentials.private_key) {
@@ -23,16 +23,14 @@ export class GoogleVisionOCRRepository {
       this.storage = new Storage({
         credentials,
       })
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error initializing Google Cloud clients:', error)
-      throw error
     }
   }
 
   async uploadToGCS(pdfFile: Blob, fileName: string): Promise<string> {
+    this.initializeClients()
     const bucketName = 'spreeva-ocr-output'
-    const bucket = this.storage.bucket(bucketName)
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    const bucket = this.storage!.bucket(bucketName)
     const file = bucket.file(fileName)
 
     await file.save(Buffer.from(await pdfFile.arrayBuffer()), {
@@ -43,6 +41,7 @@ export class GoogleVisionOCRRepository {
   }
 
   async extractTextFromPDF(pdfFile: Blob): Promise<string> {
+    this.initializeClients()
     const fileName = `uploads/${Date.now()}.pdf`
     const gcsUri = await this.uploadToGCS(pdfFile, fileName)
     const outputPrefix = `output/${uuidv4()}-`
@@ -64,13 +63,17 @@ export class GoogleVisionOCRRepository {
       ],
     }
 
-    const [operation] = await this.client.asyncBatchAnnotateFiles(request)
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    const [operation] = await this.client!.asyncBatchAnnotateFiles(request)
     await operation.promise()
 
     for (let attempt = 0; attempt < 10; attempt++) {
-      const [files] = await this.storage.bucket('spreeva-ocr-output').getFiles({
-        prefix: outputPrefix,
-      })
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      const [files] = await this.storage!.bucket('spreeva-ocr-output').getFiles(
+        {
+          prefix: outputPrefix,
+        },
+      )
 
       if (files.length > 0) {
         const ocrData = JSON.parse(
