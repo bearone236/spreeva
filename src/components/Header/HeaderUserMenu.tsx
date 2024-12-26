@@ -13,6 +13,7 @@ import { LogOut, User, UserCog } from 'lucide-react'
 import type { Session } from 'next-auth'
 import { signOut } from 'next-auth/react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Suspense } from 'react'
 import { Button } from '../ui/button'
 import { Skeleton } from '../ui/skeleton'
@@ -66,6 +67,16 @@ export default function HeaderUserMenu({
           <DropdownMenuSeparator />
           <DropdownMenuItem>🚧プロフィール設定🚧</DropdownMenuItem>
           <DropdownMenuItem>🚧アカウント設定🚧</DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link
+              href={process.env.NEXT_PUBLIC_SURVEY_URL || '#'}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-orange-500'
+            >
+              📝 Spreeva改善フォーム 📝
+            </Link>
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className='text-red-600'
