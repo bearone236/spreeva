@@ -79,7 +79,7 @@ export default function AboutPage() {
             <span className='border-b-4 border-[#F5B642] pb-2'>主な機能</span>
           </h2>
           <div className='grid md:grid-cols-2 gap-12'>
-            <div className='bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-[#F5B642]'>
+            <div className='bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5 border-2 border-[#F5B642]'>
               <div className='flex items-center gap-4 mb-6'>
                 <div className='p-4 bg-[#F5B642] rounded-full'>
                   <Clock className='w-10 h-10 text-white' />
@@ -92,7 +92,7 @@ export default function AboutPage() {
                 AIが生成するテーマで、瞬発的な英語力を鍛えます。レベルや時間を自由に設定可能で、実践的なスピーキング力を効率的に向上させます。
               </p>
             </div>
-            <div className='bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-[#F5B642]'>
+            <div className='bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5 border-2 border-[#F5B642]'>
               <div className='flex items-center gap-4 mb-6'>
                 <div className='p-4 bg-[#F5B642] rounded-full'>
                   <FileText className='w-10 h-10 text-white' />
@@ -116,7 +116,7 @@ export default function AboutPage() {
               </span>
             </h2>
             <div className='grid md:grid-cols-3 gap-8'>
-              <div className='bg-white/10 backdrop-blur-lg rounded-xl p-8 text-center transform hover:scale-105 transition-all duration-300'>
+              <div className='bg-white/10 backdrop-blur-lg rounded-xl p-8 text-center transform hover:scale-105 transition-all duration-500'>
                 <Target className='w-16 h-16 mx-auto mb-6 text-[#F5B642]' />
                 <h3 className='text-2xl font-semibold mb-4'>
                   独自評価システム
@@ -125,14 +125,14 @@ export default function AboutPage() {
                   会話の質を高める独自の評価指標で、効果的な上達をサポート
                 </p>
               </div>
-              <div className='bg-white/10 backdrop-blur-lg rounded-xl p-8 text-center transform hover:scale-105 transition-all duration-300'>
+              <div className='bg-white/10 backdrop-blur-lg rounded-xl p-8 text-center transform hover:scale-105 transition-all duration-500'>
                 <Star className='w-16 h-16 mx-auto mb-6 text-[#F5B642]' />
                 <h3 className='text-2xl font-semibold mb-4'>基本機能無料</h3>
                 <p className='text-gray-300 text-lg'>
                   必要な機能を制限なく利用可能。学習の継続性を重視
                 </p>
               </div>
-              <div className='bg-white/10 backdrop-blur-lg rounded-xl p-8 text-center transform hover:scale-105 transition-all duration-300'>
+              <div className='bg-white/10 backdrop-blur-lg rounded-xl p-8 text-center transform hover:scale-105 transition-all duration-500'>
                 <Users className='w-16 h-16 mx-auto mb-6 text-[#F5B642]' />
                 <h3 className='text-2xl font-semibold mb-4'>多用途対応</h3>
                 <p className='text-gray-300 text-lg'>
