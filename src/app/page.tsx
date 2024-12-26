@@ -15,7 +15,7 @@ export default async function Page() {
         {session?.user ? (
           <>
             <div className='flex flex-col px-8'>
-              <div className='flex flex-col md:flex-row gap-6 mt-4'>
+              <div className='flex flex-col md:flex-row gap-6 mt-3'>
                 <div className='md:w-1/2'>
                   <QuickStartForm />
                 </div>
