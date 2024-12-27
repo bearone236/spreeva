@@ -1,6 +1,7 @@
 {
   "functions": {
-    "api/*": {
+    "server/**/*.ts": {
+      "runtime": "nodejs16.x",
       "maxDuration": 60
     }
   }
