@@ -51,6 +51,7 @@ export default function ResultPage() {
       }
 
       const data = await response.json()
+      console.log(data)
 
       if (data.success) {
         setEvaluation(data.evaluation)
@@ -59,6 +60,8 @@ export default function ResultPage() {
         throw new Error(data.error || 'Failed to evaluate speech')
       }
     } catch (error) {
+      console.error('Fetch error:', error)
+
       alert('評価に失敗しました。もう一度お試しください。')
     } finally {
       setIsLoading(false)
