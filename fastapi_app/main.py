@@ -45,7 +45,6 @@ class EvaluationRequest(BaseModel):
 # レスポンスモデル
 class EvaluationResponse(BaseModel):
     similarity_score: float
-    similarity_percentage: int
     diversity_score: float
     overall_score: float
     exact_matches: int
@@ -71,9 +70,8 @@ def calculate_similarity_score(theme, response, model):
         penalty += (matching_count - 3) * 0.02
 
     adjusted_similarity = max(0, similarity - penalty)
-    similarity_percentage = int(adjusted_similarity * 100)
 
-    return adjusted_similarity, similarity_percentage, matching_count, penalty
+    return adjusted_similarity, matching_count, penalty
 
 def highlight_related_words(theme, response):
     """
@@ -118,16 +116,16 @@ async def calculate_evaluation(request: EvaluationRequest):
     theme = request.theme
     response = request.response
 
-    similarity_score, similarity_percentage, exact_matches, penalty = calculate_similarity_score(
+    similarity_score, exact_matches, penalty = calculate_similarity_score(
         theme, response, model
     )
     diversity_score = calculate_topic_diversity(response, model)
     overall_score = calculate_overall_score(similarity_score, diversity_score)
     highlighted_words = highlight_related_words(theme, response)
 
+
     return EvaluationResponse(
         similarity_score=similarity_score,
-        similarity_percentage=similarity_percentage,
         diversity_score=diversity_score,
         overall_score=overall_score,
         exact_matches=exact_matches,
