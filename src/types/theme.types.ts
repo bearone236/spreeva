@@ -1,6 +1,6 @@
 export type ThemeLevel = 'Low' | 'Middle' | 'High'
 export type ThemeType = 'quickstart' | 'ocr'
-export type ThemeInput = 'ramdom' | 'custom' | string
+export type ThemeInput = 'random' | 'custom' | string
 
 export type Evaluation = {
   grammarAccuracy: string
