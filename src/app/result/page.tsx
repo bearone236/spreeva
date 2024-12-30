@@ -21,6 +21,7 @@ export default function ResultPage() {
     retryCount,
     setRetryCount,
     setEvaluation,
+    setFastApiEvaluation,
   } = useStore()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -39,6 +40,21 @@ export default function ResultPage() {
       transcript: spokenText || '',
     }
 
+    // ダミーデータテストの際に使用する
+    // const evaluationData = {
+    //   userId: 'cm4v1hrcu0000mjqcqxw2nyhk',
+    //   organizationUserId: '',
+    //   theme: 'The impact of AI on modern society',
+    //   themeType: 'random',
+    //   level: 'Low',
+    //   thinkTime: 30,
+    //   speakTime: 30,
+    //   transcript: `Artificial intelligence is transforming many aspects of our lives.
+    //            It is being used in healthcare, education, and even in entertainment.
+    //            While there are many benefits, such as efficiency and innovation,
+    //            we must also be cautious about ethical concerns like privacy and job displacement.`,
+    // }
+
     try {
       const response = await fetch('/api/evaluate', {
         method: 'POST',
@@ -51,17 +67,16 @@ export default function ResultPage() {
       }
 
       const data = await response.json()
-      console.log(data)
+      console.log(data.fastApiEvaluation)
 
       if (data.success) {
+        setFastApiEvaluation(data.fastApiEvaluation)
         setEvaluation(data.evaluation)
         router.push('/evaluate')
       } else {
         throw new Error(data.error || 'Failed to evaluate speech')
       }
     } catch (error) {
-      console.error('Fetch error:', error)
-
       alert('評価に失敗しました。もう一度お試しください。')
     } finally {
       setIsLoading(false)
@@ -77,27 +92,27 @@ export default function ResultPage() {
 
   return (
     <div className='flex flex-col items-center justify-center pt-20'>
-      <Card className='w-full max-w-3xl bg-white shadow-lg border-t-4 border-[#ed9600]'>
-        <CardHeader>
+      <Card className='w-full max-w-3xl bg-white border border-[#ed9600]/20'>
+        <CardHeader className='pb-3 flex flex-row items-center justify-between'>
           <CardTitle className='text-2xl font-bold text-[#ed7e00]'>
             Result
           </CardTitle>
+          <LevelDisplay level={level} />
         </CardHeader>
         <CardContent className='space-y-6'>
           <div>
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
               テーマ
             </h3>
-            <p className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
+            <p className='text-lg text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-100'>
               {theme}
             </p>
           </div>
-          <LevelDisplay level={level} />
           <div>
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
               あなたのスピーチ
             </h3>
-            <p className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
+            <p className='text-lg text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-100'>
               {spokenText}
             </p>
           </div>
@@ -114,10 +129,10 @@ export default function ResultPage() {
 
             <Button
               onClick={handleEvaluate}
-              className='bg-[#ed7e00] hover:bg-[#ed9600] text-white font-semibold'
+              className='bg-[#ed7e00] hover:bg-[#ed9600] text-white font-semibold px-6'
               disabled={isLoading}
             >
-              評価
+              {isLoading ? '評価中' : '評価　'}
             </Button>
           </div>
         </CardContent>
