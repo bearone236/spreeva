@@ -1,5 +1,6 @@
 import type { Context } from 'hono'
 import { z } from 'zod'
+import { fetchFastApiEvaluation } from '../repository/FastApiEvaluationRepository'
 import type { EvaluateSpeakingUseCase } from '../usecase/EvaluateSpeakingUseCase'
 
 const evaluationRequestSchema = z.object({
@@ -41,9 +42,15 @@ export class SpeakingEvaluationController {
         speakTime: validatedData.speakTime,
       })
 
+      const fastApiEvaluation = await fetchFastApiEvaluation(
+        validatedData.theme,
+        validatedData.transcript,
+      )
+
       return c.json({
         success: true,
         evaluation: evaluation.getEvaluation(),
+        fastApiEvaluation: fastApiEvaluation,
       })
     } catch (error) {
       if (error instanceof z.ZodError) {
