@@ -12,6 +12,14 @@ interface AppState {
   spokenText: string
   evaluation: string
   retryCount: number
+  fastApiEvaluation: {
+    similarity_score: number
+    diversity_score: number
+    overall_score: number
+    exact_matches: number
+    penalty: number
+    highlighted_words: string[]
+  } | null
   setTheme: (theme: string) => void
   setThemeType: (themeType: string) => void
   setThinkTime: (time: string) => void
@@ -22,6 +30,7 @@ interface AppState {
   setSpokenText: (text: string) => void
   setEvaluation: (evaluation: string) => void
   setRetryCount: (count: number) => void
+  setFastApiEvaluation: (evaluation: AppState['fastApiEvaluation']) => void
 }
 
 const initialState = {
@@ -35,6 +44,7 @@ const initialState = {
   spokenText: '',
   evaluation: '',
   retryCount: 0,
+  fastApiEvaluation: null,
 }
 
 const useStore = create<AppState>(set => ({
@@ -49,6 +59,7 @@ const useStore = create<AppState>(set => ({
   setSpokenText: text => set({ spokenText: text }),
   setEvaluation: evaluation => set({ evaluation }),
   setRetryCount: count => set({ retryCount: count }),
+  setFastApiEvaluation: evaluation => set({ fastApiEvaluation: evaluation }),
 }))
 
 export default useStore
