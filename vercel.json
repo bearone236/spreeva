@@ -5,8 +5,10 @@
       "maxDuration": 60
     }
   },
-  "fastapi_app/main.py": {
-    "runtime": "python3.9",
-    "maxDuration": 60
-  }
+  "builds": [
+    {
+      "src": "next.config.mjs",
+      "use": "@vercel/next"
+    }
+  ]
 }
