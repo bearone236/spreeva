@@ -99,7 +99,6 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
             speakingResultId: speakingResult.id,
             aiEvaluation: evaluation.getEvaluation(),
             similarityScore: evaluationData.similarity_score,
-            similarityPercentage: evaluationData.similarity_percentage,
             diversityScore: evaluationData.diversity_score,
             overallScore: evaluationData.overall_score,
             exactMatches: evaluationData.exact_matches,
