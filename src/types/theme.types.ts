@@ -6,6 +6,6 @@ export type Evaluation = {
   grammarAccuracy: string
   vocabularyAppropriateness: string
   relevanceToTheme: string
-  improvementSuggestions: string
+  improvementSuggestions: string[]
   improvedExpressionExamples: string[]
 }

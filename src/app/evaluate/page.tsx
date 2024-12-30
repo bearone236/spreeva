@@ -24,6 +24,17 @@ export default function EvaluatePage() {
     fastApiEvaluation,
   } = useStore()
   const level: ThemeLevel = themeLevel as ThemeLevel
+  const defaultEvaluation: Evaluation = {
+    grammarAccuracy: '',
+    vocabularyAppropriateness: '',
+    relevanceToTheme: '',
+    improvementSuggestions: [],
+    improvedExpressionExamples: [] as string[],
+  }
+
+  const parsedEvaluation: Evaluation = evaluation
+    ? JSON.parse(evaluation)
+    : defaultEvaluation
 
   const {
     grammarAccuracy,
@@ -31,7 +42,7 @@ export default function EvaluatePage() {
     relevanceToTheme,
     improvementSuggestions,
     improvedExpressionExamples,
-  }: Evaluation = JSON.parse(evaluation)
+  }: Evaluation = parsedEvaluation
 
   const suggestions =
     typeof improvementSuggestions === 'string'
