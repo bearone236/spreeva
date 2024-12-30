@@ -6,7 +6,7 @@ export async function fetchFastApiEvaluation(
   spokenText: string,
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 ): Promise<any> {
-  const apiUrl = 'http://127.0.0.1:8000/calculate-evaluation'
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
 
   const response = await fetch(apiUrl, {
     method: 'POST',
