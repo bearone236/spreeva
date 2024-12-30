@@ -78,19 +78,18 @@ model SpeakingResult {
 }
 
 model Evaluation {
-  id                   String         @id @default(cuid())
-  speakingResultId     String
-  aiEvaluation         String
-  similarityScore      Float?
-  similarityPercentage Int?
-  diversityScore       Float?
-  overallScore         Float?
-  exactMatches         Int?
-  penalty              Float?
-  highlightedWords     String?
-  createdAt            DateTime       @default(now())
-  updatedAt            DateTime       @updatedAt
-  speakingResult       SpeakingResult @relation(fields: [speakingResultId], references: [id])
+  id               String         @id @default(cuid())
+  speakingResultId String
+  aiEvaluation     String
+  similarityScore  Float?
+  diversityScore   Float?
+  overallScore     Float?
+  exactMatches     Int?
+  penalty          Float?
+  highlightedWords String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  speakingResult   SpeakingResult @relation(fields: [speakingResultId], references: [id])
 
   @@index([speakingResultId])
 }
