@@ -5,6 +5,7 @@ import type {
   EvaluationParams,
   IEvaluationInterface,
 } from '../domain/interfaces/IEvaluationInterface'
+import { fetchFastApiEvaluation } from './FastApiEvaluationRepository'
 
 export class GeminiEvaluationRepository implements IEvaluationInterface {
   private genAI: GoogleGenerativeAI
@@ -55,6 +56,11 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
     }
 
     try {
+      const evaluationData = await fetchFastApiEvaluation(
+        evaluation.getTheme(),
+        evaluation.getSpokenText(),
+      )
+
       await this.prisma.$transaction(async tx => {
         if (userId) {
           const userExists = await tx.user.findUnique({
@@ -92,6 +98,12 @@ export class GeminiEvaluationRepository implements IEvaluationInterface {
           data: {
             speakingResultId: speakingResult.id,
             aiEvaluation: evaluation.getEvaluation(),
+            similarityScore: evaluationData.similarity_score,
+            diversityScore: evaluationData.diversity_score,
+            overallScore: evaluationData.overall_score,
+            exactMatches: evaluationData.exact_matches,
+            penalty: evaluationData.penalty,
+            highlightedWords: JSON.stringify(evaluationData.highlighted_words),
           },
         })
       })
