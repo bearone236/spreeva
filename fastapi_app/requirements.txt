@@ -3,3 +3,4 @@ pydantic
 sentence-transformers
 nltk
 gensim
+uvicorn
