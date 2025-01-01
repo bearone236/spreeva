@@ -4,11 +4,5 @@
       "memory": 1024,
       "maxDuration": 60
     }
-  },
-  "builds": [
-    {
-      "src": "next.config.mjs",
-      "use": "@vercel/next"
-    }
-  ]
+  }
 }
