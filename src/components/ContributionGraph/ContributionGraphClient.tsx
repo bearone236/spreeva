@@ -182,7 +182,7 @@ const ContributionGraphClient: React.FC<ContributionGraphProps> = ({
           </h1>
           <div className='flex justify-between items-center mb-4 mt-2'>
             <div className='text-left'>
-              <h1 className='text-lg font-semibold xs:text-sm'>
+              <h1 className='lg:text-lg font-semibold xs:text-sm'>
                 {year} Total Lessons: {totalContributions}
               </h1>
             </div>

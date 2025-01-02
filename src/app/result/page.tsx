@@ -1,5 +1,4 @@
 'use client'
-
 import LevelDisplay from '@/components/LevelDisplay'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -40,21 +39,6 @@ export default function ResultPage() {
       transcript: spokenText || '',
     }
 
-    // ダミーデータテストの際に使用する
-    // const evaluationData = {
-    //   userId: 'cm4v1hrcu0000mjqcqxw2nyhk',
-    //   organizationUserId: '',
-    //   theme: 'The impact of AI on modern society',
-    //   themeType: 'random',
-    //   level: 'Low',
-    //   thinkTime: 30,
-    //   speakTime: 30,
-    //   transcript: `Artificial intelligence is transforming many aspects of our lives.
-    //            It is being used in healthcare, education, and even in entertainment.
-    //            While there are many benefits, such as efficiency and innovation,
-    //            we must also be cautious about ethical concerns like privacy and job displacement.`,
-    // }
-
     try {
       const response = await fetch('/api/evaluate', {
         method: 'POST',
@@ -71,13 +55,14 @@ export default function ResultPage() {
       if (data.success) {
         setFastApiEvaluation(data.fastApiEvaluation)
         setEvaluation(data.evaluation)
-        router.push('/evaluate')
+        await router.push('/evaluate') // リダイレクトが完了するまで待機
       } else {
         throw new Error(data.error || 'Failed to evaluate speech')
       }
     } catch (error) {
       alert('評価に失敗しました。もう一度お試しください。')
     } finally {
+      // リダイレクトが完了後にボタンを再度有効化
       setIsLoading(false)
     }
   }
@@ -137,7 +122,7 @@ export default function ResultPage() {
               className='bg-[#ed7e00] hover:bg-[#ed9600] text-white font-semibold px-6'
               disabled={isLoading || isErrorSpeech}
             >
-              {isLoading ? '評価中' : '評価　'}
+              {isLoading ? '評価中...' : '評価'}
             </Button>
           </div>
         </CardContent>
