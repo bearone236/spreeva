@@ -57,7 +57,7 @@ const HistoryCard = ({ entry }: { entry: HistoryEntry }) => {
             シンキングタイム: {entry.thinkTime}秒 | スピーキングタイム:{' '}
             {entry.speakTime}秒
           </div>
-          <div className='grid grid-cols-3 gap-4 mt-5'>
+          <div className='grid lg:grid-cols-3 gap-4 mt-5 xs:grid-cols-1'>
             <div className='p-2 bg-gray-50 rounded border'>
               <span className='font-semibold'>類似スコア:</span>{' '}
               {entry.similarityScore !== null
