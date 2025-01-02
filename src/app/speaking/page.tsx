@@ -160,7 +160,9 @@ export default function SpeakingPage() {
 
       if (response.ok) {
         const data = await response.json()
-        setTranscribedText(data.transcription || '音声が検出されませんでした')
+        const transcription = data.transcription || '音声が検出されませんでした'
+        setTranscribedText(transcription)
+        setSpokenText(transcription)
         setIsLoading(false)
       } else {
         setIsLoading(false)
