@@ -67,7 +67,6 @@ export default function ResultPage() {
       }
 
       const data = await response.json()
-      console.log(data.fastApiEvaluation)
 
       if (data.success) {
         setFastApiEvaluation(data.fastApiEvaluation)
