@@ -8,7 +8,6 @@ export class SpeechRepository {
 
   constructor() {
     try {
-      // GCLOUD_CREDENTIALS を必ず利用する
       const credentials = JSON.parse(process.env.GCLOUD_CREDENTIALS || '{}')
 
       if (!credentials.client_email || !credentials.private_key) {
