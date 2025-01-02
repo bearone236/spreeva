@@ -1,5 +1,5 @@
 起動コマンド
-`uvicorn main:app --reload`
+`uvicorn main:app --host 0.0.0.0 --port 8080`
 
 
 Dockerにて起動

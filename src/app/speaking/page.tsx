@@ -28,8 +28,8 @@ const Timer = ({
   }, [isRecording])
 
   return (
-    <div className='flex flex-col items-center justify-center pt-20 p-4 '>
-      <Card className='w-full max-w-2xl bg-white shadow-lg border-t-4 border-[#ed9600]'>
+    <div className='flex flex-col items-center justify-center pt-12 p-4 '>
+      <Card className='w-full max-w-2xl bg-white border shadow-lg rounded-lg border-[#ed9600]/20'>
         <CardContent className='p-8 md:p-12'>
           <h2 className='text-3xl font-bold text-[#ed7e00] mb-6 text-center'>
             Speaking Time
@@ -160,7 +160,9 @@ export default function SpeakingPage() {
 
       if (response.ok) {
         const data = await response.json()
-        setTranscribedText(data.transcription || '')
+        const transcription = data.transcription || '音声が検出されませんでした'
+        setTranscribedText(transcription)
+        setSpokenText(transcription)
         setIsLoading(false)
       } else {
         setIsLoading(false)

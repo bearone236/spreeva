@@ -92,7 +92,7 @@ export default function EvaluatePage() {
 
   return (
     <div className='flex flex-col items-center justify-center p-3'>
-      <Card className='w-full max-w-4xl bg-white shadow-lg border-t-4 border-[#ed9600]'>
+      <Card className='w-full max-w-4xl bg-white border shadow-lg rounded-lg border-[#ed9600]/20'>
         <CardHeader className='flex justify-between'>
           <CardTitle className='text-2xl font-bold text-[#ed7e00]'>
             評価結果
@@ -103,7 +103,7 @@ export default function EvaluatePage() {
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
               テーマ
             </h3>
-            <p className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
+            <p className='text-lg text-gray-700 bg-gray-100 p-4 rounded-lg border border-gray-100'>
               {theme}
             </p>
             <div className='mt-2 flex justify-between items-center'>
@@ -119,7 +119,7 @@ export default function EvaluatePage() {
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
               あなたのスピーチ
             </h3>
-            <p className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
+            <p className='text-lg text-gray-700 bg-gray-100 p-4 rounded-lg border border-gray-100'>
               {spokenText}
             </p>
           </div>
@@ -127,8 +127,7 @@ export default function EvaluatePage() {
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>結果</h3>
             <div className='grid grid-cols-1 gap-4'>
               <TooltipProvider>
-                {/* 総合スコア */}
-                <div className='bg-gray-50 p-4 rounded-lg border-l-4 border-[#edc700]'>
+                <div className=' text-gray-700 bg-gray-100 p-4 rounded-lg border border-gray-100'>
                   <div className='flex items-center gap-2 mb-3'>
                     <Zap className='mr-2 h-5 w-5' />
                     <h4 className='font-bold text-lg'>総合スコア</h4>
@@ -146,7 +145,7 @@ export default function EvaluatePage() {
                       <div className='flex-1'>
                         <Progress
                           value={overallScore * 100}
-                          className='h-2 [&>div]:bg-[#1a1f36]'
+                          className='h-2 bg-gray-200 [&>div]:bg-[#1a1f36]'
                         />
                       </div>
                       <div className='text-md font-bold w-20 text-right'>
@@ -169,7 +168,7 @@ export default function EvaluatePage() {
                   </div>
                 </div>
 
-                <div className='bg-gray-50 p-4 rounded-lg border-l-4 border-[#edc700]'>
+                <div className='text-gray-700 bg-gray-100 p-4 rounded-lg border border-gray-100'>
                   <div className='flex items-center gap-2 mb-3'>
                     <Target className='mr-2 h-5 w-5' />
                     <h4 className='font-bold text-lg'>関連性スコア</h4>
@@ -187,7 +186,7 @@ export default function EvaluatePage() {
                       <div className='flex-1'>
                         <Progress
                           value={similarityScore * 100}
-                          className='h-2 [&>div]:bg-[#1a1f36]'
+                          className='h-2 bg-gray-200 [&>div]:bg-[#1a1f36]'
                         />
                       </div>
                       <div className='text-md font-bold w-20 text-right'>
@@ -210,7 +209,7 @@ export default function EvaluatePage() {
                   </div>
                 </div>
 
-                <div className='bg-gray-50 p-4 rounded-lg border-l-4 border-[#edc700]'>
+                <div className='text-gray-700 bg-gray-100 p-4 rounded-lg border border-gray-100'>
                   <div className='flex items-center gap-2 mb-3'>
                     <Percent className='mr-2 h-5 w-5' />
                     <h4 className='font-bold text-lg'>多様性スコア</h4>
@@ -228,7 +227,7 @@ export default function EvaluatePage() {
                       <div className='flex-1'>
                         <Progress
                           value={diversityScore * 100}
-                          className='h-2 [&>div]:bg-[#1a1f36]'
+                          className='h-2 bg-gray-200 [&>div]:bg-[#1a1f36]'
                         />
                       </div>
                       <div className='text-md font-bold w-20 text-right'>
@@ -258,23 +257,27 @@ export default function EvaluatePage() {
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
               AI評価
             </h3>
-            <div className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
-              <h4 className='font-bold'>文法の正確さ</h4>
-              <p>{grammarAccuracy}</p>
-              <h4 className='font-bold mt-4'>語彙の適切性</h4>
-              <p>{vocabularyAppropriateness}</p>
-              <h4 className='font-bold mt-4'>テーマの関連性</h4>
-              <p>{relevanceToTheme}</p>
-              <h4 className='font-bold mt-4'>改善の提案</h4>
+            <div className='text-lg text-gray-600 bg-gray-100 p-4 rounded-lg border border-gray-100 px-8 py-8'>
+              <h4 className='font-bold mt-4 text-[#ed9600]'>文法の正確さ</h4>
+              <p className='text-base'>{grammarAccuracy}</p>
+              <h4 className='font-bold mt-12 text-[#ed9600]'>語彙の適切性</h4>
+              <p className='text-base'>{vocabularyAppropriateness}</p>
+              <h4 className='font-bold mt-12 text-[#ed9600]'>テーマの関連性</h4>
+              <p className='text-base'>{relevanceToTheme}</p>
+              <h4 className='font-bold mt-12 text-[#ed9600]'>改善の提案</h4>
               <ul className='list-disc pl-5'>
                 {suggestions.map(suggestion => (
-                  <li key={suggestion}>{suggestion}</li>
+                  <li key={suggestion} className='text-base'>
+                    {suggestion}
+                  </li>
                 ))}
               </ul>
-              <h4 className='font-bold mt-4'>改善例</h4>
+              <h4 className='font-bold mt-12 text-[#ed9600]'>改善例</h4>
               <ul className='list-disc pl-5'>
                 {improvedExpressionExamples.map(example => (
-                  <li key={example}>{example}</li>
+                  <li key={example} className='text-base'>
+                    {example}
+                  </li>
                 ))}
               </ul>
             </div>

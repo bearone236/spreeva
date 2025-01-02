@@ -43,6 +43,8 @@ export default function SelectPage() {
   const [customThinkingTime, setCustomThinkingTime] = useState('')
   const [customSpeakingTime, setCustomSpeakingTime] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [thinkingError, setThinkingError] = useState('')
+  const [speakingError, setSpeakingError] = useState('')
   const router = useRouter()
 
   const levelDescriptions = {
@@ -71,8 +73,38 @@ export default function SelectPage() {
     setReadTheme(checked)
   }
 
+  const validateCustomTimes = () => {
+    let isValid = true
+
+    if (thinkTime === 'custom') {
+      const value = Number.parseInt(customThinkingTime, 10)
+      if (value < 1 || value > 180 || Number.isNaN(value)) {
+        setThinkingError('1秒以上180秒以下の値を入力してください。')
+        isValid = false
+      } else {
+        setThinkingError('')
+      }
+    }
+
+    if (speakTime === 'custom') {
+      const value = Number.parseInt(customSpeakingTime, 10)
+      if (value < 1 || value > 180 || Number.isNaN(value)) {
+        setSpeakingError('1秒以上180秒以下の値を入力してください。')
+        isValid = false
+      } else {
+        setSpeakingError('')
+      }
+    }
+
+    return isValid
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!validateCustomTimes()) {
+      return
+    }
     setIsLoading(true)
 
     try {
@@ -93,7 +125,7 @@ export default function SelectPage() {
 
       setThinkTime(effectiveThinkTime)
       setSpeakTime(effectiveSpeakTime)
-      router.push('/thinking')
+      await router.push('/thinking')
     } catch (error) {
       alert('セッションの開始に失敗しました。もう一度お試しください。')
     } finally {
@@ -131,13 +163,18 @@ export default function SelectPage() {
               </div>
             </RadioGroup>
             {thinkTime === 'custom' && (
-              <Input
-                type='number'
-                placeholder='秒数を入力'
-                value={customThinkingTime}
-                onChange={e => setCustomThinkingTime(e.target.value)}
-                className='w-full max-w-[150px]'
-              />
+              <>
+                <Input
+                  type='number'
+                  placeholder='秒数を入力'
+                  value={customThinkingTime}
+                  onChange={e => setCustomThinkingTime(e.target.value)}
+                  className='w-full max-w-[150px]'
+                />
+                {thinkingError && (
+                  <p className='text-red-500 text-sm mt-1'>{thinkingError}</p>
+                )}
+              </>
             )}
           </div>
 
@@ -162,13 +199,18 @@ export default function SelectPage() {
               </div>
             </RadioGroup>
             {speakTime === 'custom' && (
-              <Input
-                type='number'
-                placeholder='秒数を入力'
-                value={customSpeakingTime}
-                onChange={e => setCustomSpeakingTime(e.target.value)}
-                className='w-full max-w-[150px]'
-              />
+              <>
+                <Input
+                  type='number'
+                  placeholder='秒数を入力'
+                  value={customSpeakingTime}
+                  onChange={e => setCustomSpeakingTime(e.target.value)}
+                  className='w-full max-w-[150px]'
+                />
+                {speakingError && (
+                  <p className='text-red-500 text-sm mt-1'>{speakingError}</p>
+                )}
+              </>
             )}
           </div>
 
@@ -245,7 +287,6 @@ export default function SelectPage() {
             </div>
           </div>
 
-          {/* Submit Button */}
           <Button
             type='submit'
             disabled={isLoading}

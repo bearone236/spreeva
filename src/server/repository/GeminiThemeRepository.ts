@@ -1,32 +1,55 @@
+import { GoogleGenerativeAI } from '@google/generative-ai'
 import type { Theme } from '../domain/entities/Theme'
 import type { IThemeInterface } from '../domain/interfaces/IThemeInterface'
 import type { ThemeGenerationParams } from '../domain/interfaces/IThemeInterface'
 
 export class GeminiThemeRepository implements IThemeInterface {
+  genAI!: GoogleGenerativeAI
   constructor(
     private apiUrl: string,
     private apiKey: string,
   ) {}
 
   async generateTheme(params: ThemeGenerationParams): Promise<string> {
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY is not defined')
+    }
+    this.genAI = new GoogleGenerativeAI(this.apiKey)
+
     const prompt = this.createPrompt(params)
 
-    const response = await fetch(`${this.apiUrl}?key=${this.apiKey}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-      }),
-    })
+    try {
+      const model = this.genAI.getGenerativeModel({
+        model: 'gemini-1.5-flash',
+        generationConfig: {
+          responseMimeType: 'application/json',
+          temperature: 1.8,
+          topP: 0.8,
+          topK: 90,
+          presencePenalty: 0.6,
+          frequencyPenalty: 0.6,
+        },
+      })
 
-    if (!response.ok) {
-      throw new Error('Failed to generate theme from Gemini API')
+      const result = await model.generateContent(prompt)
+      if (!result || !result.response) {
+        throw new Error('Failed to generate content from Gemini AI')
+      }
+
+      const jsonResponse = JSON.parse(await result.response.text())
+      if (!jsonResponse.question) {
+        throw new Error('Response does not contain a "question" field')
+      }
+
+      return jsonResponse.question
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(
+          `Failed to generate theme from Gemini API: ${error.message}`,
+        )
+      }
+      throw new Error('Failed to generate theme from Gemini API: Unknown error')
     }
-
-    const data = await response.json()
-    return data.candidates[0].content.parts[0].text
   }
 
   async save(_theme: Theme): Promise<void> {}
@@ -52,7 +75,7 @@ export class GeminiThemeRepository implements IThemeInterface {
       return `${basePrompt} Based on this text: "${params.theme}", create a relevant discussion question.`
     }
 
-    if (params.theme === 'custom') {
+    if (params.theme !== 'random') {
       return `${basePrompt} Create a themed question that encourages thoughtful discussion about "${params.theme}".`
     }
 

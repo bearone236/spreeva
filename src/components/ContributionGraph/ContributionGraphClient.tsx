@@ -177,10 +177,12 @@ const ContributionGraphClient: React.FC<ContributionGraphProps> = ({
     <>
       <TooltipProvider>
         <div className='bg-white p-6 rounded-lg shadow-md'>
-          <h1 className='text-[#e67e22] text-2xl font-bold'>継続グラフ</h1>
+          <h1 className='text-[#e67e22] text-2xl font-bold xs:text-xl'>
+            継続グラフ
+          </h1>
           <div className='flex justify-between items-center mb-4 mt-2'>
             <div className='text-left'>
-              <h1 className='text-lg font-semibold'>
+              <h1 className='lg:text-lg font-semibold xs:text-sm'>
                 {year} Total Lessons: {totalContributions}
               </h1>
             </div>
