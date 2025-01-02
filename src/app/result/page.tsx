@@ -89,6 +89,8 @@ export default function ResultPage() {
     router.push('/speaking')
   }
 
+  const isErrorSpeech = spokenText === '音声が検出されませんでした'
+
   return (
     <div className='flex flex-col items-center justify-center pt-20'>
       <Card className='w-full max-w-3xl bg-white border border-[#ed9600]/20'>
@@ -111,7 +113,11 @@ export default function ResultPage() {
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
               あなたのスピーチ
             </h3>
-            <p className='text-lg text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-100'>
+            <p
+              className={`text-lg bg-gray-50 p-4 rounded-lg border border-gray-100 ${
+                isErrorSpeech ? 'text-red-400' : 'text-gray-700'
+              }`}
+            >
               {spokenText}
             </p>
           </div>
@@ -129,7 +135,7 @@ export default function ResultPage() {
             <Button
               onClick={handleEvaluate}
               className='bg-[#ed7e00] hover:bg-[#ed9600] text-white font-semibold px-6'
-              disabled={isLoading}
+              disabled={isLoading || isErrorSpeech}
             >
               {isLoading ? '評価中' : '評価　'}
             </Button>
