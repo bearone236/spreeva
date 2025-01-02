@@ -9,7 +9,7 @@ export class ThemeUseCase {
   constructor(private themeRepository: IThemeInterface) {}
 
   async execute(params: {
-    theme: string
+    theme: ThemeInput
     themeLevel: ThemeLevel
     themeType: ThemeType
   }): Promise<Theme> {
@@ -44,7 +44,7 @@ export class ThemeUseCase {
   }
 
   private validateInput(params: {
-    theme: string
+    theme: ThemeInput
     themeLevel: ThemeLevel
     themeType: ThemeType
   }) {
