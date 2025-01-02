@@ -4,17 +4,17 @@ import type { IThemeInterface } from '../domain/interfaces/IThemeInterface'
 import type { ThemeGenerationParams } from '../domain/interfaces/IThemeInterface'
 
 export class GeminiThemeRepository implements IThemeInterface {
+  genAI!: GoogleGenerativeAI
   constructor(
     private apiUrl: string,
     private apiKey: string,
-    private genAI: GoogleGenerativeAI,
   ) {}
 
   async generateTheme(params: ThemeGenerationParams): Promise<string> {
     if (!process.env.GEMINI_API_KEY) {
       throw new Error('GEMINI_API_KEY is not defined')
     }
-    this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
+    this.genAI = new GoogleGenerativeAI(this.apiKey)
 
     const prompt = this.createPrompt(params)
 
