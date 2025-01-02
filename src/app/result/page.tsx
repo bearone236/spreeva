@@ -105,7 +105,7 @@ export default function ResultPage() {
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
               テーマ
             </h3>
-            <p className='text-lg text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-100'>
+            <p className='text-lg text-gray-700 bg-gray-100 p-4 rounded-lg border border-gray-100'>
               {theme}
             </p>
           </div>
@@ -114,7 +114,7 @@ export default function ResultPage() {
               あなたのスピーチ
             </h3>
             <p
-              className={`text-lg bg-gray-50 p-4 rounded-lg border border-gray-100 ${
+              className={`text-lg bg-gray-100 p-4 rounded-lg border border-gray-100 ${
                 isErrorSpeech ? 'text-red-400' : 'text-gray-700'
               }`}
             >

@@ -29,7 +29,7 @@ const Timer = ({
 
   return (
     <div className='flex flex-col items-center justify-center pt-12 p-4 '>
-      <Card className='w-full max-w-2xl bg-white shadow-lg border-t-4 border-[#ed9600]'>
+      <Card className='w-full max-w-2xl bg-white border shadow-lg rounded-lg border-[#ed9600]/20'>
         <CardContent className='p-8 md:p-12'>
           <h2 className='text-3xl font-bold text-[#ed7e00] mb-6 text-center'>
             Speaking Time

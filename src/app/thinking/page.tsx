@@ -117,7 +117,7 @@ export default function ThinkingPage() {
 
   return (
     <div className='flex flex-col items-center justify-center pt-20'>
-      <Card className='w-full max-w-3xl bg-white shadow-lg border-t-4 border-[#ed9600]'>
+      <Card className='w-full max-w-3xl bg-white border shadow-lg rounded-lg border-[#ed9600]/20'>
         <CardContent className='p-6'>
           {remainingTime > 0 ? (
             <>
@@ -132,7 +132,7 @@ export default function ThinkingPage() {
                   Theme
                 </h3>
                 {showTheme ? (
-                  <div className='text-lg text-gray-700 bg-[#e6ebf0] p-4 rounded-lg border-l-4 border-[#edc700]'>
+                  <div className='text-lg text-gray-700 bg-gray-100 p-4 rounded-lg border border-gray-100'>
                     <ReactMarkdown
                       components={{
                         p: ({ children }) => (
@@ -171,13 +171,13 @@ export default function ThinkingPage() {
           ) : gracePeriod > 0 ? (
             <div className='flex justify-center items-center p-20'>
               <div className='text-center space-y-4'>
-                <div className='text-3xl font-bold text-[#ed7e00] xs:text-2xl'>
+                <div className='lg:text-3xl font-bold text-[#ed7e00] xs:text-2xl'>
                   Speaking画面に遷移します
                 </div>
-                <div className='text-8xl font-extrabold text-[#ed9600] '>
+                <div className='lg:text-8xl font-extrabold text-[#ed9600] '>
                   {gracePeriod}
                 </div>
-                <p className='text-2xl text-[#ed9600] font-semibold xs:text-lg'>
+                <p className='lg:text-2xl text-[#ed9600] font-semibold xs:text-lg'>
                   秒後に遷移します
                 </p>
               </div>
