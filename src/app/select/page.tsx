@@ -125,7 +125,7 @@ export default function SelectPage() {
 
       setThinkTime(effectiveThinkTime)
       setSpeakTime(effectiveSpeakTime)
-      router.push('/thinking')
+      await router.push('/thinking')
     } catch (error) {
       alert('セッションの開始に失敗しました。もう一度お試しください。')
     } finally {
