@@ -3,10 +3,8 @@
 import LevelDisplay from '@/components/LevelDisplay'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import type { Evaluation } from '@/types/theme.types'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useState } from 'react'
-import React from 'react'
 
 type HistoryEntry = {
   id: string
@@ -16,14 +14,16 @@ type HistoryEntry = {
   speakTime: number
   thinkTime: number
   spokenText: string
-  audioUrl?: string
+  similarityScore: number | null
+  diversityScore: number | null
+  overallScore: number | null
   aiEvaluation: string
 }
 
 const HistoryCard = ({ entry }: { entry: HistoryEntry }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
-  let evaluationData: Evaluation | null = null
+  let evaluationData = null
   try {
     evaluationData = entry.aiEvaluation ? JSON.parse(entry.aiEvaluation) : null
   } catch (error) {
@@ -52,6 +52,32 @@ const HistoryCard = ({ entry }: { entry: HistoryEntry }) => {
             <LevelDisplay level={entry.level} />
           </div>
         </div>
+        <div className='text-sm text-gray-600'>
+          <div className='text-xs text-gray-500 mt-1'>
+            シンキングタイム: {entry.thinkTime}秒 | スピーキングタイム:{' '}
+            {entry.speakTime}秒
+          </div>
+          <div className='grid grid-cols-3 gap-4 mt-5'>
+            <div className='p-2 bg-gray-50 rounded border'>
+              <span className='font-semibold'>類似スコア:</span>{' '}
+              {entry.similarityScore !== null
+                ? `${(entry.similarityScore * 100).toFixed(1)}`
+                : 'N/A'}
+            </div>
+            <div className='p-2 bg-gray-50 rounded border'>
+              <span className='font-semibold'>多様性スコア:</span>{' '}
+              {entry.diversityScore !== null
+                ? `${(entry.diversityScore * 100).toFixed(1)}`
+                : 'N/A'}
+            </div>
+            <div className='p-2 bg-gray-50 rounded border'>
+              <span className='font-semibold'>総合スコア:</span>{' '}
+              {entry.overallScore !== null
+                ? `${(entry.overallScore * 100).toFixed(1)}`
+                : 'N/A'}
+            </div>
+          </div>
+        </div>
         {isExpanded && (
           <div className='mt-4 text-sm text-gray-600 space-y-4'>
             <div className='border p-2 rounded bg-gray-50'>
@@ -60,55 +86,39 @@ const HistoryCard = ({ entry }: { entry: HistoryEntry }) => {
                 {entry.spokenText}
               </p>
             </div>
-            <div className='border p-2 rounded bg-gray-50'>
-              <span className='font-semibold'>シンキング時間:</span>{' '}
-              {entry.thinkTime} 秒
-            </div>
-            <div className='border p-2 rounded bg-gray-50'>
-              <span className='font-semibold'>スピーキング時間:</span>{' '}
-              {entry.speakTime} 秒
-            </div>
-            <div className='border p-2 rounded bg-gray-50'>
-              <span className='font-semibold'>文法の正確さ:</span>
-              <p className='mt-2 whitespace-pre-wrap break-words'>
-                {grammarAccuracy}
-              </p>
-            </div>
-            {entry.audioUrl && (
+            <div className='space-y-4 pt-6'>
               <div className='border p-2 rounded bg-gray-50'>
-                <span className='font-semibold'>録音データ:</span>
-                <audio controls className='mt-2 w-full'>
-                  <source src={entry.audioUrl} type='audio/wav' />
-                  <track kind='captions' />
-                  あなたのブラウザはaudio要素をサポートしていません。
-                </audio>
+                <span className='font-semibold'>文法の正確さ:</span>
+                <p className='mt-2 whitespace-pre-wrap break-words'>
+                  {grammarAccuracy}
+                </p>
               </div>
-            )}
-            <div className='border p-2 rounded bg-gray-50'>
-              <span className='font-semibold'>語彙の適切性:</span>
-              <p className='mt-2 whitespace-pre-wrap break-words'>
-                {vocabularyAppropriateness}
-              </p>
-            </div>
-            <div className='border p-2 rounded bg-gray-50'>
-              <span className='font-semibold'>テーマの関連性:</span>
-              <p className='mt-2 whitespace-pre-wrap break-words'>
-                {relevanceToTheme}
-              </p>
-            </div>
-            <div className='border p-2 rounded bg-gray-50'>
-              <span className='font-semibold'>改善の提案:</span>
-              <p className='mt-2 whitespace-pre-wrap break-words'>
-                {improvementSuggestions}
-              </p>
-            </div>
-            <div className='border p-2 rounded bg-gray-50'>
-              <span className='font-semibold'>改善例:</span>
-              <ul className='list-disc pl-5 mt-2'>
-                {improvedExpressionExamples.map(example => (
-                  <li key={example}>{example}</li>
-                ))}
-              </ul>
+              <div className='border p-2 rounded bg-gray-50'>
+                <span className='font-semibold'>語彙の適切性:</span>
+                <p className='mt-2 whitespace-pre-wrap break-words'>
+                  {vocabularyAppropriateness}
+                </p>
+              </div>
+              <div className='border p-2 rounded bg-gray-50'>
+                <span className='font-semibold'>テーマの関連性:</span>
+                <p className='mt-2 whitespace-pre-wrap break-words'>
+                  {relevanceToTheme}
+                </p>
+              </div>
+              <div className='border p-2 rounded bg-gray-50'>
+                <span className='font-semibold'>改善の提案:</span>
+                <p className='mt-2 whitespace-pre-wrap break-words'>
+                  {improvementSuggestions}
+                </p>
+              </div>
+              <div className='border p-2 rounded bg-gray-50'>
+                <span className='font-semibold'>改善例:</span>
+                <ul className='list-disc pl-5 mt-2'>
+                  {improvedExpressionExamples.map((example: string) => (
+                    <li key={example}>{example}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         )}

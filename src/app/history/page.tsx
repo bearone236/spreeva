@@ -27,36 +27,39 @@ export default async function HistoryPage() {
         speakTime: true,
         spokenText: true,
         createdAt: true,
+        Evaluation: {
+          select: {
+            similarityScore: true,
+            diversityScore: true,
+            overallScore: true,
+            aiEvaluation: true,
+          },
+        },
       },
     })
 
-    const history = await Promise.all(
-      speakingResults.map(async entry => {
-        const evaluation = await prisma.evaluation.findFirst({
-          where: {
-            speakingResultId: entry.id,
-          },
-          select: {
-            aiEvaluation: true,
-          },
-        })
-
-        return {
-          id: entry.id,
-          date: entry.createdAt.toISOString().split('T')[0],
-          theme: entry.theme,
-          level: entry.level as 'Low' | 'Middle' | 'High',
-          thinkTime: entry.thinkTime,
-          speakTime: entry.speakTime,
-          spokenText: entry.spokenText,
-          aiEvaluation: evaluation?.aiEvaluation || '',
-        }
+    const history = speakingResults.map(entry => ({
+      id: entry.id,
+      date: new Date(entry.createdAt).toLocaleString('ja-JP', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
       }),
-    )
+      theme: entry.theme,
+      level: entry.level as 'Low' | 'Middle' | 'High',
+      thinkTime: entry.thinkTime,
+      speakTime: entry.speakTime,
+      spokenText: entry.spokenText,
+      similarityScore: entry.Evaluation[0]?.similarityScore || null,
+      diversityScore: entry.Evaluation[0]?.diversityScore || null,
+      overallScore: entry.Evaluation[0]?.overallScore || null,
+      aiEvaluation: entry.Evaluation[0]?.aiEvaluation || '',
+    }))
 
     return <HistoryPageClient history={history} />
   } catch (error) {
-    console.error('Failed to load speaking results:', error)
     return <div>Failed to load speaking results. Please try again later.</div>
   }
 }
