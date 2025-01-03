@@ -20,7 +20,7 @@ const QuickStartForm = () => {
   }
 
   return (
-    <div className='bg-white p-6 rounded-lg shadow-md min-h-[280px] flex flex-col justify-center'>
+    <div className='bg-white p-6 rounded-lg shadow-md min-h-[270px] flex flex-col justify-center'>
       <label
         htmlFor='theme-input'
         className='block text-lg font-bold text-[#e67e22] mb-2'

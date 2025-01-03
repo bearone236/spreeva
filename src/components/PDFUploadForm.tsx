@@ -53,7 +53,7 @@ const PDFUploadForm = () => {
   }
 
   return (
-    <div className='bg-white p-6 rounded-lg shadow-md min-h-[280px] flex flex-col justify-center'>
+    <div className='bg-white p-6 rounded-lg shadow-md min-h-[270px] flex flex-col justify-center'>
       <h1 className='text-[#e67e22] text-2xl font-bold xs:text-xl'>
         PDFからテーマ生成
       </h1>

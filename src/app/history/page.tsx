@@ -1,6 +1,15 @@
 import { auth } from '@/app/api/auth/[...nextauth]/auth'
 import prisma from '@/lib/prisma'
-import HistoryPageClient from './HistoryPageClient'
+import dynamic from 'next/dynamic'
+
+const HistoryPageClient = dynamic(() => import('./HistoryPageClient'), {
+  ssr: true,
+  loading: () => (
+    <div className='min-h-screen flex items-center justify-center'>
+      Loading...
+    </div>
+  ),
+})
 
 export default async function HistoryPage() {
   const session = await auth()

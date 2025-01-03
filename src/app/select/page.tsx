@@ -20,7 +20,10 @@ import useStore from '../../provider/store/useStore'
 
 const Player = dynamic(
   () => import('@lottiefiles/react-lottie-player').then(mod => mod.Player),
-  { ssr: false },
+  {
+    ssr: false,
+    loading: () => <div style={{ height: '250px', width: '250px' }} />,
+  },
 )
 
 export default function SelectPage() {
@@ -290,7 +293,7 @@ export default function SelectPage() {
           <Button
             type='submit'
             disabled={isLoading}
-            className='w-full bg-[#ed7e00] hover:bg-[#f18e1b] text-white py-2 rounded-md flex justify-center items-center'
+            className='w-60 mx-auto bg-[#ed7e00] hover:bg-[#f18e1b] text-white py-2 rounded-md flex justify-center items-center'
           >
             {isLoading ? (
               <>

@@ -1,5 +1,6 @@
 import type { ThemeLevel } from '@/types/theme.types'
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 interface AppState {
   theme: string
@@ -33,7 +34,20 @@ interface AppState {
   setFastApiEvaluation: (evaluation: AppState['fastApiEvaluation']) => void
 }
 
-const initialState = {
+const initialState: Omit<
+  AppState,
+  | 'setTheme'
+  | 'setThemeType'
+  | 'setThinkTime'
+  | 'setSpeakTime'
+  | 'setLevel'
+  | 'setShowTheme'
+  | 'setReadTheme'
+  | 'setSpokenText'
+  | 'setEvaluation'
+  | 'setRetryCount'
+  | 'setFastApiEvaluation'
+> = {
   theme: '',
   themeType: '',
   thinkTime: '30',
@@ -47,19 +61,27 @@ const initialState = {
   fastApiEvaluation: null,
 }
 
-const useStore = create<AppState>(set => ({
-  ...initialState,
-  setTheme: theme => set({ theme }),
-  setThemeType: themeType => set({ themeType }),
-  setThinkTime: time => set({ thinkTime: time }),
-  setSpeakTime: time => set({ speakTime: time }),
-  setLevel: level => set({ level }),
-  setShowTheme: show => set({ showTheme: show }),
-  setReadTheme: read => set({ readTheme: read }),
-  setSpokenText: text => set({ spokenText: text }),
-  setEvaluation: evaluation => set({ evaluation }),
-  setRetryCount: count => set({ retryCount: count }),
-  setFastApiEvaluation: evaluation => set({ fastApiEvaluation: evaluation }),
-}))
+const useStore = create<AppState>()(
+  persist(
+    set => ({
+      ...initialState,
+      setTheme: theme => set({ theme }),
+      setThemeType: themeType => set({ themeType }),
+      setThinkTime: time => set({ thinkTime: time }),
+      setSpeakTime: time => set({ speakTime: time }),
+      setLevel: level => set({ level }),
+      setShowTheme: show => set({ showTheme: show }),
+      setReadTheme: read => set({ readTheme: read }),
+      setSpokenText: text => set({ spokenText: text }),
+      setEvaluation: evaluation => set({ evaluation }),
+      setRetryCount: count => set({ retryCount: count }),
+      setFastApiEvaluation: evaluation =>
+        set({ fastApiEvaluation: evaluation }),
+    }),
+    {
+      name: 'app-storage',
+    },
+  ),
+)
 
 export default useStore

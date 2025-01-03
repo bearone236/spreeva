@@ -3,6 +3,7 @@
 import LevelDisplay from '@/components/LevelDisplay'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Tooltip,
   TooltipContent,
@@ -11,6 +12,7 @@ import {
 } from '@/components/ui/tooltip'
 import type { Evaluation, ThemeLevel } from '@/types/theme.types'
 import { InfoIcon, Percent, Target, Zap } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import useStore from '../../provider/store/useStore'
 
 export default function EvaluatePage() {
@@ -23,6 +25,14 @@ export default function EvaluatePage() {
     spokenText,
     fastApiEvaluation,
   } = useStore()
+  const [isDataLoaded, setIsDataLoaded] = useState(false)
+
+  useEffect(() => {
+    if (theme && spokenText && fastApiEvaluation) {
+      setIsDataLoaded(true)
+    }
+  }, [theme, spokenText, fastApiEvaluation])
+
   const level: ThemeLevel = themeLevel as ThemeLevel
   const defaultEvaluation: Evaluation = {
     grammarAccuracy: '',
@@ -103,15 +113,26 @@ export default function EvaluatePage() {
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
               テーマ
             </h3>
-            <p className='text-lg text-gray-700 bg-gray-100 p-4 rounded-lg border border-gray-100'>
-              {theme}
-            </p>
+            {!isDataLoaded ? (
+              <Skeleton className='h-16 w-full bg-gray-200 rounded-lg' />
+            ) : (
+              <p className='text-lg text-gray-700 bg-gray-100 p-4 rounded-lg border border-gray-100'>
+                {theme}
+              </p>
+            )}
             <div className='mt-2 flex justify-between items-center'>
               <div className='text-sm text-gray-600'>
-                シンキングタイム: {thinkTime}秒 | スピーキングタイム:{' '}
-                {speakTime}秒
+                {!isDataLoaded ? (
+                  <Skeleton className='h-6 w-80 bg-gray-200 rounded-lg' />
+                ) : (
+                  `シンキングタイム: ${thinkTime}秒 | スピーキングタイム: ${speakTime}秒`
+                )}
               </div>
-              <LevelDisplay level={level} />
+              {!isDataLoaded ? (
+                <Skeleton className='h-7 w-16 bg-gray-200 rounded-lg' />
+              ) : (
+                <LevelDisplay level={level} />
+              )}
             </div>
           </div>
 
@@ -119,9 +140,13 @@ export default function EvaluatePage() {
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
               あなたのスピーチ
             </h3>
-            <p className='text-lg text-gray-700 bg-gray-100 p-4 rounded-lg border border-gray-100'>
-              {spokenText}
-            </p>
+            {!isDataLoaded ? (
+              <Skeleton className='h-16 w-full bg-gray-200 rounded-lg' />
+            ) : (
+              <p className='text-lg text-gray-700 bg-gray-100 p-4 rounded-lg border border-gray-100'>
+                {spokenText}
+              </p>
+            )}
           </div>
           <div>
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>結果</h3>
@@ -257,30 +282,36 @@ export default function EvaluatePage() {
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
               AI評価
             </h3>
-            <div className='text-lg text-gray-600 bg-gray-100 p-4 rounded-lg border border-gray-100 px-8 py-8'>
-              <h4 className='font-bold mt-4 text-[#ed9600]'>文法の正確さ</h4>
-              <p className='text-base'>{grammarAccuracy}</p>
-              <h4 className='font-bold mt-12 text-[#ed9600]'>語彙の適切性</h4>
-              <p className='text-base'>{vocabularyAppropriateness}</p>
-              <h4 className='font-bold mt-12 text-[#ed9600]'>テーマの関連性</h4>
-              <p className='text-base'>{relevanceToTheme}</p>
-              <h4 className='font-bold mt-12 text-[#ed9600]'>改善の提案</h4>
-              <ul className='list-disc pl-5'>
-                {suggestions.map(suggestion => (
-                  <li key={suggestion} className='text-base'>
-                    {suggestion}
-                  </li>
-                ))}
-              </ul>
-              <h4 className='font-bold mt-12 text-[#ed9600]'>改善例</h4>
-              <ul className='list-disc pl-5'>
-                {improvedExpressionExamples.map(example => (
-                  <li key={example} className='text-base'>
-                    {example}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {!isDataLoaded ? (
+              <Skeleton className='h-60 w-full bg-gray-200 rounded-lg' />
+            ) : (
+              <div className='text-lg text-gray-600 bg-gray-100 p-4 rounded-lg border border-gray-100 px-8 py-8'>
+                <h4 className='font-bold mt-4 text-[#ed9600]'>文法の正確さ</h4>
+                <p className='text-base'>{grammarAccuracy}</p>
+                <h4 className='font-bold mt-12 text-[#ed9600]'>語彙の適切性</h4>
+                <p className='text-base'>{vocabularyAppropriateness}</p>
+                <h4 className='font-bold mt-12 text-[#ed9600]'>
+                  テーマの関連性
+                </h4>
+                <p className='text-base'>{relevanceToTheme}</p>
+                <h4 className='font-bold mt-12 text-[#ed9600]'>改善の提案</h4>
+                <ul className='list-disc pl-5'>
+                  {suggestions.map(suggestion => (
+                    <li key={suggestion} className='text-base'>
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+                <h4 className='font-bold mt-12 text-[#ed9600]'>改善例</h4>
+                <ul className='list-disc pl-5'>
+                  {improvedExpressionExamples.map(example => (
+                    <li key={example} className='text-base'>
+                      {example}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

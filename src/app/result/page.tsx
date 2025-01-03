@@ -2,9 +2,10 @@
 import LevelDisplay from '@/components/LevelDisplay'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import useStore from '../../provider/store/useStore'
 
 export default function ResultPage() {
@@ -23,7 +24,14 @@ export default function ResultPage() {
     setFastApiEvaluation,
   } = useStore()
 
+  const [isDataLoaded, setIsDataLoaded] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    if (theme && spokenText) {
+      setIsDataLoaded(true)
+    }
+  }, [theme, spokenText])
 
   const handleEvaluate = async () => {
     setIsLoading(true)
@@ -55,14 +63,13 @@ export default function ResultPage() {
       if (data.success) {
         setFastApiEvaluation(data.fastApiEvaluation)
         setEvaluation(data.evaluation)
-        await router.push('/evaluate') // リダイレクトが完了するまで待機
+        await router.push('/evaluate')
       } else {
         throw new Error(data.error || 'Failed to evaluate speech')
       }
     } catch (error) {
       alert('評価に失敗しました。もう一度お試しください。')
     } finally {
-      // リダイレクトが完了後にボタンを再度有効化
       setIsLoading(false)
     }
   }
@@ -90,22 +97,32 @@ export default function ResultPage() {
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
               テーマ
             </h3>
-            <p className='text-lg text-gray-700 bg-gray-100 p-4 rounded-lg border border-gray-100'>
-              {theme}
-            </p>
+            {!isDataLoaded ? (
+              <Skeleton className='min-h-16 w-full bg-gray-200 rounded-lg' />
+            ) : (
+              <p className='min-h-16 text-lg text-gray-700 bg-gray-100 p-4 rounded-lg border border-gray-100'>
+                {theme}
+              </p>
+            )}
           </div>
           <div>
             <h3 className='text-xl font-semibold text-[#ed9600] mb-2'>
               あなたのスピーチ
             </h3>
-            <p
-              className={`text-lg bg-gray-100 p-4 rounded-lg border border-gray-100 ${
-                isErrorSpeech ? 'text-red-400' : 'text-gray-700'
-              }`}
-            >
-              {spokenText}
-            </p>
+            {!isDataLoaded ? (
+              <Skeleton className='min-h-24 w-full bg-gray-200 rounded-lg' />
+            ) : (
+              <p
+                className={`text-lg bg-gray-100 p-4 rounded-lg border border-gray-100 ${
+                  isErrorSpeech ? 'text-red-400' : 'text-gray-700'
+                }`}
+                style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}
+              >
+                {spokenText}
+              </p>
+            )}
           </div>
+
           <div className='flex justify-between'>
             <Button
               onClick={handleRetry}
