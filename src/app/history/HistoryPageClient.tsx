@@ -4,7 +4,8 @@ import LevelDisplay from '@/components/LevelDisplay'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import SkeletonHistoryCard from './SkeletonHistoryCard'
 
 type HistoryEntry = {
   id: string
@@ -145,7 +146,17 @@ const HistoryCard = ({ entry }: { entry: HistoryEntry }) => {
 
 export default function HistoryPageClient({
   history,
-}: { history: HistoryEntry[] }) {
+}: { history: HistoryEntry[] | null }) {
+  const [isLoading, setIsLoading] = useState(true)
+  const [data, setData] = useState<HistoryEntry[] | null>(null)
+
+  useEffect(() => {
+    if (history) {
+      setData(history)
+      setIsLoading(false)
+    }
+  }, [history])
+
   return (
     <div className='min-h-screen flex flex-col items-center justify-center p-4'>
       <Card className='w-full max-w-4xl bg-white shadow-lg rounded-lg'>
@@ -155,9 +166,11 @@ export default function HistoryPageClient({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {history.map(entry => (
-            <HistoryCard key={entry.id} entry={entry} />
-          ))}
+          {isLoading
+            ? Array.from({ length: 5 }).map(() => (
+                <SkeletonHistoryCard key={crypto.randomUUID()} />
+              ))
+            : data?.map(entry => <HistoryCard key={entry.id} entry={entry} />)}
         </CardContent>
       </Card>
     </div>
