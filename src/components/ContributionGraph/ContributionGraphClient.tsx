@@ -129,7 +129,7 @@ const ContributionGraphClient: React.FC<ContributionGraphProps> = ({
 
   if (!year) {
     return (
-      <div className='bg-white p-6 rounded-lg shadow-md'>
+      <div className='bg-white p-6 rounded-lg shadow-md w-full max-w-5xl mx-auto'>
         <h1 className='text-[#e67e22] text-2xl font-bold'>
           <Skeleton className='h-7 w-[150px] mb-4' />
         </h1>
@@ -176,9 +176,9 @@ const ContributionGraphClient: React.FC<ContributionGraphProps> = ({
   return (
     <>
       <TooltipProvider>
-        <div className='bg-white p-6 rounded-lg shadow-md'>
+        <div className='bg-white p-6 rounded-lg shadow-md w-full max-w-5xl mx-auto'>
           <h1 className='text-[#e67e22] text-2xl font-bold xs:text-xl'>
-            継続グラフ
+            活動記録
           </h1>
           <div className='flex justify-between items-center mb-4 mt-2'>
             <div className='text-left'>
@@ -202,7 +202,10 @@ const ContributionGraphClient: React.FC<ContributionGraphProps> = ({
             </div>
           </div>
 
-          <div className='overflow-x-auto' ref={containerRef}>
+          <div
+            className='overflow-x-auto scrollbar-hidden w-full max-w-full'
+            ref={containerRef}
+          >
             <div className='flex'>
               <div className='flex flex-col mr-2 text-xs text-gray-500 mt-7'>
                 {displayDayLabels.map((day, index) => {

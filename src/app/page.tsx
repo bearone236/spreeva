@@ -1,8 +1,8 @@
 import AboutPage from '@/components/About'
 import ContributionGraph from '@/components/ContributionGraph/index'
 import PDFUploadForm from '@/components/PDFUploadForm'
-// import GamificationCard from '@/components/GemificationCard'
 import QuickStartForm from '@/components/QuickStartForm'
+import StreakDashboard from '@/components/Streak/index'
 import React from 'react'
 import { auth } from './api/auth/[...nextauth]/auth'
 
@@ -24,8 +24,15 @@ export default async function Page() {
                 </div>
               </div>
             </div>
-            <div className='mt-4 px-8'>
-              <ContributionGraph />
+            <div>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6 px-8 mt-3'>
+                <div className='w-full'>
+                  <ContributionGraph />
+                </div>
+                <div className='w-full'>
+                  <StreakDashboard />
+                </div>
+              </div>
             </div>
           </>
         ) : (
