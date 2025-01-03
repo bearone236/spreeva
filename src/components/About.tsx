@@ -3,6 +3,7 @@ import {
   ArrowRight,
   Clock,
   FileText,
+  Group,
   MessageSquare,
   Mic,
   Star,
@@ -174,6 +175,60 @@ export default function AboutPage() {
                 楽しみながら英語を学びたい方
               </p>
             </div>
+          </div>
+        </section>
+
+        <section className='py-20 bg-gradient-to-r from-[#1B2B3A] to-[#2C3E50] text-white mb-16'>
+          <div className='container mx-auto px-4'>
+            <h2 className='text-4xl md:text-5xl font-bold mb-8 text-center'>
+              <span className='border-b-4 border-[#F5B642] pb-2'>
+                他にはないSpreevaの強み
+              </span>
+            </h2>
+            <div className='max-w-4xl mx-auto bg-white/10 backdrop-blur-lg rounded-xl p-8 shadow-lg'>
+              <div className='text-center mb-6'>
+                <Group className='w-16 h-16 mx-auto text-[#F5B642]' />
+                <h3 className='text-3xl font-semibold text-white'>団体機能</h3>
+                <p className='text-gray-300 text-lg mt-4'>
+                  団体（学校）や組織単位で利用可能。スピーキング学習を効率的に管理できます。
+                </p>
+              </div>
+              <div className='border-t border-gray-500 pt-6'>
+                <h4 className='text-xl font-semibold text-white mb-4'>
+                  この機能でできること:
+                </h4>
+                <ul className='list-disc list-inside text-gray-300 text-lg space-y-2'>
+                  <li>
+                    <span className='font-bold text-[#F5B642]'>
+                      リモート対応:
+                    </span>{' '}
+                    リモート環境でスピーキングテストを実施可能
+                  </li>
+                  <li>
+                    <span className='font-bold text-[#F5B642]'>
+                      テーマ提示機能:
+                    </span>{' '}
+                    AIテーマだけでなく、団体管理者がテーマを指定可能
+                  </li>
+                  <li>
+                    <span className='font-bold text-[#F5B642]'>
+                      組織内・グループ内管理:
+                    </span>{' '}
+                    メンバーの学習状況を一元管理
+                  </li>
+                  <li>
+                    <span className='font-bold text-[#F5B642]'>
+                      試験対策に最適:
+                    </span>{' '}
+                    英検やTOEFLなどのスピーキング試験対策として活用可能
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <p className='text-center text-lg mt-8'>
+              <span className='font-semibold text-[#F5B642]'>現在開発中</span>
+              、近日リリース予定！
+            </p>
           </div>
         </section>
 
