@@ -5,6 +5,8 @@ import type { ThemeGenerationParams } from '../domain/interfaces/IThemeInterface
 
 export class GeminiThemeRepository implements IThemeInterface {
   genAI!: GoogleGenerativeAI
+  private generatedThemes: Set<string> = new Set()
+
   constructor(
     private apiUrl: string,
     private apiKey: string,
@@ -23,25 +25,32 @@ export class GeminiThemeRepository implements IThemeInterface {
         model: 'gemini-1.5-flash',
         generationConfig: {
           responseMimeType: 'application/json',
-          temperature: 1.8,
-          topP: 0.8,
-          topK: 90,
-          presencePenalty: 0.6,
-          frequencyPenalty: 0.6,
+          temperature: 2.0,
+          topP: 0.9,
         },
       })
 
-      const result = await model.generateContent(prompt)
-      if (!result || !result.response) {
-        throw new Error('Failed to generate content from Gemini AI')
+      // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
+      let result
+      for (let attempts = 0; attempts < 3; attempts++) {
+        result = await model.generateContent(prompt)
+        if (!result || !result.response) {
+          throw new Error('Failed to generate content from Gemini AI')
+        }
+
+        const jsonResponse = JSON.parse(await result.response.text())
+        if (!jsonResponse.question) {
+          throw new Error('Response does not contain a "question" field')
+        }
+
+        const question = jsonResponse.question
+        if (!this.generatedThemes.has(question)) {
+          this.generatedThemes.add(question)
+          return question
+        }
       }
 
-      const jsonResponse = JSON.parse(await result.response.text())
-      if (!jsonResponse.question) {
-        throw new Error('Response does not contain a "question" field')
-      }
-
-      return jsonResponse.question
+      throw new Error('Failed to generate a unique theme after 3 attempts')
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(
@@ -69,20 +78,23 @@ export class GeminiThemeRepository implements IThemeInterface {
       High: 'Challenge users to articulate comprehensive, well-structured answers with depth and nuance in their reasoning.',
     }
 
-    const basePrompt = `You are an English speech test teacher. Your task is to generate a single-sentence English question with a maximum of 15 words, suitable for a speaking practice test at the ${params.level} level (${levelDescriptions[params.level]}). The question should align with the following goal: ${speakingGoals[params.level]}.`
+    const creativeGuidance =
+      'Ensure the question is unique, thought-provoking, and contains creative elements to keep it fresh.'
+
+    const basePrompt = `You are an English speech test teacher. Your task is to generate a single-sentence English question with a maximum of 15 words, suitable for a speaking practice test at the ${params.level} level (${levelDescriptions[params.level]}). The question should align with the following goal: ${speakingGoals[params.level]}. ${creativeGuidance}`
 
     if (params.themeType === 'ocr') {
-      return `${basePrompt} Based on this text: "${params.theme}", create a relevant discussion question.`
+      return `${basePrompt} Based on this text: "${params.theme}", create a relevant and creative discussion question.`
     }
 
     if (params.theme !== 'random') {
-      return `${basePrompt} Create a themed question that encourages thoughtful discussion about "${params.theme}".`
+      return `${basePrompt} Create a themed question that encourages unique and thoughtful discussion about "${params.theme}".`
     }
 
     if (params.level !== 'Low') {
-      return `${basePrompt} The topic can reference current news, historical events, or general knowledge.`
+      return `${basePrompt} The topic can reference unique perspectives on current news, historical events, or general knowledge.`
     }
 
-    return `${basePrompt} Generate a random theme that encourages thoughtful discussion while meeting the level-specific requirements.`
+    return `${basePrompt} Generate a random, unique theme that encourages thoughtful discussion while meeting the level-specific requirements.`
   }
 }
