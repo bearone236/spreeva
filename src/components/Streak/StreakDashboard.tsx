@@ -18,7 +18,7 @@ export default function StreakDashboard({
 }: StreakDashboardProps) {
   return (
     <div className='bg-white p-3 rounded-lg shadow-md w-full'>
-      <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 auto-rows-fr'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
         <Card className='relative'>
           <CardHeader className='space-y-0 pb-4'>
             <CardTitle className='text-base font-medium text-muted-foreground'>
