@@ -129,7 +129,7 @@ const ContributionGraphClient: React.FC<ContributionGraphProps> = ({
 
   if (!year) {
     return (
-      <div className='bg-white p-6 rounded-lg shadow-md w-full max-w-5xl mx-auto'>
+      <div className='bg-white p-6 rounded-lg shadow-md w-full max-w-6xl mx-auto'>
         <h1 className='text-[#e67e22] text-2xl font-bold'>
           <Skeleton className='h-7 w-[150px] mb-4 mt-2' />
         </h1>
@@ -176,7 +176,7 @@ const ContributionGraphClient: React.FC<ContributionGraphProps> = ({
   return (
     <>
       <TooltipProvider>
-        <div className='bg-white p-6 rounded-lg shadow-md w-full max-w-5xl mx-auto'>
+        <div className='bg-white p-6 rounded-lg shadow-md w-full max-w-6xl mx-auto'>
           <h1 className='text-[#e67e22] text-2xl font-bold xs:text-xl'>
             活動記録
           </h1>
