@@ -28,7 +28,6 @@ export default function ResultPage() {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    // Zustandの状態が空でないか確認し、データがロードされたことを設定
     if (theme && spokenText) {
       setIsDataLoaded(true)
     }
@@ -64,7 +63,7 @@ export default function ResultPage() {
       if (data.success) {
         setFastApiEvaluation(data.fastApiEvaluation)
         setEvaluation(data.evaluation)
-        await router.push('/evaluate') // リダイレクトが完了するまで待機
+        await router.push('/evaluate')
       } else {
         throw new Error(data.error || 'Failed to evaluate speech')
       }
