@@ -112,7 +112,7 @@ export default function ThinkingPage() {
           }}
         />
         <p className='mt-32 text-lg text-center font-bold fixed'>
-          テキストを読み取っています...
+          画面の遷移中です...
         </p>
       </div>
     )
