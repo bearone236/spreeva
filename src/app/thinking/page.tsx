@@ -174,13 +174,13 @@ export default function ThinkingPage() {
           ) : gracePeriod > 0 ? (
             <div className='flex justify-center items-center p-20'>
               <div className='text-center space-y-4'>
-                <div className='lg:text-3xl font-bold text-[#ed7e00] xs:text-2xl'>
+                <div className='md:text-3xl lg:text-3xl font-bold text-[#ed7e00] xs:text-2xl'>
                   Speaking画面に遷移します
                 </div>
-                <div className='lg:text-8xl font-extrabold text-[#ed9600] '>
+                <div className='md:text-8xl lg:text-8xl font-extrabold text-[#ed9600] '>
                   {gracePeriod}
                 </div>
-                <p className='lg:text-2xl text-[#ed9600] font-semibold xs:text-lg'>
+                <p className='md:text-2xl lg:text-2xl text-[#ed9600] font-semibold xs:text-lg'>
                   秒後に遷移します
                 </p>
               </div>
