@@ -73,7 +73,7 @@ export default function StreakDashboard({
         <Card>
           <CardHeader className='space-y-0 pb-4'>
             <CardTitle className='text-base font-medium text-muted-foreground'>
-              累計セッション数
+              累計スピーキング数
             </CardTitle>
           </CardHeader>
           <CardContent>
