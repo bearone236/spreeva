@@ -4,7 +4,10 @@ import dynamic from 'next/dynamic'
 
 const Player = dynamic(
   () => import('@lottiefiles/react-lottie-player').then(mod => mod.Player),
-  { ssr: false },
+  {
+    ssr: false,
+    loading: () => <div style={{ height: '250px', width: '250px' }} />,
+  },
 )
 
 export default function LoadingAnimation() {
