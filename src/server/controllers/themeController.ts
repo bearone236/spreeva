@@ -1,6 +1,7 @@
 import type { Context } from 'hono'
 import { z } from 'zod'
 import type { ThemeLevel } from '../../types/theme.types'
+import type { Theme } from '../domain/entities/Theme'
 import type { ThemeUseCase } from '../usecase/ThemeUseCase'
 import type { PDFThemeGenerationUsecase } from '../usecase/pdfThemeGeneration'
 
@@ -43,87 +44,100 @@ export class ThemeController {
 
   async handleThemeGeneration(c: Context) {
     try {
-      const contentType = c.req.header('content-type')
+      const isMultipart =
+        c.req.header('content-type')?.includes('multipart/form-data') ?? false
+      const validatedData = isMultipart
+        ? await this.handleMultipartRequest(c)
+        : await this.handleJsonRequest(c)
 
-      if (contentType?.includes('multipart/form-data')) {
-        const formData = await c.req.formData()
-        const file = formData.get('file') as File
-
-        if (!file) {
-          return c.json({ error: 'PDFファイルがありません' }, 400)
-        }
-
-        const arrayBuffer = await file.arrayBuffer()
-        const pdfBlob = new Blob([arrayBuffer], { type: 'application/pdf' })
-        const themeLevel =
-          (formData.get('themeLevel') as ThemeLevel) || 'Middle'
-
-        const extractedText =
-          await this.pdfThemeGenerationUsecase.execute(pdfBlob)
-
-        const themeParams = {
-          theme: extractedText.trim(),
-          themeLevel,
-          themeType: 'ocr' as const,
-        }
-
-        const validatedData = themeRequestSchema.parse(themeParams)
-
-        const theme = await this.generateThemeUseCase.execute(validatedData)
-
-        const response = ocrThemeResponseSchema.parse({
-          success: true,
-          theme: theme.getContent(),
-          message: theme.getContent(),
-          data: {
-            id: theme.getId(),
-            content: theme.getContent(),
-            level: theme.getLevel(),
-            type: theme.getThemeType(),
-            sourceText: extractedText,
-          },
-        })
-
-        return c.json(response)
-      }
-
-      const body = await c.req.json()
-      const validatedData = themeRequestSchema.parse(body)
       const theme = await this.generateThemeUseCase.execute(validatedData)
 
-      const response = themeResponseSchema.parse({
+      const response = this.createResponse(
+        theme,
+        isMultipart,
+        validatedData.theme,
+      )
+
+      return c.json(response)
+    } catch (error) {
+      return this.handleError(error, c)
+    }
+  }
+
+  private async handleMultipartRequest(c: Context) {
+    const formData = await c.req.formData()
+    const file = formData.get('file') as File
+    if (!file) throw new Error('PDFファイルがありません')
+
+    const arrayBuffer = await file.arrayBuffer()
+    const extractedText = await this.pdfThemeGenerationUsecase.execute(
+      new Blob([arrayBuffer], { type: 'application/pdf' }),
+    )
+
+    const themeLevel = (formData.get('themeLevel') as ThemeLevel) || 'Middle'
+    return themeRequestSchema.parse({
+      theme: extractedText.trim(),
+      themeLevel,
+      themeType: 'ocr',
+    })
+  }
+
+  private async handleJsonRequest(c: Context) {
+    const body = await c.req.json()
+    return themeRequestSchema.parse(body)
+  }
+
+  private createResponse(
+    theme: Theme,
+    isMultipart: boolean,
+    sourceText?: string,
+  ) {
+    if (isMultipart) {
+      return ocrThemeResponseSchema.parse({
         success: true,
+        theme: theme.getContent(),
         message: theme.getContent(),
         data: {
           id: theme.getId(),
           content: theme.getContent(),
-          theme: theme.getTheme(),
           level: theme.getLevel(),
           type: theme.getThemeType(),
+          sourceText,
         },
       })
+    }
 
-      return c.json(response)
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return c.json(
-          {
-            success: false,
-            error: 'Invalid request data',
-            details: error.errors,
-          },
-          400,
-        )
-      }
+    return themeResponseSchema.parse({
+      success: true,
+      message: theme.getContent(),
+      data: {
+        id: theme.getId(),
+        content: theme.getContent(),
+        theme: theme.getTheme(),
+        level: theme.getLevel(),
+        type: theme.getThemeType(),
+      },
+    })
+  }
 
+  private handleError(error: unknown, c: Context) {
+    if (error instanceof z.ZodError) {
       return c.json(
         {
           success: false,
-          error:
-            error instanceof Error ? error.message : 'Failed to generate theme',
+          error: 'Invalid request data',
+          details: error.errors,
         },
-        500,
+        400,
       )
     }
+
+    return c.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500,
+    )
   }
 }

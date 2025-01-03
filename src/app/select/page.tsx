@@ -293,7 +293,7 @@ export default function SelectPage() {
           <Button
             type='submit'
             disabled={isLoading}
-            className='w-full bg-[#ed7e00] hover:bg-[#f18e1b] text-white py-2 rounded-md flex justify-center items-center'
+            className='w-60 mx-auto bg-[#ed7e00] hover:bg-[#f18e1b] text-white py-2 rounded-md flex justify-center items-center'
           >
             {isLoading ? (
               <>
