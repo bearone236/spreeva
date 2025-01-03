@@ -25,11 +25,11 @@ export default async function Page() {
               </div>
             </div>
             <div>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6 px-8 mt-3'>
-                <div className='w-full'>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6 px-8 mt-3 items-start'>
+                <div className='w-full flex'>
                   <ContributionGraph />
                 </div>
-                <div className='w-full'>
+                <div className='w-full flex'>
                   <StreakDashboard />
                 </div>
               </div>
